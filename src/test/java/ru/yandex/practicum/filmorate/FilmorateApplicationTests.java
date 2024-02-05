@@ -11,16 +11,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 class FilmorateApplicationTests {
 
-	@Autowired
-	private FilmController filmController;
+    @Autowired
+    private FilmController filmController;
 
-	@Autowired
-	private UserController userController;
+    @Autowired
+    private UserController userController;
 
-	@Test
-	void contextLoads() {
-		assertThat(filmController).isNotNull();
-		assertThat(userController).isNotNull();
-	}
+    @Test
+    void contextLoads() {
+        assertThat(filmController).isNotNull();
+        assertThat(userController).isNotNull();
+    }
 
 }

@@ -12,10 +12,10 @@ import java.time.LocalDate;
 @Data
 @Builder(toBuilder = true)
 public class Film {
-    private int id;
     private final String name;
     private final String description;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private final LocalDate releaseDate;
     private final int duration;
+    private int id;
 }

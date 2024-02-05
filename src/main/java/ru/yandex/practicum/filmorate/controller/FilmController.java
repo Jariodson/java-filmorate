@@ -17,8 +17,8 @@ import java.util.Map;
 @ResponseStatus(HttpStatus.NOT_FOUND)
 @Slf4j
 public class FilmController {
-    private final Map<Integer, Film> films = new HashMap<>();
     private static int genId = 0;
+    private final Map<Integer, Film> films = new HashMap<>();
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)

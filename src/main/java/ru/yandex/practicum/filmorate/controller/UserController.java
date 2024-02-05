@@ -18,8 +18,8 @@ import java.util.Map;
 @ResponseStatus(HttpStatus.NOT_FOUND)
 @Slf4j
 public class UserController {
-    private final Map<Integer, User> users = new HashMap<>();
     private static int genId = 0;
+    private final Map<Integer, User> users = new HashMap<>();
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
