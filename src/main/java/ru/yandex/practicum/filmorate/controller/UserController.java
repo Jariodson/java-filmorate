@@ -1,6 +1,8 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
@@ -13,33 +15,39 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/users")
+@ResponseStatus(HttpStatus.NOT_FOUND)
 @Slf4j
 public class UserController {
-    private final Map<String, User> users = new HashMap<>();
+    private final Map<Integer, User> users = new HashMap<>();
+    private static int genId = 0;
 
     @GetMapping
+    @ResponseStatus(HttpStatus.OK)
     public Collection<User> getUsers() {
         return users.values();
     }
 
     @PostMapping
-    public User addUser(@Valid @RequestBody User user) {
+    public ResponseEntity<User> addUser(@Valid @RequestBody User user) {
         checkUserCriteria(user);
-        if (users.containsKey(user.getEmail())) {
+        if (users.values().stream().map(User::getEmail).anyMatch(user.getEmail()::equals)) {
             throw new ValidationException("Пользователь с электронной почтой " +
                     user.getEmail() + " уже зарегистрирован.");
         }
-        users.put(user.getEmail(), user);
+        users.put(user.getId(), user);
         log.debug("Добавление пользователя: {}", user);
-        return user;
+        return ResponseEntity.status(HttpStatus.OK).body(user);
     }
 
     @PutMapping
-    public User updateUser(@Valid @RequestBody User user) {
-        checkUserCriteria(user);
-        users.put(user.getEmail(), user);
-        log.debug("Перезапись пользователя: {}", user);
-        return user;
+    public ResponseEntity<User> updateUser(@Valid @RequestBody User user) {
+        if (users.containsKey(user.getId())) {
+            checkUserCriteria(user);
+            users.put(user.getId(), user);
+            log.debug("Перезапись пользователя: {}", user);
+            return ResponseEntity.status(HttpStatus.OK).body(user);
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(user);
     }
 
     private void checkUserCriteria(User user) {
@@ -62,6 +70,9 @@ public class UserController {
         if (user.getBirthday().isAfter(LocalDate.now().plusDays(1))) {
             log.warn("Введена неправильная дата рождения: {}", user.getBirthday());
             throw new ValidationException("Дата рождения не может быть в будущем");
+        }
+        if (user.getId() == 0) {
+            user.setId(++genId);
         }
     }
 }

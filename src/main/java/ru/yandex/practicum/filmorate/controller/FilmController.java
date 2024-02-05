@@ -1,6 +1,8 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -12,32 +14,39 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/films")
+@ResponseStatus(HttpStatus.NOT_FOUND)
 @Slf4j
 public class FilmController {
-    private final Map<String, Film> films = new HashMap<>();
+    private final Map<Integer, Film> films = new HashMap<>();
+    private static int genId = 0;
 
     @GetMapping
+    @ResponseStatus(HttpStatus.OK)
     public Collection<Film> getFilms() {
+        log.debug("Вывод всех фильмов");
         return films.values();
     }
 
     @PostMapping
-    public Film addFilm(@RequestBody Film film) {
+    public ResponseEntity<Film> addFilm(@RequestBody Film film) {
         checkFilmCriteria(film);
-        if (films.containsKey(film.getName())) {
+        if (films.values().stream().map(Film::getName).anyMatch(film.getName()::equals)) {
             throw new ValidationException("Фильм с названием " + film.getName() + "уже добавлен");
         }
-        films.put(film.getName(), film);
+        films.put(film.getId(), film);
         log.debug("Добавление фильма: {}", film);
-        return film;
+        return ResponseEntity.status(HttpStatus.OK).body(film);
     }
 
     @PutMapping
-    public Film updateFilm(@RequestBody Film film) {
+    public ResponseEntity<Film> updateFilm(@RequestBody Film film) {
         checkFilmCriteria(film);
-        films.put(film.getName(), film);
-        log.debug("Перезапись фильма: {}", film);
-        return film;
+        if (films.containsKey(film.getId())) {
+            films.put(film.getId(), film);
+            log.debug("Перезапись фильма: {}", film);
+            return ResponseEntity.status(HttpStatus.OK).body(film);
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(film);
     }
 
     private void checkFilmCriteria(Film film) {
@@ -58,5 +67,12 @@ public class FilmController {
             log.warn("Введена отрицательная продолжительность фильма: {}", film.getDuration());
             throw new ValidationException("Продолжительность фильма должна быть положительной!");
         }
+        if (film.getId() == 0) {
+            film.setId(++genId);
+        }
+    }
+
+    void deleteAllFilms() {
+        films.clear();
     }
 }
