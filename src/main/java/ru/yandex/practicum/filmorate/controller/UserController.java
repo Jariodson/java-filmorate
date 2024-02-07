@@ -29,43 +29,35 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<User> addUser(@Valid @RequestBody User user) {
+        log.info("Получен запрос POST на добавление пользователя в список");
         checkUserCriteria(user);
         if (users.values().stream().map(User::getEmail).anyMatch(user.getEmail()::equals)) {
+            log.warn("Пользователь с e-mail: {} уже зарегестрирован!", user.getEmail());
             throw new ValidationException("Пользователь с электронной почтой " +
                     user.getEmail() + " уже зарегистрирован.");
         }
         users.put(user.getId(), user);
-        log.debug("Добавление пользователя: {}", user);
+        log.info("Пользователь: {} добавлен!", user);
         return ResponseEntity.status(HttpStatus.OK).body(user);
     }
 
     @PutMapping
     public ResponseEntity<User> updateUser(@Valid @RequestBody User user) {
+        log.info("Получен запрос PUT на обновление пользователя в списке");
         if (users.containsKey(user.getId())) {
             checkUserCriteria(user);
             users.put(user.getId(), user);
-            log.debug("Перезапись пользователя: {}", user);
+            log.info("Информация о пользователе: {} обновлена!", user);
             return ResponseEntity.status(HttpStatus.OK).body(user);
         }
+        log.warn("Пользователь не найден в списке!");
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(user);
     }
 
     private void checkUserCriteria(User user) {
-        if (user.getEmail() == null || user.getEmail().isBlank()) {
-            log.warn("Введена пустая электронная почта: {}", user.getEmail());
-            throw new ValidationException("Электронная почта не может быть пустой");
-        }
-        if (!user.getEmail().contains("@")) {
-            log.warn("Электронная почта не содержит символ @: {}", user.getEmail());
-            throw new ValidationException("Электронная почта должна содержать символ @");
-        }
-        if (user.getLogin() == null || user.getLogin().isBlank()) {
-            log.warn("Логин пустой или содержит пробелы: {}", user.getLogin());
-            throw new ValidationException("Логин не может быть пустым и содержать пробелы");
-        }
         if (user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin());
-            log.debug("Имя пустое, поэтому имя изменено на логин: {}", user.getName());
+            log.info("Введено пустое имя, поэтому имя изменено на логин: {}", user.getLogin());
         }
         if (user.getBirthday().isAfter(LocalDate.now().plusDays(1))) {
             log.warn("Введена неправильная дата рождения: {}", user.getBirthday());
