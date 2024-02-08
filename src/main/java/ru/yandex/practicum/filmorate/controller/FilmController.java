@@ -35,7 +35,7 @@ public class FilmController {
         checkFilmCriteria(film);
         if (films.values().stream().map(Film::getName).anyMatch(film.getName()::equals)) {
             log.warn("Фильм с названием {} уже добавлен", film.getName());
-            throw new ValidationException("Фильм с названием " + film.getName() + "уже добавлен");
+            throw new ValidationException("Фильм с названием " + film.getName() + " уже добавлен");
         }
         films.put(film.getId(), film);
         log.info("Фильм добавлен в список: {}.\nРазмер списка: {}", film, films.size());
