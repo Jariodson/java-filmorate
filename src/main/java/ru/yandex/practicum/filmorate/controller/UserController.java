@@ -29,6 +29,7 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<User> addUser(@Valid @RequestBody User user) {
+        setGenId(user);
         log.info("Получен запрос POST на добавление пользователя в список");
         checkUserCriteria(user);
         if (users.values().stream().map(User::getEmail).anyMatch(user.getEmail()::equals)) {
@@ -43,7 +44,8 @@ public class UserController {
 
     @PutMapping
     public ResponseEntity<User> updateUser(@Valid @RequestBody User user) {
-        log.info("Получен запрос PUT на обновление пользователя в списке");
+        setGenId(user);
+        log.info("Получен запрос PUT на обновление пользователя в списке. Id пользователя: {}", user.getId());
         if (users.containsKey(user.getId())) {
             checkUserCriteria(user);
             users.put(user.getId(), user);
@@ -63,6 +65,8 @@ public class UserController {
             log.warn("Введена неправильная дата рождения: {}", user.getBirthday());
             throw new ValidationException("Дата рождения не может быть в будущем");
         }
+    }
+    private void setGenId(User user){
         if (user.getId() == 0) {
             user.setId(++genId);
         }
