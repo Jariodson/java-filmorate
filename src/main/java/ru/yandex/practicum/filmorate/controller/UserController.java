@@ -66,7 +66,8 @@ public class UserController {
             throw new ValidationException("Дата рождения не может быть в будущем");
         }
     }
-    private void setGenId(User user){
+
+    private void setGenId(User user) {
         if (user.getId() == 0) {
             user.setId(++genId);
         }
