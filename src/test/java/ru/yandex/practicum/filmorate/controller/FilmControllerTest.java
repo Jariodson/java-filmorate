@@ -41,14 +41,14 @@ class FilmControllerTest {
     @Test
     void testAddFilmShouldReturnFilms() throws Exception {
         Film film1 = Film.builder()
-                .id(1)
+                .id(1L)
                 .name("Aladdin")
                 .description("Cartoon about prince")
                 .releaseDate(LocalDate.parse("1967-03-25"))
                 .duration(90)
                 .build();
         Film film2 = Film.builder()
-                .id(2)
+                .id(2L)
                 .name("Rusalochka")
                 .description("Cartoon about the see princes")
                 .releaseDate(LocalDate.parse("1900-03-25"))
@@ -58,7 +58,7 @@ class FilmControllerTest {
 
         String gsonString = objectMapper.writeValueAsString(films);
 
-        when(controller.getFilms()).thenReturn(films);
+        //when(controller.getFilms()).thenReturn(films);
         this.mockMvc.perform(
                         get("/films"))
                 .andExpect(status().isOk())
@@ -69,7 +69,7 @@ class FilmControllerTest {
     @Test
     void testAddFilmShouldAddNewFilm() throws Exception {
         Film film1 = Film.builder()
-                .id(1)
+                .id(1L)
                 .name("Aladdin")
                 .description("Cartoon about prince")
                 .releaseDate(LocalDate.parse("1967-03-25"))
@@ -86,7 +86,7 @@ class FilmControllerTest {
     @Test
     void testUpdateFilmShouldReturnStatusNotFound() throws Exception {
         Film film1 = Film.builder()
-                .id(1)
+                .id(1L)
                 .name("Aladdin")
                 .description("Cartoon about prince")
                 .releaseDate(LocalDate.parse("1967-03-25"))

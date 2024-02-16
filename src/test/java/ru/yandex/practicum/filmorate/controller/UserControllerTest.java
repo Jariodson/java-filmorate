@@ -93,9 +93,24 @@ class UserControllerTest {
                 .birthday(LocalDate.parse("1998-03-25"))
                 .build();
         when(controller.addUser(user1)).thenReturn(ResponseEntity.ok(user1));
-        this.mockMvc.perform(put("/films")
+        this.mockMvc.perform(put("/users")
                         .content(objectMapper.writeValueAsString(user1))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void testShouldReturnException() throws Exception {
+        User user1 = User.builder()
+                .name("Alex")
+                .login("alexSpring")
+                .birthday(LocalDate.parse("1998-03-25"))
+                .build();
+        when(controller.addUser(user1)).thenReturn(ResponseEntity.ok(user1));
+        this.mockMvc.perform(post("/users")
+                        .content(objectMapper.writeValueAsString(user1))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+        System.out.println(user1);
     }
 }
