@@ -24,7 +24,11 @@ public class FilmController {
     @GetMapping(value = {"", "/{id}"})
     @ResponseStatus(HttpStatus.OK)
     public Collection<Film> getFilms(@PathVariable Optional<Long> id) {
-        return id.map(aLong -> List.of(filmService.getFilmById(aLong))).orElseGet(() -> filmService.getFilms());
+        if (id.isPresent()){
+            return List.of(filmService.getFilmById(id.get()));
+        }else {
+            return filmService.getFilms();
+        }
     }
 
     @PostMapping

@@ -19,7 +19,7 @@ public class User {
     private final String login;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private final LocalDate birthday;
-    private Long id;
+    private long id;
     private String name;
     private final Set<Long> friendsIds;
 

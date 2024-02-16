@@ -19,8 +19,8 @@ import java.util.stream.Collectors;
 @Slf4j
 public class FilmService {
     FilmStorage filmStorage = new InMemoryFilmStorage();
-    public List<Film> getFilms(){
-        return (List<Film>) filmStorage.getAllFilms();
+    public Collection<Film> getFilms(){
+        return filmStorage.getAllFilms();
     }
     public Film getFilmById(Long id){
         for (Film film : filmStorage.getAllFilms()){

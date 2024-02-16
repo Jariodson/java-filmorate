@@ -12,9 +12,7 @@ import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import javax.validation.Valid;
 import java.time.LocalDate;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @RequestMapping("/users")
@@ -23,10 +21,14 @@ import java.util.Map;
 public class UserController {
     UserService userService = new UserService();
 
-    @GetMapping
+    @GetMapping(value = {"", "{id}"})
     @ResponseStatus(HttpStatus.OK)
-    public Collection<User> getUsers() {
-        return userService.getUsers();
+    public Collection<User> getUsers(@PathVariable Optional<Long> id) {
+        if (id.isPresent()){
+            return List.of(userService.findUserById(id.get()));
+        }else {
+            return userService.getUsers();
+        }
     }
 
     @PostMapping
@@ -42,5 +44,44 @@ public class UserController {
     @DeleteMapping
     public ResponseEntity<User> deleteUser(@Valid @RequestBody User user){
         return userService.removeUser(user);
+    }
+
+    @GetMapping("/{id}/friends")
+    public Collection<User> getUserFriends(@PathVariable Optional<Long> id){
+        if (id.isPresent()){
+            return userService.getFriends(id.get());
+        }else {
+            throw new IllegalArgumentException("Введён неверный индефикатор!");
+        }
+    }
+
+    @PutMapping("/{id}/friends/{friendId}")
+    public ResponseEntity<User> addFriend(@PathVariable(value = "id") Optional<Long> userId,
+                                          @PathVariable Optional<Long> friendId){
+        if (userId.isPresent() && friendId.isPresent()){
+            return userService.addFriend(userId.get(), friendId.get());
+        }else {
+            throw new IllegalArgumentException("Введён неверный индефикатор!");
+        }
+    }
+
+    @DeleteMapping("/{id}/friends/{friendId}")
+    public ResponseEntity<User> removeFriend(@PathVariable(value = "id") Optional<Long> userId,
+                                             @PathVariable Optional<Long> friendId){
+        if (userId.isPresent() && friendId.isPresent()) {
+            return userService.deleteFriend(userId.get(), friendId.get());
+        }else {
+            throw new IllegalArgumentException("Введён неверный индефикатор!");
+        }
+    }
+
+    @GetMapping("/{id}/friends/common/{otherId}")
+    public Collection<User> getCommonFriends(@PathVariable(value = "id") Optional<Long> userId,
+                                             @PathVariable Optional<Long> friendId){
+        if (userId.isPresent() && friendId.isPresent()){
+            return userService.getCommonFriends(userId.get(), friendId.get());
+        }else {
+            throw new IllegalArgumentException("Введён неверный индефикатор!");
+        }
     }
 }

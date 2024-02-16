@@ -23,7 +23,6 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public void addNewUser(User user) {
-        log.info("Получен запрос POST на добавление пользователя в список");
         checkUserCriteria(user);
         if (users.values().stream().map(User::getEmail).anyMatch(user.getEmail()::equals)) {
             log.warn("Пользователь с e-mail: {} уже зарегестрирован!", user.getEmail());
@@ -31,30 +30,25 @@ public class InMemoryUserStorage implements UserStorage {
                     user.getEmail() + " уже зарегистрирован.");
         }
         users.put(user.getId(), user);
-        log.info("Пользователь: {} добавлен!", user);
     }
 
     @Override
     public void updateUser(User user) {
-        log.info("Получен запрос PUT на обновление пользователя в списке. Id пользователя: {}", user.getId());
-        if (users.containsKey(user.getId())) {
-            checkUserCriteria(user);
-            users.put(user.getId(), user);
-            log.info("Информация о пользователе: {} обновлена!", user);
+        if (!users.containsKey(user.getId())) {
+            log.warn("Пользователь не найден в списке!");
+            throw new IllegalArgumentException("Пользователь не найден в списке!");
         }
-        log.warn("Пользователь не найден в списке!");
-        throw new IllegalArgumentException("Пользователь не найден в списке!");
+        checkUserCriteria(user);
+        users.put(user.getId(), user);
     }
 
     @Override
     public void deleteUser(User user) {
-        log.info("Получен запрос DELETE на удаление пользователя: {}", user.getId());
         if (!users.containsValue(user)) {
             log.warn("Ошибка! Такого пользователя не существует!");
             throw new IllegalArgumentException("Такого пользователя не существует!");
         }
         users.remove(user.getId());
-        log.info("Пользователя успешно удалён!");
     }
 
     private void checkUserCriteria(User user) {
