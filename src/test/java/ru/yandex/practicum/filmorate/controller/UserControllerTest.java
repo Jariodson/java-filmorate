@@ -41,14 +41,14 @@ class UserControllerTest {
     @Test
     void testGetUsersShouldReturnUsers() throws Exception {
         User user1 = User.builder()
-                .id(1)
+                .id(1L)
                 .name("Alex")
                 .email("spring.a@yandex.ru")
                 .login("alexSpring")
                 .birthday(LocalDate.parse("1998-03-25"))
                 .build();
         User user2 = User.builder()
-                .id(1)
+                .id(1L)
                 .name("Joseph")
                 .email("winter.j@yandex.ru")
                 .login("josephWinter")
@@ -58,7 +58,7 @@ class UserControllerTest {
 
         String gsonString = objectMapper.writeValueAsString(users);
 
-        when(controller.getUsers()).thenReturn(users);
+        //when(controller.getUsers()).thenReturn(users);
         this.mockMvc.perform(
                         get("/users"))
                 .andExpect(status().isOk())
@@ -69,7 +69,7 @@ class UserControllerTest {
     @Test
     void testAddUserShouldReturnNewUser() throws Exception {
         User user1 = User.builder()
-                .id(1)
+                .id(1L)
                 .name("Alex")
                 .email("spring.a@yandex.ru")
                 .login("alexSpring")
@@ -86,7 +86,7 @@ class UserControllerTest {
     @Test
     void testUpdateUserShouldReturnUserWithStatusNotFound() throws Exception {
         User user1 = User.builder()
-                .id(1)
+                .id(1L)
                 .name("Alex")
                 .email("spring.a@yandex.ru")
                 .login("alexSpring")
