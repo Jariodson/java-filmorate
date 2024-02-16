@@ -6,63 +6,67 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.service.FilmService;
+import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.film.InMemoryFilmStorage;
 
 import javax.validation.Valid;
 import java.time.LocalDate;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @RequestMapping("/films")
 @ResponseStatus(HttpStatus.NOT_FOUND)
 @Slf4j
 public class FilmController {
-    private static int genId = 0;
-    private final Map<Integer, Film> films = new HashMap<>();
+    FilmService filmService = new FilmService();
 
-    @GetMapping
+    @GetMapping(value = {"", "/{id}"})
     @ResponseStatus(HttpStatus.OK)
-    public Collection<Film> getFilms() {
-        log.info("Получен запрос GET на получение списка всех фильмов");
-        log.info("Размер списка фильмов: {}", films.size());
-        return films.values();
+    public Collection<Film> getFilms(@PathVariable Optional<Long> id) {
+        return id.map(aLong -> List.of(filmService.getFilmById(aLong))).orElseGet(() -> filmService.getFilms());
     }
 
     @PostMapping
     public ResponseEntity<Film> addFilm(@Valid @RequestBody Film film) {
-        log.info("Получен запрос POST на добавление фильма в список");
-        checkFilmCriteria(film);
-        if (films.values().stream().map(Film::getName).anyMatch(film.getName()::equals)) {
-            log.warn("Фильм с названием {} уже добавлен", film.getName());
-            throw new ValidationException("Фильм с названием " + film.getName() + " уже добавлен");
-        }
-        films.put(film.getId(), film);
-        log.info("Фильм добавлен в список: {}.\nРазмер списка: {}", film, films.size());
-        return ResponseEntity.status(HttpStatus.OK).body(film);
+        return filmService.addFilm(film);
     }
 
     @PutMapping
     public ResponseEntity<Film> updateFilm(@Valid @RequestBody Film film) {
-        log.info("Получен запрос PUT на обновления фильма в списке");
-        checkFilmCriteria(film);
-        if (films.containsKey(film.getId())) {
-            films.put(film.getId(), film);
-            log.info("Обновленный фильм: {} добавлен в список.\nРазмер списка: {}", film, films.size());
-            return ResponseEntity.status(HttpStatus.OK).body(film);
-        }
-        log.warn("Фильм не содержится в списке!");
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(film);
+        return filmService.updateFilm(film);
     }
 
-    private void checkFilmCriteria(Film film) {
-        LocalDate filmBirthday = LocalDate.of(1895, 12, 28);
-        if (film.getReleaseDate().isBefore(filmBirthday)) {
-            log.warn("Введена слишком ранняя дата релиза: {}", film.getReleaseDate());
-            throw new ValidationException("Слшиком ранняя дата релиза!");
-        }
-        if (film.getId() == 0) {
-            film.setId(++genId);
+    @DeleteMapping
+    public ResponseEntity<Film> deleteFilm(@Valid @RequestBody Film film) {
+        return filmService.deleteFilm(film);
+    }
+
+    @PutMapping("/{id}/like/{userId}")
+    public ResponseEntity<Film> addLike(@PathVariable(value = "id") Optional<Long> filmId,
+                                        @PathVariable Optional<Long> userId) {
+        if (filmId.isPresent() && userId.isPresent()) {
+            return filmService.addLike(filmId.get(), userId.get());
+        } else {
+            throw new IllegalArgumentException("Введены неверные индефикаторы!");
         }
     }
+
+    @DeleteMapping("/{id}/like/{userId}")
+    public ResponseEntity<Film> removeLike(@PathVariable(value = "id") Optional<Long> filmId,
+                                           @PathVariable Optional<Long> userId) {
+        if (filmId.isPresent() && userId.isPresent()) {
+            return filmService.removeLike(filmId.get(), userId.get());
+        } else {
+            throw new IllegalArgumentException("Введены неверные индефикаторы!");
+        }
+    }
+
+    @GetMapping("/popular?count={count}")
+    public Collection<Film> getFavouriteFilms(@RequestParam(defaultValue = "10") int count){
+        return filmService.getFavouriteFilms(count);
+    }
+
+
+
 }
