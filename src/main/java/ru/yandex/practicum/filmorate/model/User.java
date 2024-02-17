@@ -6,7 +6,9 @@ import lombok.Data;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -21,13 +23,16 @@ public class User {
     private final LocalDate birthday;
     private long id;
     private String name;
-    private final Set<Long> friendsIds;
+    private Set<Long> friendsIds = new HashSet<>();
 
-    public void addNewFriend(Long id){
+    public void createFriend(long id){
+        if (friendsIds == null){
+            friendsIds = new HashSet<>();
+        }
         friendsIds.add(id);
     }
 
-    public void removeFriend(Long id){
+    public void removeFriend(long id){
         friendsIds.remove(id);
     }
 }

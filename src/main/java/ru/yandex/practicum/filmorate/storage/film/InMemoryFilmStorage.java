@@ -48,6 +48,10 @@ public class InMemoryFilmStorage implements FilmStorage {
         throw new IllegalArgumentException("Такого фильма не существует!");
     }
 
+    public Film getFilmById(Long id){
+        return films.get(id);
+    }
+
     @Override
     public void deleteFilm(Film film) {
         log.info("Получен запрос DELETE на удаление фильма");
