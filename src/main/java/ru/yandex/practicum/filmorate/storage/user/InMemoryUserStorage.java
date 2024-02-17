@@ -1,14 +1,14 @@
 package ru.yandex.practicum.filmorate.storage.user;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 @Slf4j
@@ -49,6 +49,11 @@ public class InMemoryUserStorage implements UserStorage {
             throw new IllegalArgumentException("Такого пользователя не существует!");
         }
         users.remove(user.getId());
+    }
+
+    @Override
+    public User getUserById(Long id) {
+        return users.get(id);
     }
 
     private void checkUserCriteria(User user) {

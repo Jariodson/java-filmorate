@@ -4,15 +4,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
-import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
-import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import javax.validation.Valid;
-import java.time.LocalDate;
-import java.util.*;
+import javax.validation.constraints.Positive;
+import java.util.Collection;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/users")
@@ -21,14 +19,19 @@ import java.util.*;
 public class UserController {
     UserService userService = new UserService();
 
-    @GetMapping(value = {"", "{id}"})
+    @GetMapping()
     @ResponseStatus(HttpStatus.OK)
-    public Collection<User> getUsers(@PathVariable Optional<Long> id) {
-        if (id.isPresent()){
-            return List.of(userService.findUserById(id.get()));
-        }else {
-            return userService.getUsers();
+    public Collection<User> getUsers() {
+        return userService.getUsers();
+    }
+
+    @GetMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public User getUserById(@PathVariable Optional<Long> id) {
+        if (id.isPresent()) {
+            return userService.findUserById(id.get());
         }
+        throw new IllegalArgumentException("Введён неверный индефикатор!");
     }
 
     @PostMapping
@@ -42,45 +45,47 @@ public class UserController {
     }
 
     @DeleteMapping
-    public ResponseEntity<User> deleteUser(@Valid @RequestBody User user){
+    public ResponseEntity<User> deleteUser(@Valid @RequestBody User user) {
         return userService.removeUser(user);
     }
 
     @GetMapping("/{id}/friends")
-    public Collection<User> getUserFriends(@PathVariable Optional<Long> id){
-        if (id.isPresent()){
+    @ResponseStatus(HttpStatus.OK)
+    public Collection<User> getUserFriends(@PathVariable Optional<Long> id) {
+        if (id.isPresent()) {
             return userService.getFriends(id.get());
-        }else {
+        } else {
             throw new IllegalArgumentException("Введён неверный индефикатор!");
         }
     }
 
     @PutMapping("/{id}/friends/{friendId}")
     public ResponseEntity<User> addFriend(@PathVariable(value = "id") Optional<Long> userId,
-                                          @PathVariable Optional<Long> friendId){
-        if (userId.isPresent() && friendId.isPresent()){
+                                          @PathVariable Optional<Long> friendId) {
+        if (userId.isPresent() && friendId.isPresent()) {
             return userService.addFriend(userId.get(), friendId.get());
-        }else {
+        } else {
             throw new IllegalArgumentException("Введён неверный индефикатор!");
         }
     }
 
     @DeleteMapping("/{id}/friends/{friendId}")
     public ResponseEntity<User> removeFriend(@PathVariable(value = "id") Optional<Long> userId,
-                                             @PathVariable Optional<Long> friendId){
+                                             @PathVariable Optional<Long> friendId) {
         if (userId.isPresent() && friendId.isPresent()) {
             return userService.deleteFriend(userId.get(), friendId.get());
-        }else {
+        } else {
             throw new IllegalArgumentException("Введён неверный индефикатор!");
         }
     }
 
     @GetMapping("/{id}/friends/common/{otherId}")
+    @ResponseStatus(HttpStatus.OK)
     public Collection<User> getCommonFriends(@PathVariable(value = "id") Optional<Long> userId,
-                                             @PathVariable Optional<Long> friendId){
-        if (userId.isPresent() && friendId.isPresent()){
+                                             @PathVariable(value = "otherId") Optional<Long> friendId) {
+        if (userId.isPresent() && friendId.isPresent()) {
             return userService.getCommonFriends(userId.get(), friendId.get());
-        }else {
+        } else {
             throw new IllegalArgumentException("Введён неверный индефикатор!");
         }
     }
