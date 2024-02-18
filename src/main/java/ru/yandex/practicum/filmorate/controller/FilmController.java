@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +19,7 @@ import java.util.Optional;
 public class FilmController {
     private final FilmService filmService;
 
+    @Autowired
     public FilmController(FilmService filmService) {
         this.filmService = filmService;
     }
@@ -25,38 +27,56 @@ public class FilmController {
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public Collection<Film> getFilms() {
-        return filmService.getFilms();
+        log.info("Получен запрос GET на получение списка всех фильмов");
+        Collection<Film> films = filmService.getFilms();
+        log.info("Вывод фильмов. Размер списка фильмов: {}", films.size());
+        return films;
     }
 
     @GetMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
     public Film getFilmById(@PathVariable Optional<Long> id) {
+        log.info("Получен запрос GET на получение фильма по ID: {}", id);
         if (id.isPresent()) {
-            return filmService.getFilmById(id.get());
+            Film film = filmService.getFilmById(id.get());
+            log.info("Вывод фильма с Id: {}", id);
+            return film;
         }
         throw new IllegalArgumentException("Введен неверные индефикатор!");
     }
 
     @PostMapping
     public ResponseEntity<Film> addFilm(@Valid @RequestBody Film film) {
-        return filmService.addFilm(film);
+        log.info("Получен запрос POST на добавление фильма в список");
+        filmService.addFilm(film);
+        log.info("Фильм добавлен в список: {}. Размер списка: {}", film, filmService.getFilms().size());
+        return new ResponseEntity<>(film, HttpStatus.CREATED);
     }
 
     @PutMapping
     public ResponseEntity<Film> updateFilm(@Valid @RequestBody Film film) {
-        return filmService.updateFilm(film);
+        log.info("Получен запрос PUT на обновления фильма в списке");
+        filmService.updateFilm(film);
+        log.info("Обновленный фильм: {} добавлен в список. Размер списка: {}", film, filmService.getFilms().size());
+        return new ResponseEntity<>(film, HttpStatus.OK);
     }
 
     @DeleteMapping
     public ResponseEntity<Film> deleteFilm(@Valid @RequestBody Film film) {
-        return filmService.deleteFilm(film);
+        log.info("Получен запрос DELETE на удаление фильма");
+        filmService.deleteFilm(film);
+        log.info("Фильм удалён! {}", film);
+        return new ResponseEntity<>(film, HttpStatus.OK);
     }
 
     @PutMapping("/{id}/like/{userId}")
     public ResponseEntity<Film> addLike(@PathVariable(value = "id") Optional<Long> filmId,
                                         @PathVariable Optional<Long> userId) {
+        log.info("Получен запрос PUT на добавление лайка. Id фильма: {}, Id пользователя: {}", filmId, userId);
         if (filmId.isPresent() && userId.isPresent()) {
-            return filmService.addLike(filmId.get(), userId.get());
+            Film film = filmService.addLike(filmId.get(), userId.get());
+            log.info("Лайк успешно поставлен! Id фильма: {} ,Id пользователя: {}", filmId, userId);
+            return new ResponseEntity<>(film, HttpStatus.OK);
         } else {
             throw new IllegalArgumentException("Введены неверные индефикаторы!");
         }
@@ -65,8 +85,11 @@ public class FilmController {
     @DeleteMapping("/{id}/like/{userId}")
     public ResponseEntity<Film> removeLike(@PathVariable(value = "id") Optional<Long> filmId,
                                            @PathVariable Optional<Long> userId) {
+        log.info("Получен запрос DELETE на удаление лайка");
         if (filmId.isPresent() && userId.isPresent()) {
-            return filmService.removeLike(filmId.get(), userId.get());
+            Film film = filmService.removeLike(filmId.get(), userId.get());
+            log.info("Лайк пользователя {} успешно удалён!", userId);
+            return new ResponseEntity<>(film, HttpStatus.OK);
         } else {
             throw new IllegalArgumentException("Введены неверные индефикаторы!");
         }
@@ -75,6 +98,9 @@ public class FilmController {
     @GetMapping("/popular")
     @ResponseStatus(HttpStatus.OK)
     public Collection<Film> getFavouriteFilms(@RequestParam(defaultValue = "10") int count) {
-        return filmService.getFavouriteFilms(count);
+        log.info("Получен запрос GET на получение самых популярных фильмов!");
+        Collection<Film> films = filmService.getFavouriteFilms(count);
+        log.info("Вывод {} популярных фильмов", count);
+        return films;
     }
 }
