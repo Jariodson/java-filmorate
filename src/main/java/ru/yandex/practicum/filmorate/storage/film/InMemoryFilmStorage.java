@@ -18,49 +18,42 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public Collection<Film> getAllFilms() {
-        log.info("Получен запрос GET на получение списка всех фильмов");
-        log.info("Размер списка фильмов: {}", films.size());
         return films.values();
     }
 
     @Override
     public void addNewFilm(Film film) {
-        log.info("Получен запрос POST на добавление фильма в список");
         checkFilmCriteria(film);
         if (films.values().stream().map(Film::getName).anyMatch(film.getName()::equals)) {
             log.warn("Фильм с названием {} уже добавлен", film.getName());
             throw new ValidationException("Фильм с названием " + film.getName() + " уже добавлен");
         }
         films.put(film.getId(), film);
-        log.info("Фильм добавлен в список: {}.\nРазмер списка: {}", film, films.size());
     }
 
     @Override
     public void updateFilm(Film film) {
-        log.info("Получен запрос PUT на обновления фильма в списке");
         checkFilmCriteria(film);
         if (films.containsKey(film.getId())) {
             films.put(film.getId(), film);
-            log.info("Обновленный фильм: {} добавлен в список. Размер списка: {}", film, films.size());
             return;
         }
         log.warn("Фильм не содержится в списке!");
         throw new IllegalArgumentException("Такого фильма не существует!");
     }
 
-    public Film getFilmById(Long id){
+    @Override
+    public Film getFilmById(Long id) {
         return films.get(id);
     }
 
     @Override
     public void deleteFilm(Film film) {
-        log.info("Получен запрос DELETE на удаление фильма");
-        if (!films.containsValue(film)){
+        if (!films.containsValue(film)) {
             log.warn("Ошибка! Фильма {} не существует!", film);
             throw new IllegalArgumentException("Такого фильма не сушествует!");
         }
         films.remove(film.getId());
-        log.info("Фильм удалён! {}", film);
     }
 
     private void checkFilmCriteria(Film film) {
