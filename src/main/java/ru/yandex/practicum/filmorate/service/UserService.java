@@ -8,7 +8,10 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -92,24 +95,24 @@ public class UserService {
                         .map(friendFrienId -> userStorage.getUserById(userFriendId))
                         .forEach(commonFriends::add);
             });
-        }catch (NullPointerException e){
+        } catch (NullPointerException e) {
             return Collections.emptyList();
         }
         return commonFriends;
     }
 
-    public User findUserById(Long id) {
+    public User findUserById(long id) {
         log.info("Получен запрос на поиск пользователя с ID: {}", id);
         checkUserId(id);
-        if (userStorage.getUserById(id) == null){
+        if (userStorage.getUserById(id) == null) {
             log.warn("Ошибка! Пользваотель с id {} не найден!", id);
             throw new IllegalArgumentException("Пользователь с ID " + id + " не найден!");
         }
         return userStorage.getUserById(id);
     }
 
-    private void checkUserId(long id){
-        if (id > 0){
+    private void checkUserId(long id) {
+        if (id > 0) {
             return;
         }
         log.warn("Ошибка! Введен неверный ID!");
