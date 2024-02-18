@@ -53,7 +53,11 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public User getUserById(Long id) {
-        return users.get(id);
+        if (users.containsKey(id)) {
+            return users.get(id);
+        }
+        log.warn("Ошибка! Пользователя с Id: {} не существует!", id);
+        throw new IllegalArgumentException("Пользователь с Id " + id + " не найден");
     }
 
     private void checkUserCriteria(User user) {
@@ -65,7 +69,7 @@ public class InMemoryUserStorage implements UserStorage {
             log.warn("Введена неправильная дата рождения: {}", user.getBirthday());
             throw new ValidationException("Дата рождения не может быть в будущем");
         }
-        if (user.getId() == 0) {
+        if (user.getId() == null) {
             user.setId(++genId);
             log.info("Пользователю присвоен ID: {}", user.getId());
         }
