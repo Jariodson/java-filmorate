@@ -23,7 +23,7 @@ public class User {
     private final String login;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private final LocalDate birthday;
-    private long id;
+    private Long id;
     private String name;
     private Set<Long> friendsIds = new HashSet<>();
 
