@@ -11,7 +11,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import ru.yandex.practicum.filmorate.model.User;
@@ -81,11 +80,11 @@ class UserControllerTest {
                 .login("alexSpring")
                 .birthday(LocalDate.parse("1998-03-25"))
                 .build();
-        when(userService.createUser(user1)).thenReturn(ResponseEntity.ok(user1));
+        when(userService.createUser(user1)).thenReturn(user1);
         this.mockMvc.perform(post("/users")
                         .content(objectMapper.writeValueAsString(user1))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated());
     }
 
     @Test
@@ -97,8 +96,24 @@ class UserControllerTest {
                 .login("alexSpring")
                 .birthday(LocalDate.parse("1998-03-25"))
                 .build();
-        when(userService.updateUser(user1)).thenReturn(ResponseEntity.ok(user1));
+        when(userService.updateUser(user1)).thenReturn(user1);
         this.mockMvc.perform(put("/users")
+                        .content(objectMapper.writeValueAsString(user1))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void testShouldReturnStatusIsOkThenRemoveUser() throws Exception {
+        User user1 = User.builder()
+                .id(1L)
+                .name("Alex")
+                .email("spring.a@yandex.ru")
+                .login("alexSpring")
+                .birthday(LocalDate.parse("1998-03-25"))
+                .build();
+        when(userService.removeUser(user1)).thenReturn(user1);
+        this.mockMvc.perform(delete("/users")
                         .content(objectMapper.writeValueAsString(user1))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());

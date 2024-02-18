@@ -11,7 +11,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -22,7 +21,6 @@ import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.notNullValue;
@@ -86,11 +84,11 @@ class FilmControllerTest {
                 .releaseDate(LocalDate.parse("1967-03-25"))
                 .duration(90)
                 .build();
-        when(filmService.addFilm(film1)).thenReturn(ResponseEntity.ok(film1));
+        when(filmService.addFilm(film1)).thenReturn(film1);
         this.mockMvc.perform(post("/films")
                         .content(objectMapper.writeValueAsString(film1))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andDo(print());
     }
 
@@ -103,7 +101,7 @@ class FilmControllerTest {
                 .releaseDate(LocalDate.parse("1967-03-25"))
                 .duration(90)
                 .build();
-        when(filmService.updateFilm(film1)).thenReturn(ResponseEntity.ok(film1));
+        when(filmService.updateFilm(film1)).thenReturn(film1);
         this.mockMvc.perform(put("/films")
                         .content(objectMapper.writeValueAsString(film1))
                         .contentType(MediaType.APPLICATION_JSON))
@@ -128,9 +126,8 @@ class FilmControllerTest {
                 .login("alexSpring")
                 .birthday(LocalDate.parse("1998-03-25"))
                 .build();
-        Film film2 = film1.toBuilder().build();
-        film2.addLike(user1.getId());
-        when(filmService.addLike(1L, 1L)).thenReturn(ResponseEntity.ok(film2));
+        film1.addLike(user1.getId());
+        when(filmService.addLike(1L, 1L)).thenReturn(film1);
         this.mockMvc.perform(put("/films/1/like/1")
                         .content(objectMapper.writeValueAsString(film1))
                         .contentType(MediaType.APPLICATION_JSON))
@@ -155,9 +152,7 @@ class FilmControllerTest {
                 .birthday(LocalDate.parse("1998-03-25"))
                 .build();
         film1.addLike(user1.getId());
-        Film film = film1.toBuilder().build();
-        film.removeLike(user1.getId());
-        when(controller.removeLike(Optional.of(1L), Optional.of(1L))).thenReturn(ResponseEntity.ok(film));
+        when(filmService.removeLike(1L, 1L)).thenReturn(film1);
         this.mockMvc.perform(delete("/films/1/like/1")
                         .content(objectMapper.writeValueAsString(film1))
                         .contentType(MediaType.APPLICATION_JSON))
