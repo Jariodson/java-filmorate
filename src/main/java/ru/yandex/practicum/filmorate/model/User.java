@@ -1,8 +1,10 @@
 package ru.yandex.practicum.filmorate.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -12,6 +14,8 @@ import java.util.Set;
 
 @Data
 @Builder
+@NoArgsConstructor(force = true)
+@AllArgsConstructor
 public class User {
     @Email(message = "Введён некоректный e-mail")
     private final String email;
