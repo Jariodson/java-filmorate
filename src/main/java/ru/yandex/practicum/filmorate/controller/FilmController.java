@@ -4,31 +4,37 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
-import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
-import ru.yandex.practicum.filmorate.storage.film.InMemoryFilmStorage;
 
 import javax.validation.Valid;
-import java.time.LocalDate;
-import java.util.*;
+import java.util.Collection;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/films")
 @ResponseStatus(HttpStatus.NOT_FOUND)
 @Slf4j
 public class FilmController {
-    FilmService filmService = new FilmService();
+    private final FilmService filmService;
 
-    @GetMapping(value = {"", "/{id}"})
+    public FilmController(FilmService filmService) {
+        this.filmService = filmService;
+    }
+
+    @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public Collection<Film> getFilms(@PathVariable Optional<Long> id) {
-        if (id.isPresent()){
-            return List.of(filmService.getFilmById(id.get()));
-        }else {
-            return filmService.getFilms();
+    public Collection<Film> getFilms() {
+        return filmService.getFilms();
+    }
+
+    @GetMapping(value = "/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public Film getFilmById(@PathVariable Optional<Long> id) {
+        if (id.isPresent()) {
+            return filmService.getFilmById(id.get());
         }
+        throw new IllegalArgumentException("Введен неверные индефикатор!");
     }
 
     @PostMapping
@@ -66,11 +72,9 @@ public class FilmController {
         }
     }
 
-    @GetMapping("/popular?count={count}")
-    public Collection<Film> getFavouriteFilms(@RequestParam(defaultValue = "10") int count){
+    @GetMapping("/popular")
+    @ResponseStatus(HttpStatus.OK)
+    public Collection<Film> getFavouriteFilms(@RequestParam(defaultValue = "10") int count) {
         return filmService.getFavouriteFilms(count);
     }
-
-
-
 }
