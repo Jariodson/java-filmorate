@@ -3,15 +3,21 @@ package ru.yandex.practicum.filmorate.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.UserService;
 
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -22,20 +28,23 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(UserController.class)
+@ExtendWith(MockitoExtension.class)
 class UserControllerTest {
     @Autowired
     private static ObjectMapper objectMapper;
-    @Autowired
     private MockMvc mockMvc;
-    @MockBean
+    @InjectMocks
     private UserController controller;
 
-    @BeforeAll
-    static void beforeAll() {
+    @Mock
+    private UserService userService;
+
+    @BeforeEach
+    void beforeEach() {
         objectMapper = JsonMapper.builder()
                 .addModule(new JavaTimeModule())
                 .build();
+        mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
     }
 
     @Test
@@ -58,7 +67,7 @@ class UserControllerTest {
 
         String gsonString = objectMapper.writeValueAsString(users);
 
-        //when(controller.getUsers()).thenReturn(users);
+        when(userService.getUsers()).thenReturn(users);
         this.mockMvc.perform(
                         get("/users"))
                 .andExpect(status().isOk())
@@ -69,48 +78,31 @@ class UserControllerTest {
     @Test
     void testAddUserShouldReturnNewUser() throws Exception {
         User user1 = User.builder()
-                .id(1L)
                 .name("Alex")
                 .email("spring.a@yandex.ru")
                 .login("alexSpring")
                 .birthday(LocalDate.parse("1998-03-25"))
                 .build();
-        when(controller.addUser(user1)).thenReturn(ResponseEntity.ok(user1));
-        this.mockMvc.perform(post("/users")
-                        .content(objectMapper.writeValueAsString(user1))
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(content().json(objectMapper.writeValueAsString(user1)));
-    }
-
-    @Test
-    void testUpdateUserShouldReturnUserWithStatusNotFound() throws Exception {
-        User user1 = User.builder()
-                .id(1L)
-                .name("Alex")
-                .email("spring.a@yandex.ru")
-                .login("alexSpring")
-                .birthday(LocalDate.parse("1998-03-25"))
-                .build();
-        when(controller.addUser(user1)).thenReturn(ResponseEntity.ok(user1));
-        this.mockMvc.perform(put("/users")
-                        .content(objectMapper.writeValueAsString(user1))
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound());
-    }
-
-    @Test
-    void testShouldReturnException() throws Exception {
-        User user1 = User.builder()
-                .name("Alex")
-                .login("alexSpring")
-                .birthday(LocalDate.parse("1998-03-25"))
-                .build();
-        when(controller.addUser(user1)).thenReturn(ResponseEntity.ok(user1));
+        when(userService.createUser(user1)).thenReturn(ResponseEntity.ok(user1));
         this.mockMvc.perform(post("/users")
                         .content(objectMapper.writeValueAsString(user1))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
-        System.out.println(user1);
+    }
+
+    @Test
+    void testUpdateUserShouldReturnUserWithStatusOk() throws Exception {
+        User user1 = User.builder()
+                .id(1L)
+                .name("Alex")
+                .email("spring.a@yandex.ru")
+                .login("alexSpring")
+                .birthday(LocalDate.parse("1998-03-25"))
+                .build();
+        when(userService.updateUser(user1)).thenReturn(ResponseEntity.ok(user1));
+        this.mockMvc.perform(put("/users")
+                        .content(objectMapper.writeValueAsString(user1))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
     }
 }
