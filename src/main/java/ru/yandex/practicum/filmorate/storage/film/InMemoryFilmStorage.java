@@ -24,7 +24,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     @Override
     public void addNewFilm(Film film) {
         checkFilmCriteria(film);
-        if (films.values().stream().map(Film::getName).anyMatch(film.getName()::equals)) {
+        if (films.containsKey(film.getId())) {
             log.warn("Фильм с названием {} уже добавлен", film.getName());
             throw new ValidationException("Фильм с названием " + film.getName() + " уже добавлен");
         }
@@ -44,7 +44,11 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public Film getFilmById(Long id) {
-        return films.get(id);
+        if (films.containsKey(id)) {
+            return films.get(id);
+        }
+        log.warn("Ошибка! Фильм с Id: {} не найден!", id);
+        throw new IllegalArgumentException("Фильм с Id " + id + " не найден");
     }
 
     @Override
