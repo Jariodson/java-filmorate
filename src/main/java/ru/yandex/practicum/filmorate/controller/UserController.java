@@ -43,7 +43,7 @@ public class UserController {
             log.info("Вывод пользоваля с Id: {}", id);
             return user;
         }
-        throw new IllegalArgumentException("Введён неверный индефикатор!");
+        throw new IllegalArgumentException("Введён неверный индефикатор! Id: " + id);
     }
 
     @PostMapping
@@ -79,8 +79,7 @@ public class UserController {
             log.info("Вывод друзей пользователя с Id: {}", id);
             return users;
         } else {
-            log.warn("Ошибка! Введён неверный Id: {}", id);
-            throw new IllegalArgumentException("Введён неверный индефикатор!");
+            throw new IllegalArgumentException("Введён неверный индефикатор! Id: " + id);
         }
     }
 
@@ -94,8 +93,7 @@ public class UserController {
             log.info("Пользователь с Id: {} успешно добавил друга с Id: {}", userId, friendId);
             return new ResponseEntity<>(user, HttpStatus.OK);
         } else {
-            log.warn("Ошибка! Введён неверный Id: {} или {}", userId, friendId);
-            throw new IllegalArgumentException("Введён неверный индефикатор!");
+            throw new IllegalArgumentException("Введён неверный индефикатор! Id: " + userId + " или Id: " + friendId);
         }
     }
 
@@ -109,8 +107,7 @@ public class UserController {
             log.info("Пользователь с Id: {} успешно удалил друга с Id: {}", user, friendId);
             return new ResponseEntity<>(user, HttpStatus.OK);
         } else {
-            log.warn("Ошибка! Введён неверный Id: {} или {}", userId, friendId);
-            throw new IllegalArgumentException("Введён неверный индефикатор!");
+            throw new IllegalArgumentException("Введён неверный индефикатор! Id: " + userId + " или Id: " + friendId);
         }
     }
 
@@ -124,8 +121,7 @@ public class UserController {
             log.info("Вывод общих друзей пользователя с Id: {} и Id: {}", userId, friendId);
             return commonFriends;
         } else {
-            log.warn("Ошибка! Введён неверный Id: {} или {}", userId, friendId);
-            throw new IllegalArgumentException("Введён неверный индефикатор!");
+            throw new IllegalArgumentException("Введён неверный индефикатор! Id: " + userId + " или Id: " + friendId);
         }
     }
 }

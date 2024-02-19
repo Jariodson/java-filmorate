@@ -42,7 +42,7 @@ public class FilmController {
             log.info("Вывод фильма с Id: {}", id);
             return film;
         }
-        throw new IllegalArgumentException("Введен неверные индефикатор!");
+        throw new IllegalArgumentException("Введен неверные индефикатор! Id: " + id);
     }
 
     @PostMapping
@@ -78,7 +78,7 @@ public class FilmController {
             log.info("Лайк успешно поставлен! Id фильма: {} ,Id пользователя: {}", filmId, userId);
             return new ResponseEntity<>(film, HttpStatus.OK);
         } else {
-            throw new IllegalArgumentException("Введены неверные индефикаторы!");
+            throw new IllegalArgumentException("Введён неверный индефикатор! Id: " + filmId + " или Id: " + userId);
         }
     }
 
@@ -91,7 +91,7 @@ public class FilmController {
             log.info("Лайк пользователя {} успешно удалён!", userId);
             return new ResponseEntity<>(film, HttpStatus.OK);
         } else {
-            throw new IllegalArgumentException("Введены неверные индефикаторы!");
+            throw new IllegalArgumentException("Введён неверный индефикатор! Id: " + filmId + " или Id: " + userId);
         }
     }
 
