@@ -25,9 +25,9 @@ public class InMemoryFilmStorage implements FilmStorage {
     public void addNewFilm(Film film) {
         checkFilmCriteria(film);
         if (films.containsKey(film.getId())) {
-            log.warn("Фильм с названием {} уже добавлен", film.getName());
-            throw new ValidationException("Фильм с названием " + film.getName() + " уже добавлен");
+            throw new ValidationException("Фильм с Id: {} " + film.getId() + " уже добавлен");
         }
+        film.setId(++genId);
         films.put(film.getId(), film);
     }
 
@@ -38,8 +38,7 @@ public class InMemoryFilmStorage implements FilmStorage {
             films.put(film.getId(), film);
             return;
         }
-        log.warn("Фильм не содержится в списке!");
-        throw new IllegalArgumentException("Такого фильма не существует!");
+        throw new IllegalArgumentException("Такого фильма не существует! Фильм: " + film);
     }
 
     @Override
@@ -47,15 +46,13 @@ public class InMemoryFilmStorage implements FilmStorage {
         if (films.containsKey(id)) {
             return films.get(id);
         }
-        log.warn("Ошибка! Фильм с Id: {} не найден!", id);
         throw new IllegalArgumentException("Фильм с Id " + id + " не найден");
     }
 
     @Override
     public void deleteFilm(Film film) {
         if (!films.containsValue(film)) {
-            log.warn("Ошибка! Фильма {} не существует!", film);
-            throw new IllegalArgumentException("Такого фильма не сушествует!");
+            throw new IllegalArgumentException("Такого фильма не сушествует! Фильм:" + film);
         }
         films.remove(film.getId());
     }
@@ -63,12 +60,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     private void checkFilmCriteria(Film film) {
         LocalDate filmBirthday = LocalDate.of(1895, 12, 28);
         if (film.getReleaseDate().isBefore(filmBirthday)) {
-            log.warn("Введена слишком ранняя дата релиза: {}", film.getReleaseDate());
-            throw new ValidationException("Слшиком ранняя дата релиза!");
-        }
-        if (film.getId() == 0) {
-            film.setId(++genId);
-            log.info("Фильму присвоен ID: {}", film.getId());
+            throw new ValidationException("Слшиком ранняя дата релиза! " + film.getReleaseDate());
         }
     }
 }

@@ -25,18 +25,17 @@ public class InMemoryUserStorage implements UserStorage {
     public void addNewUser(User user) {
         checkUserCriteria(user);
         if (users.values().stream().map(User::getEmail).anyMatch(user.getEmail()::equals)) {
-            log.warn("Пользователь с e-mail: {} уже зарегестрирован!", user.getEmail());
             throw new ValidationException("Пользователь с электронной почтой " +
                     user.getEmail() + " уже зарегистрирован.");
         }
+        user.setId(++genId);
         users.put(user.getId(), user);
     }
 
     @Override
     public void updateUser(User user) {
         if (!users.containsKey(user.getId())) {
-            log.warn("Пользователь не найден в списке!");
-            throw new IllegalArgumentException("Пользователь не найден в списке!");
+            throw new IllegalArgumentException("Пользователь с Id: " + user.getId() + " не найден в списке!");
         }
         checkUserCriteria(user);
         users.put(user.getId(), user);
@@ -45,7 +44,6 @@ public class InMemoryUserStorage implements UserStorage {
     @Override
     public void deleteUser(User user) {
         if (!users.containsValue(user)) {
-            log.warn("Ошибка! Такого пользователя не существует!");
             throw new IllegalArgumentException("Такого пользователя не существует!");
         }
         users.remove(user.getId());
@@ -56,7 +54,6 @@ public class InMemoryUserStorage implements UserStorage {
         if (users.containsKey(id)) {
             return users.get(id);
         }
-        log.warn("Ошибка! Пользователя с Id: {} не существует!", id);
         throw new IllegalArgumentException("Пользователь с Id " + id + " не найден");
     }
 
@@ -66,12 +63,7 @@ public class InMemoryUserStorage implements UserStorage {
             log.info("Введено пустое имя, поэтому имя изменено на логин: {}", user.getLogin());
         }
         if (user.getBirthday().isAfter(LocalDate.now().plusDays(1))) {
-            log.warn("Введена неправильная дата рождения: {}", user.getBirthday());
             throw new ValidationException("Дата рождения не может быть в будущем");
-        }
-        if (user.getId() == null) {
-            user.setId(++genId);
-            log.info("Пользователю присвоен ID: {}", user.getId());
         }
     }
 }
