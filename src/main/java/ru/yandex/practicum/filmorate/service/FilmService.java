@@ -28,21 +28,12 @@ public class FilmService {
     }
 
     public Film getFilmById(Long id) {
-        if (filmStorage.getFilmById(id) != null) {
-            return filmStorage.getFilmById(id);
-        }
-        throw new IllegalArgumentException("Фильма с ID " + id + "не существует!");
+        return filmStorage.getFilmById(id);
     }
 
     public Collection<Film> getFavouriteFilms(int count) {
         return filmStorage.getAllFilms().stream()
-                .sorted(Comparator.comparing(o -> {
-                    if (o.getLikes() == null) {
-                        return null;
-                    } else {
-                        return o.getLikes().size();
-                    }
-                }, Comparator.nullsLast(Comparator.naturalOrder())))
+                .sorted(Comparator.comparingInt((Film o) -> o.getLikes().size()).reversed())
                 .limit(count)
                 .collect(Collectors.toList());
     }
@@ -72,9 +63,9 @@ public class FilmService {
     public Film removeLike(Long filmId, Long userId) {
         Film film = filmStorage.getFilmById(filmId);
         if (film.getLikes() == null) {
-            log.warn("Ошибка! У фильма с ID: {} еще нет лайков!", filmId);
-            throw new IllegalArgumentException("Фильм с Id " + filmId + " не найден");
+            throw new IllegalArgumentException("У фильма с Id " + filmId + " нет лайков");
         }
+        userService.findUserById(userId);
         film.removeLike(userId);
         return film;
     }
