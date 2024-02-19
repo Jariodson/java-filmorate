@@ -29,13 +29,10 @@ public class Film {
     private final LocalDate releaseDate;
     @Positive(message = "Продолжительность фильма не может быть отрицательной или равна 0!")
     private final int duration;
-    private long id;
-    private Set<Long> likes;
+    private Long id;
+    private final Set<Long> likes = new HashSet<>();
 
     public void addLike(Long id) {
-        if (likes == null) {
-            likes = new HashSet<>();
-        }
         likes.add(id);
     }
 

@@ -25,12 +25,9 @@ public class User {
     private final LocalDate birthday;
     private Long id;
     private String name;
-    private Set<Long> friendsIds = new HashSet<>();
+    private final Set<Long> friendsIds = new HashSet<>();
 
     public void createFriend(long id) {
-        if (friendsIds == null) {
-            friendsIds = new HashSet<>();
-        }
         friendsIds.add(id);
     }
 
