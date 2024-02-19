@@ -1,68 +1,106 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.service.FilmService;
 
 import javax.validation.Valid;
-import java.time.LocalDate;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/films")
 @ResponseStatus(HttpStatus.NOT_FOUND)
 @Slf4j
 public class FilmController {
-    private static int genId = 0;
-    private final Map<Integer, Film> films = new HashMap<>();
+    private final FilmService filmService;
+
+    @Autowired
+    public FilmController(FilmService filmService) {
+        this.filmService = filmService;
+    }
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public Collection<Film> getFilms() {
         log.info("Получен запрос GET на получение списка всех фильмов");
-        log.info("Размер списка фильмов: {}", films.size());
-        return films.values();
+        Collection<Film> films = filmService.getFilms();
+        log.info("Вывод фильмов. Размер списка фильмов: {}", films.size());
+        return films;
+    }
+
+    @GetMapping(value = "/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public Film getFilmById(@PathVariable Optional<Long> id) {
+        log.info("Получен запрос GET на получение фильма по ID: {}", id);
+        if (id.isPresent()) {
+            Film film = filmService.getFilmById(id.get());
+            log.info("Вывод фильма с Id: {}", id);
+            return film;
+        }
+        throw new IllegalArgumentException("Введен неверные индефикатор! Id: " + id);
     }
 
     @PostMapping
     public ResponseEntity<Film> addFilm(@Valid @RequestBody Film film) {
         log.info("Получен запрос POST на добавление фильма в список");
-        checkFilmCriteria(film);
-        if (films.values().stream().map(Film::getName).anyMatch(film.getName()::equals)) {
-            log.warn("Фильм с названием {} уже добавлен", film.getName());
-            throw new ValidationException("Фильм с названием " + film.getName() + " уже добавлен");
-        }
-        films.put(film.getId(), film);
-        log.info("Фильм добавлен в список: {}.\nРазмер списка: {}", film, films.size());
-        return ResponseEntity.status(HttpStatus.OK).body(film);
+        filmService.addFilm(film);
+        log.info("Фильм добавлен в список: {}. Размер списка: {}", film, filmService.getFilms().size());
+        return new ResponseEntity<>(film, HttpStatus.CREATED);
     }
 
     @PutMapping
     public ResponseEntity<Film> updateFilm(@Valid @RequestBody Film film) {
         log.info("Получен запрос PUT на обновления фильма в списке");
-        checkFilmCriteria(film);
-        if (films.containsKey(film.getId())) {
-            films.put(film.getId(), film);
-            log.info("Обновленный фильм: {} добавлен в список.\nРазмер списка: {}", film, films.size());
-            return ResponseEntity.status(HttpStatus.OK).body(film);
-        }
-        log.warn("Фильм не содержится в списке!");
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(film);
+        filmService.updateFilm(film);
+        log.info("Обновленный фильм: {} добавлен в список. Размер списка: {}", film, filmService.getFilms().size());
+        return new ResponseEntity<>(film, HttpStatus.OK);
     }
 
-    private void checkFilmCriteria(Film film) {
-        LocalDate filmBirthday = LocalDate.of(1895, 12, 28);
-        if (film.getReleaseDate().isBefore(filmBirthday)) {
-            log.warn("Введена слишком ранняя дата релиза: {}", film.getReleaseDate());
-            throw new ValidationException("Слшиком ранняя дата релиза!");
+    @DeleteMapping
+    public ResponseEntity<Film> deleteFilm(@Valid @RequestBody Film film) {
+        log.info("Получен запрос DELETE на удаление фильма");
+        filmService.deleteFilm(film);
+        log.info("Фильм удалён! {}", film);
+        return new ResponseEntity<>(film, HttpStatus.OK);
+    }
+
+    @PutMapping("/{id}/like/{userId}")
+    public ResponseEntity<Film> addLike(@PathVariable(value = "id") Optional<Long> filmId,
+                                        @PathVariable Optional<Long> userId) {
+        log.info("Получен запрос PUT на добавление лайка. Id фильма: {}, Id пользователя: {}", filmId, userId);
+        if (filmId.isPresent() && userId.isPresent()) {
+            Film film = filmService.addLike(filmId.get(), userId.get());
+            log.info("Лайк успешно поставлен! Id фильма: {} ,Id пользователя: {}", filmId, userId);
+            return new ResponseEntity<>(film, HttpStatus.OK);
+        } else {
+            throw new IllegalArgumentException("Введён неверный индефикатор! Id: " + filmId + " или Id: " + userId);
         }
-        if (film.getId() == 0) {
-            film.setId(++genId);
+    }
+
+    @DeleteMapping("/{id}/like/{userId}")
+    public ResponseEntity<Film> removeLike(@PathVariable(value = "id") Optional<Long> filmId,
+                                           @PathVariable Optional<Long> userId) {
+        log.info("Получен запрос DELETE на удаление лайка");
+        if (filmId.isPresent() && userId.isPresent()) {
+            Film film = filmService.removeLike(filmId.get(), userId.get());
+            log.info("Лайк пользователя {} успешно удалён!", userId);
+            return new ResponseEntity<>(film, HttpStatus.OK);
+        } else {
+            throw new IllegalArgumentException("Введён неверный индефикатор! Id: " + filmId + " или Id: " + userId);
         }
+    }
+
+    @GetMapping("/popular")
+    @ResponseStatus(HttpStatus.OK)
+    public Collection<Film> getFavouriteFilms(@RequestParam(defaultValue = "10") int count) {
+        log.info("Получен запрос GET на получение самых популярных фильмов!");
+        Collection<Film> films = filmService.getFavouriteFilms(count);
+        log.info("Вывод {} популярных фильмов", count);
+        return films;
     }
 }
