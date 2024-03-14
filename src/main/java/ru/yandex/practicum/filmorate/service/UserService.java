@@ -69,7 +69,7 @@ public class UserService {
         List<User> commonFriends = new ArrayList<>();
         user.getFriendsIds().stream()
                 .filter(o -> friend.getFriendsIds().contains(o))
-                .map(o -> userStorage.getUserById(o))
+                .map(userStorage::getUserById)
                 .forEach(commonFriends::add);
         return commonFriends;
     }
