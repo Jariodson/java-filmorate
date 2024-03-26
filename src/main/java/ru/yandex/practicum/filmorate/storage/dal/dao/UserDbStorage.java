@@ -97,7 +97,7 @@ public class UserDbStorage implements UserStorage {
                 "WHERE status = 'CONFIRMED'", Long.class);
         jdbcTemplate.update("INSERT INTO friendship (status_id, user_id, friendUser_id) VALUES (?, ?, ?)",
                 statusId, userId, friendId);
-        // jdbcTemplate.update("INSERT INTO friendship (status_id, user_id, friendUser_id) VALUES (?, ?, ?)",
+        //jdbcTemplate.update("INSERT INTO friendship (status_id, user_id, friendUser_id) VALUES (?, ?, ?)",
         //        statusId, friendId, userId);
         return getUserById(userId);
     }
