@@ -14,7 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.service.UserService;
+import ru.yandex.practicum.filmorate.service.impl.UserServiceImpl;
 
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -34,7 +34,7 @@ class UserControllerTest {
     private UserController controller;
 
     @Mock
-    private UserService userService;
+    private UserServiceImpl userServiceImpl;
 
     @BeforeEach
     void beforeEach() {
@@ -64,7 +64,7 @@ class UserControllerTest {
 
         String gsonString = objectMapper.writeValueAsString(users);
 
-        when(userService.getUsers()).thenReturn(users);
+        when(userServiceImpl.getUsers()).thenReturn(users);
         this.mockMvc.perform(
                         get("/users"))
                 .andExpect(status().isOk())
@@ -80,7 +80,7 @@ class UserControllerTest {
                 .login("alexSpring")
                 .birthday(LocalDate.parse("1998-03-25"))
                 .build();
-        when(userService.createUser(user1)).thenReturn(user1);
+        when(userServiceImpl.createUser(user1)).thenReturn(user1);
         this.mockMvc.perform(post("/users")
                         .content(objectMapper.writeValueAsString(user1))
                         .contentType(MediaType.APPLICATION_JSON))
@@ -96,7 +96,7 @@ class UserControllerTest {
                 .login("alexSpring")
                 .birthday(LocalDate.parse("1998-03-25"))
                 .build();
-        when(userService.updateUser(user1)).thenReturn(user1);
+        when(userServiceImpl.updateUser(user1)).thenReturn(user1);
         this.mockMvc.perform(put("/users")
                         .content(objectMapper.writeValueAsString(user1))
                         .contentType(MediaType.APPLICATION_JSON))
@@ -112,7 +112,7 @@ class UserControllerTest {
                 .login("alexSpring")
                 .birthday(LocalDate.parse("1998-03-25"))
                 .build();
-        when(userService.removeUser(user1)).thenReturn(user1);
+        when(userServiceImpl.removeUser(user1)).thenReturn(user1);
         this.mockMvc.perform(delete("/users")
                         .content(objectMapper.writeValueAsString(user1))
                         .contentType(MediaType.APPLICATION_JSON))
