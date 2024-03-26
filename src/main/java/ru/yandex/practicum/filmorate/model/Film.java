@@ -5,15 +5,15 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.yandex.practicum.filmorate.Enums.Genre;
-import ru.yandex.practicum.filmorate.Enums.MPA;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -32,16 +32,9 @@ public class Film {
     private final LocalDate releaseDate;
     @Positive(message = "Продолжительность фильма не может быть отрицательной или равна 0!")
     private final int duration;
-    private final Set<Long> likes = new HashSet<>();
+    private Set<Long> likes = new HashSet<>();
+    @NotNull
     private Long id;
-    private final List<Genre> genre;
-    private final MPA mpa;
-
-    public void addLike(Long id) {
-        likes.add(id);
-    }
-
-    public void removeLike(Long id) {
-        likes.remove(id);
-    }
+    private Mpa mpa;
+    private Set<Genre> genres = new HashSet<>();
 }
