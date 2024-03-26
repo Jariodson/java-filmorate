@@ -18,12 +18,8 @@ import java.util.Optional;
 @ResponseStatus(HttpStatus.NOT_FOUND)
 @Slf4j
 public class UserController {
-    private final UserService userService;
-
     @Autowired
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
+    private UserService userService;
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
@@ -96,6 +92,25 @@ public class UserController {
             throw new IllegalArgumentException("Введён неверный индефикатор! Id: " + userId + " или Id: " + friendId);
         }
     }
+
+    /*
+    @PutMapping("/{id}/friends/{friendId}")
+    public ResponseEntity<User> confirmFriedn(
+            @RequestParam(value = "confirm", defaultValue = "unconfirmed") String status,
+            @PathVariable(value = "id") @NotNull Optional<Long> userId,
+            @PathVariable @NotNull Optional<Long> friendId){
+        if (userId.isPresent() && friendId.isPresent()) {
+            log.info("Получен запрос PUT на добавление нового друга пользователя. " +
+                    "Id пользователя: {}, Id друга: {}", userId, friendId);
+            User user = userService.addFriend(userId.get(), friendId.get());
+            log.info("Пользователь с Id: {} успешно добавил друга с Id: {}", userId, friendId);
+            return new ResponseEntity<>(user, HttpStatus.OK);
+        } else {
+            throw new IllegalArgumentException("Введён неверный индефикатор! Id: " + userId + " или Id: " + friendId);
+        }
+    }
+
+     */
 
     @DeleteMapping("/{id}/friends/{friendId}")
     public ResponseEntity<User> removeFriend(@PathVariable(value = "id") @NotNull Optional<Long> userId,

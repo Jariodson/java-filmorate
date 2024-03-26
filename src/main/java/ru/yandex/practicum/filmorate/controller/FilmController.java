@@ -17,12 +17,8 @@ import java.util.Optional;
 @ResponseStatus(HttpStatus.NOT_FOUND)
 @Slf4j
 public class FilmController {
-    private final FilmService filmService;
-
     @Autowired
-    public FilmController(FilmService filmService) {
-        this.filmService = filmService;
-    }
+    private FilmService filmService;
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
@@ -42,7 +38,7 @@ public class FilmController {
             log.info("Вывод фильма с Id: {}", id);
             return film;
         }
-        throw new IllegalArgumentException("Введен неверные индефикатор! Id: " + id);
+        throw new IllegalArgumentException("Введен неверный индефикатор! Id: " + id);
     }
 
     @PostMapping
