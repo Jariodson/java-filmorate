@@ -12,7 +12,3 @@ MERGE INTO genre (genre_id, genre_name) KEY(genre_id) VALUES
 (4, 'Триллер'),
 (5, 'Документальный'),
 (6, 'Боевик');
-
-MERGE INTO status (status_id, status) KEY(status_id) VALUES
-(1, 'CONFIRMED'),
-(2, 'UNCONFIRMED');
