@@ -10,8 +10,8 @@ import ru.yandex.practicum.filmorate.service.UserService;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Collection;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/users")
@@ -93,6 +93,7 @@ public class UserController {
             throw new IllegalArgumentException("Введён неверный индефикатор! Id: " + userId + " или Id: " + friendId);
         }
     }
+
     @DeleteMapping("/{id}/friends/{friendId}")
     public ResponseEntity<User> removeFriend(@PathVariable(value = "id") @NotNull Optional<Long> userId,
                                              @PathVariable @NotNull Optional<Long> friendId) {

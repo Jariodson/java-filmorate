@@ -3,7 +3,6 @@ package ru.yandex.practicum.filmorate.storage.dal;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.util.Collection;
-import java.util.List;
 
 public interface UserStorage {
     Collection<User> getAllUsers();

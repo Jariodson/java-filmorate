@@ -12,9 +12,9 @@ import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.dal.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.dal.UserStorage;
 import ru.yandex.practicum.filmorate.storage.dal.dao.FilmDbStorage;
 import ru.yandex.practicum.filmorate.storage.dal.dao.UserDbStorage;
-import ru.yandex.practicum.filmorate.storage.dal.UserStorage;
 
 import java.time.LocalDate;
 import java.util.Collection;

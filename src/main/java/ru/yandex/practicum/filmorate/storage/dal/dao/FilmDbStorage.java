@@ -28,8 +28,8 @@ public class FilmDbStorage implements FilmStorage {
     @Override
     public Collection<Film> getAllFilms() {
         List<Film> films = jdbcTemplate.query("SELECT f.*, m.mpa_name, f.mpa_id, " +
-                         "FROM film AS f " +
-                        "JOIN mpa AS m ON m.mpa_id = f.mpa_id", this::makeFilm);
+                "FROM film AS f " +
+                "JOIN mpa AS m ON m.mpa_id = f.mpa_id", this::makeFilm);
 
         String sql = "SELECT g.genre_id, g.genre_name FROM genre_of_film AS gf " +
                 "JOIN genre AS g ON g.genre_id = gf.genre_id " +
@@ -52,7 +52,7 @@ public class FilmDbStorage implements FilmStorage {
                 "JOIN genre_of_film AS gf ON g.genre_id = gf.genre_id " +
                 "WHERE gf.film_id = ? " +
                 "ORDER BY g.genre_id";
-        if (film != null){
+        if (film != null) {
             film.setGenres(jdbcTemplate.queryForStream(sql, this::makeGenre, film.getId())
                     .collect(Collectors.toSet()));
         }
@@ -184,27 +184,28 @@ public class FilmDbStorage implements FilmStorage {
 
         String sql = "SELECT COUNT(*) FROM mpa WHERE mpa_id = ?";
         Long mpaId = film.getMpa().getId();
-        if (mpaId != null){
+        if (mpaId != null) {
             Integer count = jdbcTemplate.queryForObject(sql, Integer.class, mpaId);
-            if (count == null || count <= 0){
+            if (count == null || count <= 0) {
                 throw new ValidationException("Неверный mpaId: " + mpaId);
             }
         }
 
         sql = "SELECT COUNT(*) FROM genre WHERE genre_id = ?";
-        if (!film.getGenres().isEmpty()){
-            for (Genre genre : film.getGenres()){
+        if (!film.getGenres().isEmpty()) {
+            for (Genre genre : film.getGenres()) {
                 Integer count = jdbcTemplate.queryForObject(sql, Integer.class, genre.getId());
-                if (count == null || count <= 0){
+                if (count == null || count <= 0) {
                     throw new ValidationException("Неверный genreId: " + genre.getId());
                 }
             }
         }
     }
-    private void checkFilmInDb(Film film){
+
+    private void checkFilmInDb(Film film) {
         String sql = "SELECT COUNT(*) FROM film WHERE film_id = ?";
         Integer count = jdbcTemplate.queryForObject(sql, Integer.class, film.getId());
-        if (count == null || count <= 0){
+        if (count == null || count <= 0) {
             throw new IllegalArgumentException("Неверный filmId: " + film.getId());
         }
     }
