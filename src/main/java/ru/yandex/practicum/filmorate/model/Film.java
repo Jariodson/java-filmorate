@@ -11,8 +11,6 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -32,8 +30,8 @@ public class Film {
     private final LocalDate releaseDate;
     @Positive(message = "Продолжительность фильма не может быть отрицательной или равна 0!")
     private final int duration;
+
     private Set<Long> likes = new HashSet<>();
-    @NotNull
     private Long id;
     private Mpa mpa;
     private Set<Genre> genres = new HashSet<>();
