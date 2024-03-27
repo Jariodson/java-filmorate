@@ -6,5 +6,6 @@ import java.util.Collection;
 
 public interface MpaService {
     Collection<Mpa> getMpa();
+
     Mpa getMpaById(Long id);
 }

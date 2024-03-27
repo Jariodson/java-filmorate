@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.service.MpaService;
 
@@ -21,7 +20,7 @@ public class MpaController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public Collection<Mpa> getGenres(){
+    public Collection<Mpa> getGenres() {
         log.info("Получен запрос GET на вывод всех рейтингов");
         Collection<Mpa> mpaCollection = mpaService.getMpa();
         log.info("Вывод списка всех рейтингов. Размер списка: {}", mpaCollection.size());
@@ -30,9 +29,9 @@ public class MpaController {
 
     @GetMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public Mpa getGenreById(@PathVariable Optional<Long> id){
+    public Mpa getGenreById(@PathVariable Optional<Long> id) {
         log.info("Получен запрос GET на получение рейтинга по ID: {}", id);
-        if (id.isPresent()){
+        if (id.isPresent()) {
             Mpa mpa = mpaService.getMpaById(id.get());
             log.info("Вывод рейтинга с Id: {}", id);
             return mpa;

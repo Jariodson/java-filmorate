@@ -10,8 +10,8 @@ import ru.yandex.practicum.filmorate.service.UserService;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.util.Collection;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/users")
@@ -68,12 +68,12 @@ public class UserController {
 
     @GetMapping("/{id}/friends")
     @ResponseStatus(HttpStatus.OK)
-    public Collection<User> getUserFriends(@PathVariable @NotNull Optional<Long> id) {
+    public Collection<Long> getUserFriends(@PathVariable @NotNull Optional<Long> id) {
         log.info("Получен запрос GET на вывод всех друзей пользователя");
         if (id.isPresent()) {
-            Collection<User> users = userService.getFriends(id.get());
-            log.info("Вывод друзей пользователя с Id: {}", id);
-            return users;
+            Collection<Long> friendId = userService.getFriends(id.get());
+            log.info("Вывод друзей пользователя с Id: {}. Id друзей: {}", id.get(), friendId);
+            return friendId;
         } else {
             throw new IllegalArgumentException("Введён неверный индефикатор! Id: " + id);
         }
@@ -87,31 +87,12 @@ public class UserController {
                     "Id пользователя: {}, Id друга: {}", userId, friendId);
             User user = userService.addFriend(userId.get(), friendId.get());
             log.info("Пользователь с Id: {} успешно добавил друга с Id: {}", userId, friendId);
+            log.info("{}", user);
             return new ResponseEntity<>(user, HttpStatus.OK);
         } else {
             throw new IllegalArgumentException("Введён неверный индефикатор! Id: " + userId + " или Id: " + friendId);
         }
     }
-
-    /*
-    @PutMapping("/{id}/friends/{friendId}")
-    public ResponseEntity<User> confirmFriedn(
-            @RequestParam(value = "confirm", defaultValue = "unconfirmed") String status,
-            @PathVariable(value = "id") @NotNull Optional<Long> userId,
-            @PathVariable @NotNull Optional<Long> friendId){
-        if (userId.isPresent() && friendId.isPresent()) {
-            log.info("Получен запрос PUT на добавление нового друга пользователя. " +
-                    "Id пользователя: {}, Id друга: {}", userId, friendId);
-            User user = userService.addFriend(userId.get(), friendId.get());
-            log.info("Пользователь с Id: {} успешно добавил друга с Id: {}", userId, friendId);
-            return new ResponseEntity<>(user, HttpStatus.OK);
-        } else {
-            throw new IllegalArgumentException("Введён неверный индефикатор! Id: " + userId + " или Id: " + friendId);
-        }
-    }
-
-     */
-
     @DeleteMapping("/{id}/friends/{friendId}")
     public ResponseEntity<User> removeFriend(@PathVariable(value = "id") @NotNull Optional<Long> userId,
                                              @PathVariable @NotNull Optional<Long> friendId) {

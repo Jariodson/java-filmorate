@@ -9,6 +9,7 @@ import ru.yandex.practicum.filmorate.storage.dal.UserStorage;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Component
@@ -51,7 +52,7 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public Collection<User> getFriends(long userId) {
+    public List<Long> getFriends(long userId) {
         return null;
     }
 
@@ -62,6 +63,7 @@ public class InMemoryUserStorage implements UserStorage {
         }
         throw new IllegalArgumentException("Пользователь с Id " + id + " не найден");
     }
+
     @Override
     public User addFriend(long userId, long friendId) {
         return null;

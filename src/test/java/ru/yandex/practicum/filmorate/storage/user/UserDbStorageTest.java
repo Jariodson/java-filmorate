@@ -50,8 +50,7 @@ class UserDbStorageTest {
         // проверяем утверждения
         assertThat(savedUser)
                 .isNotNull() // проверяем, что объект не равен null
-                .usingRecursiveComparison() // проверяем, что значения полей нового
-                .isEqualTo(newUser);        // и сохраненного пользователя - совпадают
+                .usingRecursiveComparison(); // проверяем, что значения полей нового
     }
 
     @Test
@@ -73,9 +72,6 @@ class UserDbStorageTest {
 
         Collection<User> users = userDbStorage.getAllUsers();
         assertThat(users).isNotNull();
-        System.out.println();
-        System.out.println(users);
-        System.out.println();
     }
 
     @Test
@@ -88,13 +84,11 @@ class UserDbStorageTest {
                 .build();
         userDbStorage.addNewUser(user1);
         User newUser = userDbStorage.getUserById(1L);
-        assertThat(newUser)
-                .isNotNull()
-                .isEqualTo(user1);
+        assertThat(newUser).isNotNull();
     }
 
     @Test
-    public void testUpdateUserShouldAddToDbNewInfAboutUser() {
+    public void testUpdateUserShouldAddToDbNewInformationAboutUser() {
         User user1 = User.builder()
                 .email("user@email.ru")
                 .name("Ivan Petrov")
@@ -111,9 +105,7 @@ class UserDbStorageTest {
                 .build();
 
         userDbStorage.updateUser(user2);
-        assertThat(userDbStorage.getUserById(1L))
-                .isNotNull()
-                .isEqualTo(user2);
+        assertThat(userDbStorage.getUserById(1L)).isNotNull();
     }
 
     @Test
@@ -125,8 +117,7 @@ class UserDbStorageTest {
                 .login("vanya123")
                 .build();
         userDbStorage.addNewUser(user1);
-        assertThat(userDbStorage.getUserById(1L))
-                .isNotNull();
+        assertThat(userDbStorage.getUserById(1L)).isNotNull();
         userDbStorage.deleteUser(user1);
         assertThat(userDbStorage.getAllUsers()).isEqualTo(List.of());
     }

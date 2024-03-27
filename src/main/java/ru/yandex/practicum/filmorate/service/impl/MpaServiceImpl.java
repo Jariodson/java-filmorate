@@ -12,6 +12,7 @@ import java.util.Collection;
 public class MpaServiceImpl implements MpaService {
     @Autowired
     private MpaDal mpaDao;
+
     @Override
     public Collection<Mpa> getMpa() {
         return mpaDao.getMpa();
