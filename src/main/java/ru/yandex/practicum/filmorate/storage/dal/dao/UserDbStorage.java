@@ -5,19 +5,14 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
-import ru.yandex.practicum.filmorate.Enums.FriendshipStatus;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
-import ru.yandex.practicum.filmorate.model.Status;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.dal.UserStorage;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 @Repository
@@ -37,8 +32,7 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public User getUserById(Long id) {
-        return jdbcTemplate.queryForObject("SELECT u.* FROM \"user\" AS u " +
-                "WHERE u.user_id = ?", this::makeUser, id);
+        return jdbcTemplate.queryForObject("SELECT * FROM \"user\" WHERE user_id = ?", this::makeUser, id);
 
     }
 
@@ -61,7 +55,7 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public void updateUser(User user) {
-        if (!checkUserInDb(user.getId())) {
+        if (checkUserInDb(user.getId())) {
             throw new IllegalArgumentException("Пользователь с ID: " + user.getId() + " не найден в базе данных!");
         }
         checkUserCriteria(user);
@@ -73,32 +67,24 @@ public class UserDbStorage implements UserStorage {
     public void deleteUser(User user) {
         checkUserCriteria(user);
         if (checkUserInDb(user.getId())) {
-            jdbcTemplate.update("DELETE FROM \"user\" WHERE user_id=?", user.getId());
+            throw new IllegalArgumentException("Пользователь с ID: " + user.getId() + " не найден в базе данных!");
         }
-        throw new IllegalArgumentException("Пользователь с ID: " + user.getId() + " не найден в базе данных!");
+        jdbcTemplate.update("DELETE FROM \"user\" WHERE user_id = ?", user.getId());
     }
 
     @Override
-    public Collection<User> getFriends(long userId) {
-        if (!checkUserInDb(userId)) {
+    public Collection<Long> getFriends(long userId) {
+        if (checkUserInDb(userId)) {
             throw new IllegalArgumentException("Пользователь с ID: " + userId + " не найден в базе данных!");
         }
-        String sql = "SELECT u.*, f.friendUser_id, s.status FROM \"user\" AS u " +
-                "JOIN friendship AS f ON u.user_id = f.user_id " +
-                "JOIN status AS s ON s.status_id = f.status_id " +
-                "WHERE u.user_id = ? AND s.status = 'CONFIRMED'";
-        return jdbcTemplate.query(sql, this::makeUser, userId);
+        String sql = "SELECT friendUser_id FROM friendship WHERE user_id = ?";
+        return jdbcTemplate.query(sql, (rs, rowNum) -> rs.getLong("friendUser_id"), userId);
     }
 
     @Override
     public User addFriend(long userId, long friendId) {
         checkUsersIds(userId, friendId);
-        Long statusId = jdbcTemplate.queryForObject("SELECT status_id FROM status " +
-                "WHERE status = 'CONFIRMED'", Long.class);
-        jdbcTemplate.update("INSERT INTO friendship (status_id, user_id, friendUser_id) VALUES (?, ?, ?)",
-                statusId, userId, friendId);
-        //jdbcTemplate.update("INSERT INTO friendship (status_id, user_id, friendUser_id) VALUES (?, ?, ?)",
-        //        statusId, friendId, userId);
+        jdbcTemplate.update("INSERT INTO friendship (user_id, friendUser_id) VALUES (?, ?)", userId, friendId);
         return getUserById(userId);
     }
 
@@ -106,7 +92,6 @@ public class UserDbStorage implements UserStorage {
     public User deleteFriend(long userId, long friendId) {
         checkUsersIds(userId, friendId);
         jdbcTemplate.update("DELETE FROM friendship WHERE user_id = ? AND friendUser_id = ?", userId, friendId);
-        jdbcTemplate.update("DELETE FROM friendship WHERE user_id = ? AND friendUser_id = ?", friendId, userId);
         return getUserById(userId);
     }
 
@@ -124,14 +109,14 @@ public class UserDbStorage implements UserStorage {
     private boolean checkUserInDb(Long id) {
         String sql = "SELECT COUNT(*) FROM \"user\" WHERE user_id = ?";
         Integer count = jdbcTemplate.queryForObject(sql, Integer.class, id);
-        return count != null && count != 0;
+        return count == null || count == 0;
     }
 
     private void checkUsersIds(long userId, long friendId) {
-        if (!checkUserInDb(userId)) {
+        if (checkUserInDb(userId)) {
             throw new IllegalArgumentException("Пользователь с ID: " + userId + " не найден в базе данных!");
         }
-        if (!checkUserInDb(friendId)) {
+        if (checkUserInDb(friendId)) {
             throw new IllegalArgumentException("Пользователь с ID: " + friendId + " не найден в базе данных!");
         }
     }
@@ -145,44 +130,12 @@ public class UserDbStorage implements UserStorage {
                 .login(rs.getString("login"))
                 .build();
 
-        /*
-        String sql = "SELECT f.friendUser_id, f.status_id, s.status " +
-                "FROM friendship AS f " +
-                "JOIN status AS s ON s.status_id = f.status_id " +
-                "WHERE f.user_id = ?";
-
-        Map<Long, Status> friendStatusMap = jdbcTemplate.query(sql, rs1 -> {
-            Map<Long, Status> resultMap = new HashMap<>();
-            while (rs1.next()) {
-                Long friendId = rs1.getLong("friendUser_id");
-                Status status = new Status();
-                status.setId(rs1.getLong("status_id"));
-                status.setStatus(converter(rs1.getString("status")));
-                resultMap.put(friendId, status);
-            }
-            return resultMap;
-        }, user.getId());
-        if (friendStatusMap != null) {
-            user.getFriendsIds().putAll(friendStatusMap);
-        }
-
-         */
+        String sql = "SELECT friendUser_id FROM friendship WHERE user_id = ?";
+        List<Long> friendIds = jdbcTemplate.queryForList(sql, Long.class, user.getId());
+        Set<Long> friends = new HashSet<>(friendIds);
+        user.setFriendsIds(friends);
         return user;
     }
-
-    /*
-    private FriendshipStatus converter(String status) {
-        switch (status) {
-            case "CONFIRMED":
-                return FriendshipStatus.CONFIRMED;
-            case "UNCONFIRMED":
-                return FriendshipStatus.UNCONFIRMED;
-            default:
-                throw new IllegalArgumentException("Неверный статус! Статус: " + status);
-        }
-    }
-
-     */
 
     private void checkUserCriteria(User user) {
         if (user.getName() == null || user.getName().isBlank()) {
