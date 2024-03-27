@@ -20,7 +20,7 @@ public class GenreController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public Collection<Genre> getGenres(){
+    public Collection<Genre> getGenres() {
         log.info("Получен запрос GET на вывод всех жанров");
         Collection<Genre> genres = genreService.getGenres();
         log.info("Вывод списка всех жанров. Размер списка: {}", genres.size());
@@ -29,9 +29,9 @@ public class GenreController {
 
     @GetMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public Genre getGenreById(@PathVariable Optional<Long> id){
+    public Genre getGenreById(@PathVariable Optional<Long> id) {
         log.info("Получен запрос GET на получение жанра по ID: {}", id);
-        if (id.isPresent()){
+        if (id.isPresent()) {
             Genre genre = genreService.getGenreById(id.get());
             log.info("Вывод жанра с Id: {}", id);
             return genre;

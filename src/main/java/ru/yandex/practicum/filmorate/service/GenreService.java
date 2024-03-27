@@ -6,5 +6,6 @@ import java.util.Collection;
 
 public interface GenreService {
     Collection<Genre> getGenres();
+
     Genre getGenreById(Long id);
 }

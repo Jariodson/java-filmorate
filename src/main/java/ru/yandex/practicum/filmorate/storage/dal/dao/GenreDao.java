@@ -2,8 +2,8 @@ package ru.yandex.practicum.filmorate.storage.dal.dao;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-import ru.yandex.practicum.filmorate.storage.dal.GenreDal;
 import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.storage.dal.GenreDal;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

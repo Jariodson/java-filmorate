@@ -12,6 +12,7 @@ import java.util.Collection;
 public class GenreServiceImpl implements GenreService {
     @Autowired
     private GenreDal genreDao;
+
     @Override
     public Collection<Genre> getGenres() {
         return genreDao.getGenres();
