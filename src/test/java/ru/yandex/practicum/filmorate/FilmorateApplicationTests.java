@@ -16,5 +16,4 @@ class FilmorateApplicationTests {
     void contextLoads() {
         assertThat(userController).isNotNull();
     }
-
 }

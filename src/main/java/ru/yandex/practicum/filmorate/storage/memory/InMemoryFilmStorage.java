@@ -1,9 +1,10 @@
-package ru.yandex.practicum.filmorate.storage.film;
+package ru.yandex.practicum.filmorate.storage.memory;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.storage.dal.FilmStorage;
 
 import java.time.LocalDate;
 import java.util.Collection;
@@ -55,6 +56,21 @@ public class InMemoryFilmStorage implements FilmStorage {
             throw new IllegalArgumentException("Такого фильма не сушествует! Фильм:" + film);
         }
         films.remove(film.getId());
+    }
+
+    @Override
+    public Collection<Film> getFavouriteFilms(int count) {
+        return null;
+    }
+
+    @Override
+    public Film addLike(Long filmId, Long userId) {
+        return null;
+    }
+
+    @Override
+    public Film removeLike(Long filmId, Long userId) {
+        return null;
     }
 
     private void checkFilmCriteria(Film film) {

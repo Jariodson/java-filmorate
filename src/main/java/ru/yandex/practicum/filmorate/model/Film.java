@@ -29,14 +29,9 @@ public class Film {
     private final LocalDate releaseDate;
     @Positive(message = "Продолжительность фильма не может быть отрицательной или равна 0!")
     private final int duration;
-    private final Set<Long> likes = new HashSet<>();
+
+    private Set<Long> likes = new HashSet<>();
     private Long id;
-
-    public void addLike(Long id) {
-        likes.add(id);
-    }
-
-    public void removeLike(Long id) {
-        likes.remove(id);
-    }
+    private Mpa mpa;
+    private Set<Genre> genres = new HashSet<>();
 }

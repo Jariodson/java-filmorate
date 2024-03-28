@@ -15,6 +15,15 @@ import java.util.Map;
 @RestControllerAdvice
 @Slf4j
 public class ErrorHandler {
+
+    @ExceptionHandler
+    public ResponseEntity<Map<String, String>> handleThrowable(final Throwable throwable) {
+        log.warn("Ошибка! {}", throwable.getMessage());
+        return new ResponseEntity<>(
+                Map.of("error", throwable.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR
+        );
+    }
+
     @ExceptionHandler
     public ResponseEntity<Map<String, String>> handleInvalidId(final IllegalArgumentException e) {
         log.warn("Ошибка! {}", e.getMessage());

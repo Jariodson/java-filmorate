@@ -18,12 +18,8 @@ import java.util.Optional;
 @ResponseStatus(HttpStatus.NOT_FOUND)
 @Slf4j
 public class UserController {
-    private final UserService userService;
-
     @Autowired
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
+    private UserService userService;
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
@@ -72,12 +68,12 @@ public class UserController {
 
     @GetMapping("/{id}/friends")
     @ResponseStatus(HttpStatus.OK)
-    public Collection<User> getUserFriends(@PathVariable @NotNull Optional<Long> id) {
+    public Collection<Long> getUserFriends(@PathVariable @NotNull Optional<Long> id) {
         log.info("Получен запрос GET на вывод всех друзей пользователя");
         if (id.isPresent()) {
-            Collection<User> users = userService.getFriends(id.get());
-            log.info("Вывод друзей пользователя с Id: {}", id);
-            return users;
+            Collection<Long> friendId = userService.getFriends(id.get());
+            log.info("Вывод друзей пользователя с Id: {}. Id друзей: {}", id.get(), friendId);
+            return friendId;
         } else {
             throw new IllegalArgumentException("Введён неверный индефикатор! Id: " + id);
         }
@@ -91,6 +87,7 @@ public class UserController {
                     "Id пользователя: {}, Id друга: {}", userId, friendId);
             User user = userService.addFriend(userId.get(), friendId.get());
             log.info("Пользователь с Id: {} успешно добавил друга с Id: {}", userId, friendId);
+            log.info("{}", user);
             return new ResponseEntity<>(user, HttpStatus.OK);
         } else {
             throw new IllegalArgumentException("Введён неверный индефикатор! Id: " + userId + " или Id: " + friendId);

@@ -1,13 +1,15 @@
-package ru.yandex.practicum.filmorate.storage.user;
+package ru.yandex.practicum.filmorate.storage.memory;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.dal.UserStorage;
 
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Component
@@ -50,11 +52,31 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
+    public List<Long> getFriends(long userId) {
+        return null;
+    }
+
+    @Override
     public User getUserById(Long id) {
         if (users.containsKey(id)) {
             return users.get(id);
         }
         throw new IllegalArgumentException("Пользователь с Id " + id + " не найден");
+    }
+
+    @Override
+    public User addFriend(long userId, long friendId) {
+        return null;
+    }
+
+    @Override
+    public User deleteFriend(long userId, long friendId) {
+        return null;
+    }
+
+    @Override
+    public Collection<User> getCommonFriends(long userId, long friendId) {
+        return null;
     }
 
     private void checkUserCriteria(User user) {

@@ -17,21 +17,13 @@ import java.util.Set;
 @NoArgsConstructor(force = true)
 @AllArgsConstructor
 public class User {
-    @Email(message = "Введён некоректный e-mail")
-    private final String email;
-    @NotBlank(message = "Логин не может быть пустым и содержать пробелы")
-    private final String login;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private final LocalDate birthday;
-    private final Set<Long> friendsIds = new HashSet<>();
     private Long id;
+    @Email(message = "Введён некоректный e-mail")
+    private String email;
+    @NotBlank(message = "Логин не может быть пустым и содержать пробелы")
+    private String login;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private LocalDate birthday;
+    private Set<Long> friendsIds = new HashSet<>();
     private String name;
-
-    public void createFriend(long id) {
-        friendsIds.add(id);
-    }
-
-    public void removeFriend(long id) {
-        friendsIds.remove(id);
-    }
 }
