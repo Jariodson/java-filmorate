@@ -19,7 +19,7 @@ import java.util.*;
 @Repository
 @Qualifier("userDbStorage")
 public class UserDbStorage implements UserStorage {
-    JdbcTemplate jdbcTemplate;
+    private final JdbcTemplate jdbcTemplate;
 
     @Autowired
     public UserDbStorage(JdbcTemplate jdbcTemplate) {
@@ -63,15 +63,6 @@ public class UserDbStorage implements UserStorage {
         jdbcTemplate.update("UPDATE \"user\" SET email=?, login=?, birthday=?, name=? WHERE user_id=?",
                 user.getEmail(), user.getLogin(), user.getBirthday(), user.getName(), user.getId());
         jdbcTemplate.update("DELETE FROM friendship WHERE user_id = ?", user.getId());
-
-        /*
-        if (user.getFriendsIds() != null && !user.getFriendsIds().isEmpty()) {
-            user.getFriendsIds().forEach(
-                    id -> jdbcTemplate.update("INSERT INTO friendship (user_id, friendUser_id)" +
-                    " VALUES (?, ?)", user.getId(), id));
-        }
-
-         */
     }
 
     @Override
