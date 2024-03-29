@@ -15,8 +15,12 @@ import java.util.Optional;
 @RequestMapping("/mpa")
 @ResponseStatus(HttpStatus.NOT_FOUND)
 public class MpaController {
+    private final MpaService mpaService;
+
     @Autowired
-    private MpaService mpaService;
+    public MpaController(MpaService mpaService) {
+        this.mpaService = mpaService;
+    }
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)

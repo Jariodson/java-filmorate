@@ -18,8 +18,12 @@ import java.util.Optional;
 @ResponseStatus(HttpStatus.NOT_FOUND)
 @Slf4j
 public class UserController {
+    private final UserService userService;
+
     @Autowired
-    private UserService userService;
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)

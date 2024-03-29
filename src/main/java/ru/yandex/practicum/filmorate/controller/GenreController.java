@@ -15,8 +15,12 @@ import java.util.Optional;
 @RequestMapping("/genres")
 @ResponseStatus(HttpStatus.NOT_FOUND)
 public class GenreController {
+    private final GenreService genreService;
+
     @Autowired
-    private GenreService genreService;
+    public GenreController(GenreService genreService) {
+        this.genreService = genreService;
+    }
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)

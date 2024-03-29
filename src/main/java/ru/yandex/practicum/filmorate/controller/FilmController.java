@@ -17,8 +17,12 @@ import java.util.Optional;
 @ResponseStatus(HttpStatus.NOT_FOUND)
 @Slf4j
 public class FilmController {
+    private final FilmService filmService;
+
     @Autowired
-    private FilmService filmService;
+    public FilmController(FilmService filmService) {
+        this.filmService = filmService;
+    }
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
