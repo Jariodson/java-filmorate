@@ -8,4 +8,6 @@ public interface GenreDal {
     Collection<Genre> getGenres();
 
     Genre getGenreById(Long id);
+
+    String getGenreNameById(Long id);
 }

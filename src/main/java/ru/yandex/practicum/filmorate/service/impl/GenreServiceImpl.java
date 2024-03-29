@@ -27,14 +27,15 @@ public class GenreServiceImpl implements GenreService {
     }
 
     @Override
-    public String getGenreNameById(Long id){
+    public String getGenreNameById(Long id) {
         checkGenre(id);
         return genreDao.getGenreNameById(id);
     }
-    private void checkGenre(Long id){
+
+    private void checkGenre(Long id) {
         try {
             genreDao.getGenreById(id);
-        }catch (EmptyResultDataAccessException e){
+        } catch (EmptyResultDataAccessException e) {
             throw new IllegalArgumentException("Жанр с ID: " + id + " не найден!");
         }
     }

@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.storage.dal.dao;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.model.Mpa;
@@ -13,21 +14,27 @@ import java.util.Collection;
 public class MpaDao implements MpaDal {
     private final JdbcTemplate jdbcTemplate;
 
+    @Autowired
     public MpaDao(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
     @Override
     public Collection<Mpa> getMpa() {
-        String sql = "SELECT * FROM mpa";
+        String sql = "SELECT mpa_name, mpa_id FROM mpa";
         return jdbcTemplate.query(sql, this::makeMpa);
     }
 
     @Override
     public Mpa getMpaById(Long id) {
-        checkMpaInDb(id);
-        String sql = "SELECT * FROM mpa WHERE mpa_id = ?";
+        String sql = "SELECT mpa_name, mpa_id FROM mpa WHERE mpa_id = ?";
         return jdbcTemplate.queryForObject(sql, this::makeMpa, id);
+    }
+
+    @Override
+    public String getMpaNameById(Long id) {
+        String sql = "SELECT mpa_name FROM mpa WHERE mpa_id = ?";
+        return jdbcTemplate.queryForObject(sql, String.class, id);
     }
 
     private Mpa makeMpa(ResultSet rs, int rowNum) throws SQLException {
@@ -35,13 +42,5 @@ public class MpaDao implements MpaDal {
                 .id(rs.getLong("mpa_id"))
                 .name(rs.getString("mpa_name"))
                 .build();
-    }
-
-    private void checkMpaInDb(Long id) {
-        String sql = "SELECT COUNT(*) FROM mpa WHERE mpa_id = ?";
-        Integer count = jdbcTemplate.queryForObject(sql, Integer.class, id);
-        if (count == null || count <= 0) {
-            throw new IllegalArgumentException("Введен неверный mpaId: " + id);
-        }
     }
 }

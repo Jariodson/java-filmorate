@@ -13,7 +13,7 @@ public interface UserService {
 
     User removeUser(User user);
 
-    Collection<Long> getFriends(long userId);
+    Collection<User> getFriends(long userId);
 
     User addFriend(long userId, long friendId);
 

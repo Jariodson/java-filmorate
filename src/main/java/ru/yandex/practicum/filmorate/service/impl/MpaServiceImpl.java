@@ -13,10 +13,12 @@ import java.util.Collection;
 @Service
 public class MpaServiceImpl implements MpaService {
     private final MpaDal mpaDao;
+
     @Autowired
     public MpaServiceImpl(MpaDal mpaDao) {
         this.mpaDao = mpaDao;
     }
+
     @Override
     @Transactional
     public Collection<Mpa> getMpa() {
@@ -37,10 +39,10 @@ public class MpaServiceImpl implements MpaService {
         return mpaDao.getMpaNameById(id);
     }
 
-    private void checkMpaById(Long id){
+    private void checkMpaById(Long id) {
         try {
             mpaDao.getMpaById(id);
-        }catch (EmptyResultDataAccessException e){
+        } catch (EmptyResultDataAccessException e) {
             throw new IllegalArgumentException("Рейтин с ID: " + id + " не найден!");
         }
     }

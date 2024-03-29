@@ -8,4 +8,6 @@ public interface MpaDal {
     Collection<Mpa> getMpa();
 
     Mpa getMpaById(Long id);
+
+    String getMpaNameById(Long id);
 }

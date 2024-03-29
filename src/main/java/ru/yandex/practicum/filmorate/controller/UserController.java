@@ -68,10 +68,10 @@ public class UserController {
 
     @GetMapping("/{id}/friends")
     @ResponseStatus(HttpStatus.OK)
-    public Collection<Long> getUserFriends(@PathVariable @NotNull Optional<Long> id) {
+    public Collection<User> getUserFriends(@PathVariable @NotNull Optional<Long> id) {
         log.info("Получен запрос GET на вывод всех друзей пользователя");
         if (id.isPresent()) {
-            Collection<Long> friendId = userService.getFriends(id.get());
+            Collection<User> friendId = userService.getFriends(id.get());
             log.info("Вывод друзей пользователя с Id: {}. Id друзей: {}", id.get(), friendId);
             return friendId;
         } else {
@@ -84,9 +84,9 @@ public class UserController {
                                           @PathVariable @NotNull Optional<Long> friendId) {
         if (userId.isPresent() && friendId.isPresent()) {
             log.info("Получен запрос PUT на добавление нового друга пользователя. " +
-                    "Id пользователя: {}, Id друга: {}", userId, friendId);
-            User user = userService.addFriend(userId.get(), friendId.get());
-            log.info("Пользователь с Id: {} успешно добавил друга с Id: {}", userId, friendId);
+                    "Id пользователя: {}, Id друга: {}", friendId, userId);
+            User user = userService.addFriend(friendId.get(), userId.get());
+            log.info("Пользователь с Id: {} успешно добавил друга с Id: {}", friendId, userId);
             log.info("{}", user);
             return new ResponseEntity<>(user, HttpStatus.OK);
         } else {
@@ -99,9 +99,10 @@ public class UserController {
                                              @PathVariable @NotNull Optional<Long> friendId) {
         if (userId.isPresent() && friendId.isPresent()) {
             log.info("Получен запрос DELETE на удаление пользователя из друзей" +
-                    "Id пользователя: {}, Id друга: {}", userId, friendId);
-            User user = userService.deleteFriend(userId.get(), friendId.get());
-            log.info("Пользователь с Id: {} успешно удалил друга с Id: {}", user, friendId);
+                    "Id пользователя: {}, Id друга: {}", friendId, userId);
+            User user = userService.deleteFriend(friendId.get(), userId.get());
+            log.info("Пользователь с Id: {} успешно удалил друга с Id: {}", friendId, userId);
+            log.info("Пользователь: {}", user);
             return new ResponseEntity<>(user, HttpStatus.OK);
         } else {
             throw new IllegalArgumentException("Введён неверный индефикатор! Id: " + userId + " или Id: " + friendId);
@@ -116,6 +117,7 @@ public class UserController {
             log.info("Получен запрос GET на получение общих друзей пользователей: {} и {}", userId, friendId);
             Collection<User> commonFriends = userService.getCommonFriends(userId.get(), friendId.get());
             log.info("Вывод общих друзей пользователя с Id: {} и Id: {}", userId, friendId);
+            log.info("Общие друзья: {}", commonFriends);
             return commonFriends;
         } else {
             throw new IllegalArgumentException("Введён неверный индефикатор! Id: " + userId + " или Id: " + friendId);

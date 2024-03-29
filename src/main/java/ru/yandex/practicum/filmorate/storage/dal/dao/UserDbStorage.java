@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.storage.dal.dao;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
@@ -20,6 +21,7 @@ import java.util.*;
 public class UserDbStorage implements UserStorage {
     JdbcTemplate jdbcTemplate;
 
+    @Autowired
     public UserDbStorage(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
@@ -33,7 +35,6 @@ public class UserDbStorage implements UserStorage {
     @Override
     public User getUserById(Long id) {
         return jdbcTemplate.queryForObject("SELECT * FROM \"user\" WHERE user_id = ?", this::makeUser, id);
-
     }
 
     @Override
@@ -61,6 +62,16 @@ public class UserDbStorage implements UserStorage {
         checkUserCriteria(user);
         jdbcTemplate.update("UPDATE \"user\" SET email=?, login=?, birthday=?, name=? WHERE user_id=?",
                 user.getEmail(), user.getLogin(), user.getBirthday(), user.getName(), user.getId());
+        jdbcTemplate.update("DELETE FROM friendship WHERE user_id = ?", user.getId());
+
+        /*
+        if (user.getFriendsIds() != null && !user.getFriendsIds().isEmpty()) {
+            user.getFriendsIds().forEach(
+                    id -> jdbcTemplate.update("INSERT INTO friendship (user_id, friendUser_id)" +
+                    " VALUES (?, ?)", user.getId(), id));
+        }
+
+         */
     }
 
     @Override
@@ -73,12 +84,17 @@ public class UserDbStorage implements UserStorage {
     }
 
     @Override
-    public Collection<Long> getFriends(long userId) {
+    public Collection<User> getFriends(long userId) {
         if (checkUserInDb(userId)) {
             throw new IllegalArgumentException("Пользователь с ID: " + userId + " не найден в базе данных!");
         }
         String sql = "SELECT friendUser_id FROM friendship WHERE user_id = ?";
-        return jdbcTemplate.query(sql, (rs, rowNum) -> rs.getLong("friendUser_id"), userId);
+        //return jdbcTemplate.query(sql, (rs, rowNum) -> rs.getLong("friendUser_id"), userId);
+        //return jdbcTemplate.queryForObject(sql, Long.class, userId);
+        sql = "SELECT u.* FROM \"user\" AS u " +
+                "JOIN friendship AS f ON f.user_id = u.user_id " +
+                "WHERE friendUser_id = ?";
+        return jdbcTemplate.query(sql, this::makeUser, userId);
     }
 
     @Override
@@ -100,10 +116,11 @@ public class UserDbStorage implements UserStorage {
         checkUsersIds(userId, friendId);
         String sql = "SELECT u.* " +
                 "FROM friendship f1 " +
-                "JOIN friendship f2 ON f1.friendUser_id = f2.friendUser_id " +
-                "JOIN \"user\" AS u ON f1.friendUser_id = u.user_id " +
-                "WHERE f1.user_id = ? AND f2.user_id = ?";
-        return jdbcTemplate.query(sql, this::makeUser, userId, friendId);
+                "JOIN friendship f2 ON f1.user_id = f2.user_id " +
+                "JOIN \"user\" AS u ON f1.user_id = u.user_id " +
+                "WHERE f1.friendUser_id = ? AND f2.friendUser_id = ?";
+        List<User> users = jdbcTemplate.query(sql, this::makeUser, userId, friendId);
+        return users;
     }
 
     private boolean checkUserInDb(Long id) {
@@ -134,6 +151,9 @@ public class UserDbStorage implements UserStorage {
         List<Long> friendIds = jdbcTemplate.queryForList(sql, Long.class, user.getId());
         Set<Long> friends = new HashSet<>(friendIds);
         user.setFriendsIds(friends);
+
+        //user.setFriendsIds(new HashSet<>(jdbcTemplate.query(sql,
+        //        (rs1, rowNum1) -> rs.getLong("friendUser_id"), user.getId())));
         return user;
     }
 

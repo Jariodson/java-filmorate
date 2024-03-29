@@ -17,9 +17,7 @@ import ru.yandex.practicum.filmorate.storage.dal.FilmStorage;
 
 import java.time.LocalDate;
 import java.util.Collection;
-import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -61,7 +59,7 @@ public class FilmServiceImpl implements FilmService {
         checkGenre(film.getGenres());
         filmStorage.addNewFilm(film);
         film.getMpa().setName(mpaService.getMpaNameById(film.getMpa().getId()));
-        for(Genre genre : film.getGenres()){
+        for (Genre genre : film.getGenres()) {
             genre.setName(genreService.getGenreNameById(genre.getId()));
         }
         return film;
@@ -110,27 +108,28 @@ public class FilmServiceImpl implements FilmService {
         }
     }
 
-    private void checkMpa(Long id){
+    private void checkMpa(Long id) {
         try {
             mpaService.getMpaById(id);
-        }catch (IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
             throw new NotFoundException("Рейтин с ID: " + id + " не найден!");
         }
     }
-    private void checkGenre(Set<Genre> genres){
-        for (Genre genre : genres){
+
+    private void checkGenre(Set<Genre> genres) {
+        for (Genre genre : genres) {
             try {
                 genreService.getGenreById(genre.getId());
-            }catch (IllegalArgumentException e){
+            } catch (IllegalArgumentException e) {
                 throw new NotFoundException("Жанр с ID: " + genre.getId() + " не найден!");
             }
         }
     }
 
-    private void checkFilmInDb(Long id){
+    private void checkFilmInDb(Long id) {
         try {
             filmStorage.getFilmById(id);
-        }catch (EmptyResultDataAccessException e){
+        } catch (EmptyResultDataAccessException e) {
             throw new IllegalArgumentException("Фильм с ID: " + id + " не найден!");
         }
     }

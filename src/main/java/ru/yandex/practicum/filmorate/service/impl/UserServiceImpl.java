@@ -10,7 +10,6 @@ import ru.yandex.practicum.filmorate.service.UserService;
 import ru.yandex.practicum.filmorate.storage.dal.UserStorage;
 
 import java.util.Collection;
-import java.util.List;
 
 @Service
 @Slf4j
