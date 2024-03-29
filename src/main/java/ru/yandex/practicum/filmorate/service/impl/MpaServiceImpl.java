@@ -11,6 +11,7 @@ import ru.yandex.practicum.filmorate.storage.dal.MpaDal;
 import java.util.Collection;
 
 @Service
+@Transactional
 public class MpaServiceImpl implements MpaService {
     private final MpaDal mpaDao;
 
@@ -20,20 +21,17 @@ public class MpaServiceImpl implements MpaService {
     }
 
     @Override
-    @Transactional
     public Collection<Mpa> getMpa() {
         return mpaDao.getMpa();
     }
 
     @Override
-    @Transactional
     public Mpa getMpaById(Long id) {
         checkMpaById(id);
         return mpaDao.getMpaById(id);
     }
 
     @Override
-    @Transactional
     public String getMpaNameById(Long id) {
         checkMpaById(id);
         return mpaDao.getMpaNameById(id);

@@ -19,40 +19,38 @@ import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Set;
 
-@Service
 @Slf4j
+@Service
+@Transactional
 public class FilmServiceImpl implements FilmService {
     private final FilmStorage filmStorage;
     private final MpaService mpaService;
     private final GenreService genreService;
 
     @Autowired
-    public FilmServiceImpl(@Qualifier("filmDbStorage") FilmStorage filmStorage, MpaService mpaService, GenreService genreService) {
+    public FilmServiceImpl(@Qualifier("filmDbStorage") FilmStorage filmStorage,
+                           MpaService mpaService, GenreService genreService) {
         this.filmStorage = filmStorage;
         this.mpaService = mpaService;
         this.genreService = genreService;
     }
 
     @Override
-    @Transactional
     public Collection<Film> getFilms() {
         return filmStorage.getAllFilms();
     }
 
     @Override
-    @Transactional
     public Film getFilmById(Long id) {
         return filmStorage.getFilmById(id);
     }
 
     @Override
-    @Transactional
     public Collection<Film> getFavouriteFilms(int count) {
         return filmStorage.getFavouriteFilms(count);
     }
 
     @Override
-    @Transactional
     public Film addFilm(Film film) {
         checkFilmCriteria(film);
         checkMpa(film.getMpa().getId());
@@ -66,13 +64,11 @@ public class FilmServiceImpl implements FilmService {
     }
 
     @Override
-    @Transactional
     public Film addLike(Long filmId, Long userId) {
         return filmStorage.addLike(filmId, userId);
     }
 
     @Override
-    @Transactional
     public Film updateFilm(Film film) {
         checkFilmInDb(film.getId());
         checkFilmCriteria(film);
@@ -83,7 +79,6 @@ public class FilmServiceImpl implements FilmService {
     }
 
     @Override
-    @Transactional
     public Film deleteFilm(Film film) {
         checkFilmInDb(film.getId());
         checkFilmCriteria(film);
@@ -94,7 +89,6 @@ public class FilmServiceImpl implements FilmService {
     }
 
     @Override
-    @Transactional
     public Film removeLike(Long filmId, Long userId) {
         return filmStorage.removeLike(filmId, userId);
     }
