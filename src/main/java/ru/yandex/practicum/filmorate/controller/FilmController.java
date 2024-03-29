@@ -42,7 +42,7 @@ public class FilmController {
             log.info("Вывод фильма с Id: {}", id);
             return film;
         }
-        throw new IllegalArgumentException("Введен неверные индефикатор! Id: " + id);
+        throw new IllegalArgumentException("Введен неверный индефикатор! Id: " + id);
     }
 
     @PostMapping
@@ -56,9 +56,9 @@ public class FilmController {
     @PutMapping
     public ResponseEntity<Film> updateFilm(@Valid @RequestBody Film film) {
         log.info("Получен запрос PUT на обновления фильма в списке");
-        filmService.updateFilm(film);
-        log.info("Обновленный фильм: {} добавлен в список. Размер списка: {}", film, filmService.getFilms().size());
-        return new ResponseEntity<>(film, HttpStatus.OK);
+        Film newFilm = filmService.updateFilm(film);
+        //log.info("Обновленный фильм: {} добавлен в список. Размер списка: {}", film, filmService.getFilms().size());
+        return new ResponseEntity<>(newFilm, HttpStatus.OK);
     }
 
     @DeleteMapping
