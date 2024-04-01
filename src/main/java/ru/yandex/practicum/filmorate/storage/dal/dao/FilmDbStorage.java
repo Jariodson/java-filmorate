@@ -169,15 +169,4 @@ public class FilmDbStorage implements FilmStorage {
                 .name(rs.getString("genre_name"))
                 .build();
     }
-
-    /*
-    private void checkFilmInDb(Film film) {
-        String sql = "SELECT COUNT(*) FROM film WHERE film_id = ?";
-        Integer count = jdbcTemplate.queryForObject(sql, Integer.class, film.getId());
-        if (count == null || count <= 0) {
-            throw new IllegalArgumentException("Неверный filmId: " + film.getId());
-        }
-    }
-
-     */
 }
