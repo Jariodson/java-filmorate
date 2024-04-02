@@ -99,7 +99,7 @@ public class UserServiceImpl implements UserService {
     private void checkUserInDb(Long id) {
         try {
             userStorage.getUserById(id);
-        }catch (EmptyResultDataAccessException e){
+        } catch (EmptyResultDataAccessException e) {
             throw new IllegalArgumentException("Пользователь с ID: " + id + " не найден!");
         }
     }

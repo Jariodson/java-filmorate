@@ -75,7 +75,6 @@ public class FilmDbStorage implements FilmStorage {
         parameters.put("mpa_id", film.getMpa().getId());
         Long id = jdbcInsert.executeAndReturnKey(parameters).longValue();
         film.setId(id);
-        //checkFilmInDb(film);
         if (!film.getGenres().isEmpty()) {
             for (Genre genre : film.getGenres()) {
                 jdbcTemplate.update("INSERT INTO genre_of_film (film_id, genre_id) VALUES (?, ?)",

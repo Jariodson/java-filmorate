@@ -57,7 +57,7 @@ public class FilmController {
     public ResponseEntity<Film> updateFilm(@Valid @RequestBody Film film) {
         log.info("Получен запрос PUT на обновления фильма в списке");
         Film newFilm = filmService.updateFilm(film);
-        //log.info("Обновленный фильм: {} добавлен в список. Размер списка: {}", film, filmService.getFilms().size());
+        log.info("Обновленный фильм: {} добавлен в список. Размер списка: {}", film, filmService.getFilms().size());
         return new ResponseEntity<>(newFilm, HttpStatus.OK);
     }
 
