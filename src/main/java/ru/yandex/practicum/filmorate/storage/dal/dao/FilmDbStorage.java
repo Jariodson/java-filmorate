@@ -109,6 +109,14 @@ public class FilmDbStorage implements FilmStorage {
         jdbcTemplate.update("DELETE FROM film WHERE film_id = ?", id);
     }
 
+    private Collection<Film> getFilmsByCount(int count) {
+        return jdbcTemplate.query("SELECT f.*, mpa.mpa_name, mpa.mpa_id " +
+                        "FROM film AS f " +
+                        "LEFT JOIN mpa ON mpa.mpa_id = f.mpa_id " +
+                        "LIMIT ?;",
+                this::makeFilm, count);
+    }
+
     @Override
     public Film addLike(Long filmId, Long userId) {
         String sql = "INSERT INTO \"like\" (film_id, user_id) VALUES (?, ?)";
