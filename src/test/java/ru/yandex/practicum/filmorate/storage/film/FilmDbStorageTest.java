@@ -127,7 +127,7 @@ class FilmDbStorageTest {
                 .build();
         filmStorage.addNewFilm(film1);
         assertThat(filmStorage.getFilmById(1L)).isNotNull();
-        filmStorage.deleteFilm(film1);
+        filmStorage.deleteFilm(film1.getId());
         assertThat(filmStorage.getAllFilms()).isNotNull().isEqualTo(Collections.EMPTY_LIST);
     }
 

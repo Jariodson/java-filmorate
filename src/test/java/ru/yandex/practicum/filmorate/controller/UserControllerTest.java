@@ -112,8 +112,8 @@ class UserControllerTest {
                 .login("alexSpring")
                 .birthday(LocalDate.parse("1998-03-25"))
                 .build();
-        when(userServiceImpl.removeUser(user1)).thenReturn(user1);
-        this.mockMvc.perform(delete("/users")
+        when(userServiceImpl.removeUser(user1.getId())).thenReturn(user1);
+        this.mockMvc.perform(delete("/users/1")
                         .content(objectMapper.writeValueAsString(user1))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
