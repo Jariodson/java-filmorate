@@ -48,9 +48,9 @@ public class FilmController {
     @PostMapping
     public ResponseEntity<Film> addFilm(@Valid @RequestBody Film film) {
         log.info("Получен запрос POST на добавление фильма в список");
-        filmService.addFilm(film);
+        Film newFilm = filmService.addFilm(film);
         log.info("Фильм добавлен в список: {}. Размер списка: {}", film, filmService.getFilms().size());
-        return new ResponseEntity<>(film, HttpStatus.CREATED);
+        return new ResponseEntity<>(newFilm, HttpStatus.CREATED);
     }
 
     @PutMapping
@@ -61,12 +61,15 @@ public class FilmController {
         return new ResponseEntity<>(newFilm, HttpStatus.OK);
     }
 
-    @DeleteMapping
-    public ResponseEntity<Film> deleteFilm(@Valid @RequestBody Film film) {
-        log.info("Получен запрос DELETE на удаление фильма");
-        filmService.deleteFilm(film);
-        log.info("Фильм удалён! {}", film);
-        return new ResponseEntity<>(film, HttpStatus.OK);
+    @DeleteMapping("{filmId}")
+    public ResponseEntity<Film> deleteFilm(@PathVariable(value = "filmId") Optional<Long> id) {
+        if (id.isPresent()) {
+            log.info("Получен запрос DELETE на удаление фильма");
+            Film film = filmService.deleteFilm(id.get());
+            log.info("Фильм c ID: {} удалён!", id);
+            return new ResponseEntity<>(film, HttpStatus.OK);
+        }
+        throw new IllegalArgumentException("Введён неверный индефикатор! Id: " + id);
     }
 
     @PutMapping("/{id}/like/{userId}")

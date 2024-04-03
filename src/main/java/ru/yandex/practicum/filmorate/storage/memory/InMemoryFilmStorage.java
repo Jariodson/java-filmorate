@@ -51,11 +51,11 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public void deleteFilm(Film film) {
-        if (!films.containsValue(film)) {
-            throw new IllegalArgumentException("Такого фильма не сушествует! Фильм:" + film);
+    public void deleteFilm(Long id) {
+        if (!films.containsKey(id)) {
+            throw new IllegalArgumentException("Такого фильма не сушествует! ID фильма:" + id);
         }
-        films.remove(film.getId());
+        films.remove(id);
     }
 
     @Override

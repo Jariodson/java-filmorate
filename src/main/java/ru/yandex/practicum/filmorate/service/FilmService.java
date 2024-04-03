@@ -17,7 +17,7 @@ public interface FilmService {
 
     Film updateFilm(Film film);
 
-    Film deleteFilm(Film film);
+    Film deleteFilm(Long id);
 
     Film removeLike(Long filmId, Long userId);
 }

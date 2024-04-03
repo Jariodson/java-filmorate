@@ -64,7 +64,7 @@ public class FilmServiceImpl implements FilmService {
         for (Genre genre : film.getGenres()) {
             genre.setName(genreService.getGenreNameById(genre.getId()));
         }
-        return film;
+        return filmStorage.getFilmById(film.getId());
     }
 
     @Override
@@ -85,13 +85,11 @@ public class FilmServiceImpl implements FilmService {
     }
 
     @Override
-    public Film deleteFilm(Film film) {
-        checkFilmInDb(film.getId());
-        checkFilmCriteria(film);
-        checkMpa(film.getMpa().getId());
-        checkGenre(film.getGenres());
-        filmStorage.deleteFilm(film);
-        return filmStorage.getFilmById(film.getId());
+    public Film deleteFilm(Long id) {
+        checkFilmInDb(id);
+        Film film = filmStorage.getFilmById(id);
+        filmStorage.deleteFilm(id);
+        return film;
     }
 
     @Override
