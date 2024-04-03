@@ -15,9 +15,9 @@ public interface FilmStorage {
 
     void deleteFilm(Long id);
 
-    Collection<Film> getFavouriteFilms(int count);
-
     Film addLike(Long filmId, Long userId);
 
     Film removeLike(Long filmId, Long userId);
+
+    Collection<Film> getMostPopularsFilms(Integer count, Long genreId, Integer year);
 }

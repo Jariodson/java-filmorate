@@ -59,11 +59,6 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public Collection<Film> getFavouriteFilms(int count) {
-        return null;
-    }
-
-    @Override
     public Film addLike(Long filmId, Long userId) {
         return null;
     }
@@ -73,10 +68,15 @@ public class InMemoryFilmStorage implements FilmStorage {
         return null;
     }
 
+    @Override
+    public Collection<Film> getMostPopularsFilms(Integer limit, Long genreId, Integer year) {
+        return null;
+    }
+
     private void checkFilmCriteria(Film film) {
         LocalDate filmBirthday = LocalDate.of(1895, 12, 28);
         if (film.getReleaseDate().isBefore(filmBirthday)) {
-            throw new ValidationException("Слшиком ранняя дата релиза! " + film.getReleaseDate());
+            throw new ValidationException("Слишком ранняя дата релиза! " + film.getReleaseDate());
         }
     }
 }

@@ -50,11 +50,6 @@ public class FilmServiceImpl implements FilmService {
     }
 
     @Override
-    public Collection<Film> getFavouriteFilms(int count) {
-        return filmStorage.getFavouriteFilms(count);
-    }
-
-    @Override
     public Film addFilm(Film film) {
         checkFilmCriteria(film);
         checkMpa(film.getMpa().getId());
@@ -97,6 +92,11 @@ public class FilmServiceImpl implements FilmService {
         checkFilmInDb(filmId);
         userService.findUserById(userId);
         return filmStorage.removeLike(filmId, userId);
+    }
+
+    @Override
+    public Collection<Film> getMostPopularsFilms(Integer count, Long genreId, Integer year) {
+        return filmStorage.getMostPopularsFilms(count, genreId, year);
     }
 
     private void checkFilmCriteria(Film film) {

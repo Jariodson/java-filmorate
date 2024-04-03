@@ -154,7 +154,7 @@ class FilmDbStorageTest {
 
         filmStorage.addLike(film1.getId(), newUser.getId());
 
-        Collection<Film> films = filmStorage.getFavouriteFilms(10);
+        Collection<Film> films = filmStorage.getMostPopularsFilms(10, null, null);
         assertThat(films).isNotNull();
     }
 

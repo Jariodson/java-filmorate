@@ -201,7 +201,7 @@ class FilmControllerTest {
         film1.setLikes(Set.of(1L));
         film2.setLikes(Set.of(2L, 1L));
 
-        when(controller.getFavouriteFilms(2)).thenReturn(List.of(film1, film2));
+        when(controller.getMostPopularsFilms(2, null, null)).thenReturn(List.of(film1, film2));
         this.mockMvc.perform(get("/films/popular?count=2"))
                 .andExpect(status().isOk())
                 .andDo(print());

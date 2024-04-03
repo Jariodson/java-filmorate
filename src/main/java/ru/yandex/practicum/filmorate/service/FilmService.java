@@ -3,13 +3,12 @@ package ru.yandex.practicum.filmorate.service;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.util.Collection;
+import java.util.Set;
 
 public interface FilmService {
     Collection<Film> getFilms();
 
     Film getFilmById(Long id);
-
-    Collection<Film> getFavouriteFilms(int count);
 
     Film addFilm(Film film);
 
@@ -20,4 +19,6 @@ public interface FilmService {
     Film deleteFilm(Long id);
 
     Film removeLike(Long filmId, Long userId);
+
+    Collection<Film> getMostPopularsFilms(Integer count, Long genreId, Integer year);
 }
