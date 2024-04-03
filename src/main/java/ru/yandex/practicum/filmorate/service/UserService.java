@@ -11,7 +11,7 @@ public interface UserService {
 
     User updateUser(User user);
 
-    User removeUser(User user);
+    User removeUser(Long id);
 
     Collection<User> getFriends(long userId);
 

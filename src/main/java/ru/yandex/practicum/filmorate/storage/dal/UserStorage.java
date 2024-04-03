@@ -13,7 +13,7 @@ public interface UserStorage {
 
     void updateUser(User user);
 
-    void deleteUser(User user);
+    void deleteUser(Long id);
 
     Collection<User> getFriends(long userId);
 

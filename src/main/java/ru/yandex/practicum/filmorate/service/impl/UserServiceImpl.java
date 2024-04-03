@@ -46,10 +46,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User removeUser(User user) {
-        checkUserCriteria(user);
-        checkUserInDb(user.getId());
-        userStorage.deleteUser(user);
+    public User removeUser(Long id) {
+        checkUserInDb(id);
+        User user = userStorage.getUserById(id);
+        userStorage.deleteUser(id);
         return user;
     }
 
