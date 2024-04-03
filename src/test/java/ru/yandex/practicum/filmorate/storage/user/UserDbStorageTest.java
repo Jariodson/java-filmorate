@@ -118,7 +118,7 @@ class UserDbStorageTest {
                 .build();
         userDbStorage.addNewUser(user1);
         assertThat(userDbStorage.getUserById(1L)).isNotNull();
-        userDbStorage.deleteUser(user1);
+        userDbStorage.deleteUser(user1.getId());
         assertThat(userDbStorage.getAllUsers()).isEqualTo(List.of());
     }
 

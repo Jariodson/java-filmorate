@@ -13,6 +13,7 @@ import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.service.GenreService;
 import ru.yandex.practicum.filmorate.service.MpaService;
+import ru.yandex.practicum.filmorate.service.UserService;
 import ru.yandex.practicum.filmorate.storage.dal.FilmStorage;
 
 import java.time.LocalDate;
@@ -24,13 +25,15 @@ import java.util.Set;
 @Transactional
 public class FilmServiceImpl implements FilmService {
     private final FilmStorage filmStorage;
+    private final UserService userService;
     private final MpaService mpaService;
     private final GenreService genreService;
 
     @Autowired
-    public FilmServiceImpl(@Qualifier("filmDbStorage") FilmStorage filmStorage,
+    public FilmServiceImpl(@Qualifier("filmDbStorage") FilmStorage filmStorage, UserService userService,
                            MpaService mpaService, GenreService genreService) {
         this.filmStorage = filmStorage;
+        this.userService = userService;
         this.mpaService = mpaService;
         this.genreService = genreService;
     }
@@ -42,6 +45,7 @@ public class FilmServiceImpl implements FilmService {
 
     @Override
     public Film getFilmById(Long id) {
+        checkFilmInDb(id);
         return filmStorage.getFilmById(id);
     }
 
@@ -60,11 +64,13 @@ public class FilmServiceImpl implements FilmService {
         for (Genre genre : film.getGenres()) {
             genre.setName(genreService.getGenreNameById(genre.getId()));
         }
-        return film;
+        return filmStorage.getFilmById(film.getId());
     }
 
     @Override
     public Film addLike(Long filmId, Long userId) {
+        checkFilmInDb(filmId);
+        userService.findUserById(userId);
         return filmStorage.addLike(filmId, userId);
     }
 
@@ -75,21 +81,21 @@ public class FilmServiceImpl implements FilmService {
         checkMpa(film.getMpa().getId());
         checkGenre(film.getGenres());
         filmStorage.updateFilm(film);
-        return film;
+        return filmStorage.getFilmById(film.getId());
     }
 
     @Override
-    public Film deleteFilm(Film film) {
-        checkFilmInDb(film.getId());
-        checkFilmCriteria(film);
-        checkMpa(film.getMpa().getId());
-        checkGenre(film.getGenres());
-        filmStorage.deleteFilm(film);
+    public Film deleteFilm(Long id) {
+        checkFilmInDb(id);
+        Film film = filmStorage.getFilmById(id);
+        filmStorage.deleteFilm(id);
         return film;
     }
 
     @Override
     public Film removeLike(Long filmId, Long userId) {
+        checkFilmInDb(filmId);
+        userService.findUserById(userId);
         return filmStorage.removeLike(filmId, userId);
     }
 

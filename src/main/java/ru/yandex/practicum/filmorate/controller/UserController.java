@@ -62,12 +62,15 @@ public class UserController {
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
-    @DeleteMapping
-    public ResponseEntity<User> deleteUser(@Valid @RequestBody User user) {
-        log.info("Получен запрос DELETE на удаление пользователя: {}", user.getId());
-        userService.removeUser(user);
-        log.info("Пользователя успешно удалён!");
-        return new ResponseEntity<>(user, HttpStatus.OK);
+    @DeleteMapping("/{userId}")
+    public ResponseEntity<User> deleteUser(@PathVariable(value = "userId") Optional<Long> id) {
+        if (id.isPresent()) {
+            log.info("Получен запрос DELETE на удаление пользователя: {}", id.get());
+            User user = userService.removeUser(id.get());
+            log.info("Пользователя c ID {} успешно удалён!", id.get());
+            return new ResponseEntity<>(user, HttpStatus.OK);
+        }
+        throw new IllegalArgumentException("Введён неверный индефикатор! Id: " + id);
     }
 
     @GetMapping("/{id}/friends")
