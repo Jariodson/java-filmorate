@@ -180,6 +180,11 @@ public class FilmDbStorage implements FilmStorage {
         return film;
     }
 
+    @Override
+    public Collection<Film> getFilmsByDirectorAndSort(Long directorId, String[] orderBy) {
+        return null;
+    }
+
     private Genre makeGenre(ResultSet rs, int rowNum) throws SQLException {
         return Genre.builder()
                 .id(rs.getLong("genre_id"))

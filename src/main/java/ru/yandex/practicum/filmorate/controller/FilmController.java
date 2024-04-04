@@ -106,4 +106,14 @@ public class FilmController {
         log.info("Вывод {} популярных фильмов", count);
         return films;
     }
+
+    @GetMapping("/films/director/{directorId}")
+    public Collection<Film> getFilmsByDirector(@PathVariable Long directorId,
+                                               @RequestParam(required = false) String[] sortBy) {
+        //@todo это тоже недопилено
+        log.info("Получен запрос GET на получение фильмов по режисёру!");
+        Collection<Film> films = filmService.getFilmsByDirectorAndSort(directorId, sortBy);
+        return films;
+    }
+
 }
