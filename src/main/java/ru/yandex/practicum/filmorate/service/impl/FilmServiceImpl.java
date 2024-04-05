@@ -17,7 +17,6 @@ import ru.yandex.practicum.filmorate.service.UserService;
 import ru.yandex.practicum.filmorate.storage.dal.FilmStorage;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Set;
 
@@ -101,24 +100,15 @@ public class FilmServiceImpl implements FilmService {
     }
 
     @Override
-    public  Collection<Film> getCommonFilms(Long userId, Long friendId) {
-        Collection<Film> films = new ArrayList<>();
-        filmStorage.getAllFilms().forEach(film -> {
-            if (filmStorage.getFilmById(film.getId()).getLikes().contains(userId)
-            && filmStorage.getFilmById(film.getId()).getLikes().contains(friendId))
-                films.add(film);
-            else {
-                log.info("отсутствуют общие фильмы");
-            }
-        });
-        return films;
+    public Collection<Film> getCommonFilms(Long userId, Long friendId) {
+        return filmStorage.getCommonFilms(userId, friendId);
     }
 
     private void checkFilmCriteria(Film film) {
         if (film.getReleaseDate() != null) {
             LocalDate filmBirthday = LocalDate.of(1895, 12, 28);
             if (film.getReleaseDate().isBefore(filmBirthday)) {
-                throw new ValidationException("Слшиком ранняя дата релиза! " + film.getReleaseDate());
+                throw new ValidationException("Слишком ранняя дата релиза! " + film.getReleaseDate());
             }
         }
     }

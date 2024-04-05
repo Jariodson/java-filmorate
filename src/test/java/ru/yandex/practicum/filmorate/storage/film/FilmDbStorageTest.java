@@ -11,11 +11,6 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.service.FilmService;
-import ru.yandex.practicum.filmorate.service.GenreService;
-import ru.yandex.practicum.filmorate.service.MpaService;
-import ru.yandex.practicum.filmorate.service.UserService;
-import ru.yandex.practicum.filmorate.service.impl.FilmServiceImpl;
 import ru.yandex.practicum.filmorate.storage.dal.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.dal.UserStorage;
 import ru.yandex.practicum.filmorate.storage.dal.dao.FilmDbStorage;
@@ -33,21 +28,13 @@ import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFOR
 class FilmDbStorageTest {
     @Autowired
     private JdbcTemplate jdbcTemplate;
-
     private FilmStorage filmStorage;
     private UserStorage userStorage;
-    private FilmService filmService;
-    private UserService userService;
-    private MpaService mpaService;
-    private GenreService genreService;
-
-
 
     @BeforeEach
     void beforeEach() {
         filmStorage = new FilmDbStorage(jdbcTemplate);
         userStorage = new UserDbStorage(jdbcTemplate);
-        filmService = new FilmServiceImpl(filmStorage, userService, mpaService, genreService);
     }
 
     @Test
@@ -254,7 +241,7 @@ class FilmDbStorageTest {
         userStorage.addNewUser(newUser1);
         filmStorage.addLike(1L,1L);
         filmStorage.addLike(1L,2L);
-        Collection<Film> savedFilmsCommon = filmService.getCommonFilms(1L,2L);
+        Collection<Film> savedFilmsCommon = filmStorage.getCommonFilms(1L,2L);
 
         assertThat(savedFilmsCommon)
                 .isNotNull()
