@@ -16,7 +16,6 @@ import ru.yandex.practicum.filmorate.service.GenreService;
 import ru.yandex.practicum.filmorate.service.MpaService;
 import ru.yandex.practicum.filmorate.service.UserService;
 import ru.yandex.practicum.filmorate.service.impl.FilmServiceImpl;
-import ru.yandex.practicum.filmorate.service.impl.UserServiceImpl;
 import ru.yandex.practicum.filmorate.storage.dal.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.dal.UserStorage;
 import ru.yandex.practicum.filmorate.storage.dal.dao.FilmDbStorage;
