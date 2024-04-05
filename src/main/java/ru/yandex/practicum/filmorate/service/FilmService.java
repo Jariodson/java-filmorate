@@ -10,6 +10,7 @@ public interface FilmService {
     Film getFilmById(Long id);
 
     Collection<Film> getFavouriteFilms(int count);
+
     Collection<Film> getFilmsByDirectorAndSort(Long directorId, String[] orderBy);
 
     Film addFilm(Film film);

@@ -4,9 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.model.Director;
-import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.storage.dal.DirectorDal;
-import ru.yandex.practicum.filmorate.storage.dal.GenreDal;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -37,13 +35,13 @@ public class DirectorDao implements DirectorDal {
     @Override
     public void addNewDirector(Director newDirector) {
         String sql = "INSERT INTO director (director_id, director_name) VALUES (?,?)";
-        jdbcTemplate.update(sql, newDirector.getName(),newDirector.getId());
+        jdbcTemplate.update(sql, newDirector.getName(), newDirector.getId());
     }
 
     @Override
     public void updateDirector(Director director) {
         String sql = "UPDATE director SET director_name = ? WHERE director_id = :?";
-        jdbcTemplate.update(sql, director.getName(),director.getId());
+        jdbcTemplate.update(sql, director.getName(), director.getId());
     }
 
     private Director makeDirector(ResultSet rs, int rowNum) throws SQLException {

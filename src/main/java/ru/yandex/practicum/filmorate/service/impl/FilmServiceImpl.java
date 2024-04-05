@@ -54,7 +54,10 @@ public class FilmServiceImpl implements FilmService {
         return filmStorage.getFavouriteFilms(count);
     }
 
-    public Collection<Film> getFilmsByDirectorAndSort(Long directorId, String[] orderBy) { return filmStorage.getFilmsByDirectorAndSort(directorId,orderBy);}
+    public Collection<Film> getFilmsByDirectorAndSort(Long directorId, String[] orderBy) {
+        return filmStorage.getFilmsByDirectorAndSort(directorId, orderBy);
+    }
+
     @Override
     public Film addFilm(Film film) {
         checkFilmCriteria(film);
