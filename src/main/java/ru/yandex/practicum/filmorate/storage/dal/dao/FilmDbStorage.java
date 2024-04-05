@@ -157,10 +157,10 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public Collection<Film> getCommonFilms(Long userId, Long friendId) {
-        String sql ="SELECT DISTINCT f.*, m.mpa_name FROM film f " +
+        String sql = "SELECT DISTINCT f.*, m.mpa_name FROM film f " +
                 "INNER JOIN mpa AS m ON m.mpa_id = f.mpa_id " +
-                "INNER JOIN (SELECT film_id FROM \"like\" WHERE user_id = ?) AS u1_likes" +
-                " ON f.film_id = u1_likes.film_id " +
+                "INNER JOIN (SELECT film_id FROM \"like\" WHERE user_id = ?) AS u1_likes " +
+                "ON f.film_id = u1_likes.film_id " +
                 "INNER JOIN (SELECT film_id FROM \"like\" WHERE user_id = ?) AS u2_likes " +
                 "ON f.film_id = u2_likes.film_id";
         String sqlGenre = "SELECT g.genre_id, g.genre_name FROM genre_of_film AS gf " +
