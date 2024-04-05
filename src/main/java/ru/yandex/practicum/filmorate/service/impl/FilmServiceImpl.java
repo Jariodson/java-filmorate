@@ -17,6 +17,7 @@ import ru.yandex.practicum.filmorate.service.UserService;
 import ru.yandex.practicum.filmorate.storage.dal.FilmStorage;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Set;
 
@@ -97,6 +98,20 @@ public class FilmServiceImpl implements FilmService {
         checkFilmInDb(filmId);
         userService.findUserById(userId);
         return filmStorage.removeLike(filmId, userId);
+    }
+
+    @Override
+    public  Collection<Film> getCommonFilms(Long userId, Long friendId) {
+        Collection<Film> films = new ArrayList<>();
+        filmStorage.getAllFilms().forEach(film -> {
+            if (filmStorage.getFilmById(film.getId()).getLikes().contains(userId)
+            && filmStorage.getFilmById(film.getId()).getLikes().contains(friendId))
+                films.add(film);
+            else {
+                log.info("отсутствуют общие фильмы");
+            }
+        });
+        return films;
     }
 
     private void checkFilmCriteria(Film film) {

@@ -20,4 +20,6 @@ public interface FilmService {
     Film deleteFilm(Long id);
 
     Film removeLike(Long filmId, Long userId);
+
+    Collection<Film> getCommonFilms(Long userId, Long friendId);
 }
