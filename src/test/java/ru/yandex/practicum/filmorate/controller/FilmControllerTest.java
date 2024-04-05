@@ -208,7 +208,7 @@ class FilmControllerTest {
     }
 
     @Test
-    void ShouldReturnCommonFilms() throws Exception {
+    void shouldReturnCommonFilms() throws Exception {
         Film film1 = Film.builder()
                 .id(1L)
                 .name("Aladdin")
