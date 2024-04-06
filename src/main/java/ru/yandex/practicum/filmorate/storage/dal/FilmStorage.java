@@ -20,4 +20,6 @@ public interface FilmStorage {
     Film addLike(Long filmId, Long userId);
 
     Film removeLike(Long filmId, Long userId);
+
+    Collection<Film> getCommonFilms(Long userId, Long friendId);
 }

@@ -17,9 +17,7 @@ import ru.yandex.practicum.filmorate.storage.dal.dao.FilmDbStorage;
 import ru.yandex.practicum.filmorate.storage.dal.dao.UserDbStorage;
 
 import java.time.LocalDate;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Set;
+import java.util.*;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD;
@@ -30,7 +28,6 @@ import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFOR
 class FilmDbStorageTest {
     @Autowired
     private JdbcTemplate jdbcTemplate;
-
     private FilmStorage filmStorage;
     private UserStorage userStorage;
 
@@ -209,5 +206,46 @@ class FilmDbStorageTest {
 
         Film film2 = filmStorage.removeLike(film.getId(), newUser.getId());
         assertThat(film2).isNotNull();
+    }
+
+    @Test
+    void getCommonFilms() {
+        Film film1 = Film.builder()
+                .name("Крестный отец")
+                .description("Итальянская мафия в США")
+                .releaseDate(LocalDate.of(1972, 3, 15))
+                .duration(175)
+                .mpa(Mpa.builder().id(5L).name("NC-17").build())
+                .genres(Set.of(Genre.builder().name("Боевик").id(6L).build(),
+                        Genre.builder().id(2L).name("Драма").build()))
+                .build();
+        film1.setLikes(Set.of(1L, 2L));
+        filmStorage.addNewFilm(film1);
+
+        Collection<Film> commonFilms = new ArrayList<>();
+        commonFilms.add(film1);
+
+        User newUser = User.builder()
+                .email("user@email.ru")
+                .name("Ivan Petrov")
+                .birthday(LocalDate.of(1990, 1, 1))
+                .login("vanya123")
+                .build();
+        userStorage.addNewUser(newUser);
+        User newUser1 = User.builder()
+                .email("user1@email.ru")
+                .name("Ivan1 Petrov1")
+                .birthday(LocalDate.of(1990, 1, 1))
+                .login("vanya1231")
+                .build();
+        userStorage.addNewUser(newUser1);
+        filmStorage.addLike(1L,1L);
+        filmStorage.addLike(1L,2L);
+        Collection<Film> savedFilmsCommon = filmStorage.getCommonFilms(1L,2L);
+
+        assertThat(savedFilmsCommon)
+                .isNotNull()
+                .usingRecursiveComparison()
+                .isEqualTo(commonFilms);
     }
 }

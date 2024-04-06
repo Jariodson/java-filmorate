@@ -155,6 +155,26 @@ public class FilmDbStorage implements FilmStorage {
         return getFilmById(filmId);
     }
 
+    @Override
+    public Collection<Film> getCommonFilms(Long userId, Long friendId) {
+        String sql = "SELECT DISTINCT f.*, m.mpa_name FROM film f " +
+                "INNER JOIN mpa AS m ON m.mpa_id = f.mpa_id " +
+                "INNER JOIN (SELECT film_id FROM \"like\" WHERE user_id = ?) AS u1_likes " +
+                "ON f.film_id = u1_likes.film_id " +
+                "INNER JOIN (SELECT film_id FROM \"like\" WHERE user_id = ?) AS u2_likes " +
+                "ON f.film_id = u2_likes.film_id";
+        String sqlGenre = "SELECT g.genre_id, g.genre_name FROM genre_of_film AS gf " +
+                "JOIN genre AS g ON g.genre_id = gf.genre_id " +
+                "WHERE gf.film_id = ? " +
+                "ORDER BY g.genre_id";
+        Collection<Film> films = jdbcTemplate.query(sql, this::makeFilm, userId, friendId);
+        for (Film film : films) {
+            List<Genre> genres = jdbcTemplate.query(sqlGenre, this::makeGenre, film.getId());
+            film.setGenres(new HashSet<>(genres));
+        }
+        return films;
+    }
+
     private Film makeFilm(ResultSet rs, int rowNum) throws SQLException {
         Film film = Film.builder()
                 .id(rs.getLong("film_id"))
