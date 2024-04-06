@@ -101,6 +101,8 @@ public class FilmServiceImpl implements FilmService {
 
     @Override
     public Collection<Film> getCommonFilms(Long userId, Long friendId) {
+        userService.findUserById(userId);
+        userService.findUserById(friendId);
         return filmStorage.getCommonFilms(userId, friendId);
     }
 
