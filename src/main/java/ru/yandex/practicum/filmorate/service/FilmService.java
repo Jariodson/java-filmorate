@@ -22,4 +22,6 @@ public interface FilmService {
     Film createLike(Long filmId, Long userId);
 
     Film removeLike(Long filmId, Long userId);
+
+    Collection<Film> getCommonFilms(Long userId, Long friendId);
 }

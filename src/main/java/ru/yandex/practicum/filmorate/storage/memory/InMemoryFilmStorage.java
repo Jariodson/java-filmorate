@@ -69,10 +69,15 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
 
+    @Override
+    public Collection<Film> getCommonFilms(Long userId, Long friendId) {
+        return null;
+    }
+
     private void checkFilmCriteria(Film film) {
         LocalDate filmBirthday = LocalDate.of(1895, 12, 28);
         if (film.getReleaseDate().isBefore(filmBirthday)) {
-            throw new ValidationException("Слшиком ранняя дата релиза! " + film.getReleaseDate());
+            throw new ValidationException("Слишком ранняя дата релиза! " + film.getReleaseDate());
         }
     }
 }

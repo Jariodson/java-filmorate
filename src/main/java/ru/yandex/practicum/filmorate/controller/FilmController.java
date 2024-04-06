@@ -107,4 +107,12 @@ public class FilmController {
         return films;
     }
 
+
+    @GetMapping("/common")
+    @ResponseStatus(HttpStatus.OK)
+    public Collection<Film> getCommonFilms(@RequestParam Long userId,
+                                           @RequestParam Long friendId) {
+        log.info("Получен запрос GET для общих фильмов с другом по популярности");
+        return filmService.getCommonFilms(userId, friendId);
+    }
 }

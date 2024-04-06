@@ -17,9 +17,7 @@ import ru.yandex.practicum.filmorate.storage.dal.dao.FilmDbStorage;
 import ru.yandex.practicum.filmorate.storage.dal.dao.UserDbStorage;
 
 import java.time.LocalDate;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Set;
+import java.util.*;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD;
@@ -30,7 +28,6 @@ import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFOR
 class FilmDbStorageTest {
     @Autowired
     private JdbcTemplate jdbcTemplate;
-
     private FilmStorage filmStorage;
     private UserStorage userStorage;
 
