@@ -1,15 +1,11 @@
 package ru.yandex.practicum.filmorate.storage.dal.dao;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.storage.dal.GenreDal;
 import ru.yandex.practicum.filmorate.storage.dal.LikeDal;
 
 import java.util.Collection;
-import java.util.Set;
 
 @Repository
 @Slf4j
