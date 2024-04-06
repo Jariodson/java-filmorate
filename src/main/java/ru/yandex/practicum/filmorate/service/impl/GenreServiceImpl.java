@@ -45,4 +45,14 @@ public class GenreServiceImpl implements GenreService {
             throw new IllegalArgumentException("Жанр с ID: " + id + " не найден!");
         }
     }
+
+    public Collection<Genre> getFilmsGenre(Long id){
+        return genreDao.getFilmGenre(id);
+
+    }
+
+    @Override
+    public void addFilmsGenre(Long userId,Collection<Genre> genres) {
+        genreDao.addFilmsGenre(userId, genres);
+    }
 }
