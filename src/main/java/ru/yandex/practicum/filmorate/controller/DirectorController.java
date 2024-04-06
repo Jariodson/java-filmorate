@@ -29,7 +29,7 @@ public class DirectorController {
     @ResponseStatus(HttpStatus.OK)
     public Collection<Director> getAllDirectors() {
         log.debug("Получен запрос GET на получение списка всех режисёров");
-        Collection<Director> directors = directorService.getAllDirectors();
+        Collection<Director> directors = directorService.getDirectors();
         log.debug("Вывод фильмов. Размер списка режисёров: {}", directors.size());
         return directors;
     }
@@ -48,7 +48,7 @@ public class DirectorController {
     public Director addNewDirector(@Validated(WithoutParent.class)
                                                    @RequestBody Director director) {
         log.debug("Получен запрос POST на добавление режисёра");
-        directorService.addNewDirector(director);
+        directorService.createDirector(director);
         log.debug("Вывод режисёра. ID режисёра: {}", director.getId());
         return director;
     }

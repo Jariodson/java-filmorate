@@ -21,5 +21,5 @@ public interface UserService {
 
     Collection<User> getCommonFriends(long userId, long friendId);
 
-    User findUserById(long id);
+    User getUserById(long id);
 }

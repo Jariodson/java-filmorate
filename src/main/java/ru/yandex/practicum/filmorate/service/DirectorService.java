@@ -2,20 +2,19 @@ package ru.yandex.practicum.filmorate.service;
 
 import ru.yandex.practicum.filmorate.model.Director;
 
-import java.util.ArrayList;
 import java.util.Collection;
 
 public interface DirectorService {
 
-    Collection<Director> getAllDirectors();
+    Collection<Director> getDirectors();
 
     Director getDirectorById(Long id);
 
-    void addNewDirector(Director director);
+    Director createDirector(Director director);
 
-    void updateDirector(Director director);
+    Director updateDirector(Director director);
 
-    void addFilmsDirector(Long id, Collection<Director> directors);
+    void addFilmDirectors(Long id, Collection<Director> directors);
     void deleteDirector(Long id);
 
     Collection<Director> getFilmsDirector(Long id);

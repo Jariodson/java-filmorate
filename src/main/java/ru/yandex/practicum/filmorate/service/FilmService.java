@@ -9,17 +9,17 @@ public interface FilmService {
 
     Film getFilmById(Long id);
 
-    Collection<Film> getFavouriteFilms(int count);
+    Collection<Film> getFavoriteFilms(int count);
 
-    Collection<Film> getFilmsByDirectorAndSort(Long directorId, String[] orderBy);
+    Collection<Film> getDirectorFilmsSorted(Long directorId, String[] orderBy);
 
-    Film addFilm(Film film);
-
-    Film addLike(Long filmId, Long userId);
+    Film createFilm(Film film);
 
     Film updateFilm(Film film);
 
-    Film deleteFilm(Long id);
+    Film removeFilm(Long id);
+
+    Film createLike(Long filmId, Long userId);
 
     Film removeLike(Long filmId, Long userId);
 }

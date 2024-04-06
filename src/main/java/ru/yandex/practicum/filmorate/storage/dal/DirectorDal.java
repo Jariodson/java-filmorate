@@ -9,9 +9,9 @@ public interface DirectorDal {
 
     Director getDirectorById(Long id);
 
-    void addNewDirector(Director newDirector);
+    Director addNewDirector(Director newDirector);
 
-    void updateDirector(Director director);
+    Director updateDirector(Director director);
 
     void addFilmsDirector(Long id, Collection<Director> directors);
 

@@ -7,18 +7,14 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
-import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.service.*;
 import ru.yandex.practicum.filmorate.storage.dal.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.dal.LikeDal;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
+
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 
 @Slf4j
 @Service
@@ -48,57 +44,69 @@ public class FilmServiceImpl implements FilmService {
 
     @Override
     public Collection<Film> getFilms() {
-        return filmStorage.getAllFilms();
+        Collection<Film> films =  filmStorage.getAllFilms();
+        for (Film film: films){
+            long id =film.getId();
+            film.setMpa(mpaService.getMpaById(id));
+            film.setGenres( genreService.getFilmsGenre(id));
+            film.setDirectors(directorService.getFilmsDirector(id));
+        }
+        return films;
     }
 
     public Film getFilmById(Long id) {
         checkFilmInDb(id);
-        var film = filmStorage.getFilmById(id);
-        film.getMpa().setName(mpaService.getMpaNameById(film.getMpa().getId()));
+        Film film = filmStorage.getFilmById(id);
+        film.setMpa(mpaService.getMpaById(film.getMpa().getId()));
         film.setGenres( genreService.getFilmsGenre(id));
         film.setDirectors(directorService.getFilmsDirector(id));
         return film;
     }
 
     @Override
-    public Collection<Film> getFavouriteFilms(int count) {
-        return filmStorage.getFavouriteFilms(count);
+    public Collection<Film> getFavoriteFilms(int count) {
+        Collection<Film> films =  filmStorage.getFavouriteFilms(count);
+        for (Film film: films){
+            long id =film.getId();
+            film.setMpa(mpaService.getMpaById(id));
+            film.setGenres( genreService.getFilmsGenre(id));
+            film.setDirectors(directorService.getFilmsDirector(id));
+        }
+        return films;
     }
 
-    public Collection<Film> getFilmsByDirectorAndSort(Long directorId, String[] orderBy) {
-        return filmStorage.getFilmsByDirectorAndSort(directorId, orderBy);
+    public Collection<Film> getDirectorFilmsSorted(Long directorId, String[] orderBy) {
+        Collection<Film> films =  filmStorage.getFilmsByDirectorAndSort(directorId,orderBy);
+        for (Film film: films){
+            long id =film.getId();
+            film.setMpa(mpaService.getMpaById(id));
+            film.setGenres( genreService.getFilmsGenre(id));
+            film.setDirectors(directorService.getFilmsDirector(id));
+        }
+        return films;
     }
 
     @Override
-    public Film addFilm(Film film) {
-        checkFilmCriteria(film);
+    public Film createFilm(Film film) {
         checkMpa(film.getMpa().getId());
         checkGenre(film.getGenres());
+
         filmStorage.addNewFilm(film);
         long filmId = film.getId();
-            genreService.addFilmsGenre(filmId,film.getGenres());
-
-        if (film.getDirectors()!=null){
-            directorService.addFilmsDirector(filmId, film.getDirectors());
+        if (film.getGenres()!=null) {
+            genreService.addFilmsGenre(filmId, film.getGenres());
         }
-
+        if (film.getDirectors()!=null){
+            directorService.addFilmDirectors(filmId, film.getDirectors());
+        }
         return getFilmById(film.getId());
     }
 
-    @Override
-    public Film addLike(Long filmId, Long userId) {
-        checkFilmInDb(filmId);
-        userService.findUserById(userId);
 
-        likeStorage.addLike(filmId, userId);
-
-        return  getFilmById(filmId);
-    }
 
     @Override
     public Film updateFilm(Film film) {
         checkFilmInDb(film.getId());
-        checkFilmCriteria(film);
         checkMpa(film.getMpa().getId());
         checkGenre(film.getGenres());
         filmStorage.updateFilm(film);
@@ -106,29 +114,26 @@ public class FilmServiceImpl implements FilmService {
     }
 
     @Override
-    public Film deleteFilm(Long id) {
+    public Film removeFilm(Long id) {
         checkFilmInDb(id);
         Film film = filmStorage.getFilmById(id);
         filmStorage.deleteFilm(id);
         return film;
     }
-
+    @Override
+    public Film createLike(Long filmId, Long userId) {
+        checkFilmInDb(filmId);
+        checkUserInDb(userId);
+        likeStorage.addLike(filmId, userId);
+        return  getFilmById(filmId);
+    }
     @Override
     public Film removeLike(Long filmId, Long userId) {
         checkFilmInDb(filmId);
-        userService.findUserById(userId);
+        checkUserInDb(userId);
         likeStorage.removeLike(filmId, userId);
 
         return  getFilmById(filmId);
-    }
-
-    private void checkFilmCriteria(Film film) {
-        if (film.getReleaseDate() != null) {
-            LocalDate filmBirthday = LocalDate.of(1895, 12, 28);
-            if (film.getReleaseDate().isBefore(filmBirthday)) {
-                throw new ValidationException("Слшиком ранняя дата релиза! " + film.getReleaseDate());
-            }
-        }
     }
 
     private void checkMpa(Long id) {
@@ -152,6 +157,13 @@ public class FilmServiceImpl implements FilmService {
     private void checkFilmInDb(Long id) {
         try {
             filmStorage.getFilmById(id);
+        } catch (EmptyResultDataAccessException e) {
+            throw new IllegalArgumentException("Фильм с ID: " + id + " не найден!");
+        }
+    }
+    private void checkUserInDb(Long id) {
+        try {
+            userService.getUserById(id);
         } catch (EmptyResultDataAccessException e) {
             throw new IllegalArgumentException("Фильм с ID: " + id + " не найден!");
         }

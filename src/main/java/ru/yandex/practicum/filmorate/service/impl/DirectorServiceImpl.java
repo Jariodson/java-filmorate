@@ -19,7 +19,7 @@ public class DirectorServiceImpl implements DirectorService {
     }
 
     @Override
-    public Collection<Director> getAllDirectors() {
+    public Collection<Director> getDirectors() {
         return directorStorage.getAllDirectors();
     }
 
@@ -34,19 +34,18 @@ public class DirectorServiceImpl implements DirectorService {
     }
 
     @Override
-    public void addNewDirector(Director director) {
-        directorStorage.addNewDirector(director);
+    public Director createDirector(Director director) {
+        return directorStorage.addNewDirector(director);
     }
 
     @Override
-    public void addFilmsDirector(Long id, Collection<Director> directors) {
+    public void addFilmDirectors(Long id, Collection<Director> directors) {
         directorStorage.addFilmsDirector(id, directors);
     }
 
     @Override
-    public void updateDirector(Director director) {
-        directorStorage.updateDirector(director);
-        director = getDirectorById(director.getId());
+    public Director updateDirector(Director director) {
+        return directorStorage.updateDirector(director);
     }
 
     @Override

@@ -27,7 +27,7 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public void makeReview(Review review) {
+    public void createReview(Review review) {
         checkReview(review);
         reviewDao.makeReview(review);
     }
@@ -75,7 +75,7 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     public Review postLike(Long id, Long userId) {
-        userService.findUserById(userId);
+        userService.getUserById(userId);
         reviewDao.postLike(id, userId);
         return reviewDao.getReviewById(id);
     }
@@ -99,7 +99,7 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     private void checkReview(Review review) {
-        userService.findUserById(review.getUserId());
+        userService.getUserById(review.getUserId());
         filmService.getFilmById(review.getFilmId());
         if (review.getUserId() <= 0 || review.getFilmId() <= 0) {
             throw new IllegalArgumentException("ID не может быть отрицательным или равняться 0!");

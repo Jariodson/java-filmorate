@@ -36,7 +36,7 @@ public class UserController {
     @ResponseStatus(HttpStatus.OK)
     public User getUserById(@NotNull @PathVariable Long id) {
         log.debug("Получен запрос GET на получение пользователя с ID: {}", id);
-        User user = userService.findUserById(id);
+        User user = userService.getUserById(id);
         log.debug("Вывод пользоваля с Id: {}", id);
         return user;
     }

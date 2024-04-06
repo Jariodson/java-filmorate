@@ -27,7 +27,7 @@ public class ReviewController {
     @PostMapping
     public ResponseEntity<Review> makeReview(@Valid @RequestBody Review review) {
         log.debug("Получен запрос POST на добовление нового отзыва");
-        reviewService.makeReview(review);
+        reviewService.createReview(review);
         System.out.println(review);
         log.debug("Отзыв сохранён!");
         return new ResponseEntity<>(review, HttpStatus.CREATED);

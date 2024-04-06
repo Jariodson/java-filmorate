@@ -4,11 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.model.Director;
-import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.storage.dal.DirectorDal;
 
 import java.sql.ResultSet;
@@ -44,7 +42,7 @@ public class DirectorDao implements DirectorDal {
     }
 
     @Override
-    public void addNewDirector(Director newDirector) {
+    public Director addNewDirector(Director newDirector) {
         try {
             SimpleJdbcInsert jdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
                     .withTableName("director")
@@ -55,16 +53,18 @@ public class DirectorDao implements DirectorDal {
             Number newDirectorId = jdbcInsert.executeAndReturnKey(parameters);
 
             newDirector.setId(newDirectorId.longValue());
+            return newDirector;
         } catch (DataAccessException e) {
             throw new RuntimeException("Failed to add new director", e);
         }
     }
 
     @Override
-    public void updateDirector(Director director) {
+    public Director updateDirector(Director director) {
         try {
             String sql = "UPDATE director SET director_name = ? WHERE director_id = ?";
             jdbcTemplate.update(sql, director.getName(), director.getId());
+            return director;
         } catch (EmptyResultDataAccessException e) {
             throw new IllegalArgumentException("Director with ID: " + director.getId() + " not found!");
         }
@@ -96,8 +96,7 @@ public class DirectorDao implements DirectorDal {
     public Collection<Director> getFilmsDirector(Long filmId) {
         try {
             String sql = "SELECT g.director_id, g.director_name FROM director_of_film f LEFT JOIN director g ON g.director_id = f.director_id WHERE f.FILM_ID = ?";
-            Collection<Director> genres = jdbcTemplate.query(sql, this::makeDirector, filmId);
-            return genres;
+            return jdbcTemplate.query(sql, this::makeDirector, filmId);
         } catch (EmptyResultDataAccessException e) {
             throw new IllegalArgumentException("Фильм с не найден!");
         }

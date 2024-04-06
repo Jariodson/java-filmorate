@@ -25,7 +25,7 @@ public class MpaController {
     @ResponseStatus(HttpStatus.OK)
     public Collection<Mpa> getGenres() {
         log.debug("Получен запрос GET на вывод всех рейтингов");
-        Collection<Mpa> mpaCollection = mpaService.getMpa();
+        Collection<Mpa> mpaCollection = mpaService.getMpas();
         log.debug("Вывод списка всех рейтингов. Размер списка: {}", mpaCollection.size());
         return mpaCollection;
     }
