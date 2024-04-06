@@ -5,12 +5,18 @@ import ru.yandex.practicum.filmorate.model.Director;
 import java.util.Collection;
 
 public interface DirectorDal {
-    public Collection<Director> getAllDirectors();
+    Collection<Director> getAllDirectors();
 
-    public Director getDirectorById(Long id);
+    Director getDirectorById(Long id);
 
-    public void addNewDirector(Director newDirector);
+    void addNewDirector(Director newDirector);
 
-    public void updateDirector(Director director);
+    void updateDirector(Director director);
 
+    void addFilmsDirector(Long id, Collection<Director> directors);
+
+
+    Collection<Director> getFilmsDirector(Long filmId);
+
+    void deleteDirector(Long id);
 }

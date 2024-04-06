@@ -35,21 +35,26 @@ public class DirectorController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> addNewDirector(@RequestBody Director director) {
+    public ResponseEntity<Director> addNewDirector(@RequestBody Director director) {
+        if (director.getName().isBlank()) {
+            return ResponseEntity.badRequest().build();
+        }
         directorService.addNewDirector(director);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return new ResponseEntity<>(director, HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Void> updateDirector(@PathVariable Long id, @RequestBody Director director) {
-        director.setId(id); // Устанавливаем id режиссёра, который нужно обновить
+    @PutMapping
+    public ResponseEntity<Director> updateDirector(@RequestBody Director director) {
+        if (director.getName().isBlank()) {
+            return ResponseEntity.badRequest().build();
+        }
         directorService.updateDirector(director);
-        return ResponseEntity.ok().build();
+        return new ResponseEntity<>(director, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteDirector(@PathVariable Long id) {
-        //@todo удаление надо сделать
+        directorService.deleteDirector(id);
         return ResponseEntity.ok().build();
     }
 }
