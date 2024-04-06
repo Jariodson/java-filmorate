@@ -7,13 +7,12 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.service.MpaService;
 
+import javax.validation.constraints.NotNull;
 import java.util.Collection;
-import java.util.Optional;
 
 @Slf4j
 @RestController
 @RequestMapping("/mpa")
-@ResponseStatus(HttpStatus.NOT_FOUND)
 public class MpaController {
     private final MpaService mpaService;
 
@@ -25,21 +24,20 @@ public class MpaController {
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public Collection<Mpa> getGenres() {
-        log.info("Получен запрос GET на вывод всех рейтингов");
+        log.debug("Получен запрос GET на вывод всех рейтингов");
         Collection<Mpa> mpaCollection = mpaService.getMpa();
-        log.info("Вывод списка всех рейтингов. Размер списка: {}", mpaCollection.size());
+        log.debug("Вывод списка всех рейтингов. Размер списка: {}", mpaCollection.size());
         return mpaCollection;
     }
 
     @GetMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public Mpa getGenreById(@PathVariable Optional<Long> id) {
-        log.info("Получен запрос GET на получение рейтинга по ID: {}", id);
-        if (id.isPresent()) {
-            Mpa mpa = mpaService.getMpaById(id.get());
-            log.info("Вывод рейтинга с Id: {}", id);
+    public Mpa getGenreById(@NotNull @PathVariable Long id) {
+        log.debug("Получен запрос GET на получение рейтинга по ID: {}", id);
+
+            Mpa mpa = mpaService.getMpaById(id);
+            log.debug("Вывод рейтинга с Id: {}", id);
             return mpa;
-        }
-        throw new IllegalArgumentException("Введен неверный индефикатор! Id: " + id);
+
     }
 }
