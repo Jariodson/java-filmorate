@@ -14,6 +14,7 @@ public interface DirectorService {
     Director updateDirector(Director director);
 
     void addFilmDirectors(Long id, Collection<Director> directors);
+
     void deleteDirector(Long id);
 
     Collection<Director> getFilmsDirector(Long id);
