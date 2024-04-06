@@ -68,15 +68,6 @@ public class InMemoryFilmStorage implements FilmStorage {
         return null;
     }
 
-    @Override
-    public Film addLike(Long filmId, Long userId) {
-        return null;
-    }
-
-    @Override
-    public Film removeLike(Long filmId, Long userId) {
-        return null;
-    }
 
     private void checkFilmCriteria(Film film) {
         LocalDate filmBirthday = LocalDate.of(1895, 12, 28);
