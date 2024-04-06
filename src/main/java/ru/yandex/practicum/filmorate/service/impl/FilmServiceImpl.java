@@ -10,14 +10,14 @@ import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
-import ru.yandex.practicum.filmorate.service.FilmService;
-import ru.yandex.practicum.filmorate.service.GenreService;
-import ru.yandex.practicum.filmorate.service.MpaService;
-import ru.yandex.practicum.filmorate.service.UserService;
+import ru.yandex.practicum.filmorate.service.*;
 import ru.yandex.practicum.filmorate.storage.dal.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.dal.LikeDal;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 
 @Slf4j
@@ -25,28 +25,39 @@ import java.util.Set;
 @Transactional
 public class FilmServiceImpl implements FilmService {
     private final FilmStorage filmStorage;
+
+    private final LikeDal likeStorage;
     private final UserService userService;
     private final MpaService mpaService;
     private final GenreService genreService;
 
+    private final DirectorService directorService;
+
     @Autowired
-    public FilmServiceImpl(@Qualifier("filmDbStorage") FilmStorage filmStorage, UserService userService,
-                           MpaService mpaService, GenreService genreService) {
+    public FilmServiceImpl(@Qualifier("filmDbStorage") FilmStorage filmStorage, LikeDal likeStorage, UserService userService,
+                           MpaService mpaService, GenreService genreService, DirectorService directorService) {
         this.filmStorage = filmStorage;
+        this.likeStorage = likeStorage;
         this.userService = userService;
         this.mpaService = mpaService;
         this.genreService = genreService;
+        this.directorService = directorService;
     }
+
+
 
     @Override
     public Collection<Film> getFilms() {
         return filmStorage.getAllFilms();
     }
 
-    @Override
     public Film getFilmById(Long id) {
         checkFilmInDb(id);
-        return filmStorage.getFilmById(id);
+        var film = filmStorage.getFilmById(id);
+        film.getMpa().setName(mpaService.getMpaNameById(film.getMpa().getId()));
+        film.setGenres( genreService.getFilmsGenre(id));
+        film.setDirectors(directorService.getFilmsDirector(id));
+        return film;
     }
 
     @Override
@@ -64,18 +75,24 @@ public class FilmServiceImpl implements FilmService {
         checkMpa(film.getMpa().getId());
         checkGenre(film.getGenres());
         filmStorage.addNewFilm(film);
-        film.getMpa().setName(mpaService.getMpaNameById(film.getMpa().getId()));
-        for (Genre genre : film.getGenres()) {
-            genre.setName(genreService.getGenreNameById(genre.getId()));
+        long filmId = film.getId();
+            genreService.addFilmsGenre(filmId,film.getGenres());
+
+        if (film.getDirectors()!=null){
+            directorService.addFilmsDirector(filmId, film.getDirectors());
         }
-        return filmStorage.getFilmById(film.getId());
+
+        return getFilmById(film.getId());
     }
 
     @Override
     public Film addLike(Long filmId, Long userId) {
         checkFilmInDb(filmId);
         userService.findUserById(userId);
-        return filmStorage.addLike(filmId, userId);
+
+        likeStorage.addLike(filmId, userId);
+
+        return  getFilmById(filmId);
     }
 
     @Override
@@ -85,7 +102,7 @@ public class FilmServiceImpl implements FilmService {
         checkMpa(film.getMpa().getId());
         checkGenre(film.getGenres());
         filmStorage.updateFilm(film);
-        return filmStorage.getFilmById(film.getId());
+        return getFilmById(film.getId());
     }
 
     @Override
@@ -100,7 +117,9 @@ public class FilmServiceImpl implements FilmService {
     public Film removeLike(Long filmId, Long userId) {
         checkFilmInDb(filmId);
         userService.findUserById(userId);
-        return filmStorage.removeLike(filmId, userId);
+        likeStorage.removeLike(filmId, userId);
+
+        return  getFilmById(filmId);
     }
 
     private void checkFilmCriteria(Film film) {
@@ -120,7 +139,7 @@ public class FilmServiceImpl implements FilmService {
         }
     }
 
-    private void checkGenre(Set<Genre> genres) {
+    private void checkGenre(Collection<Genre> genres) {
         for (Genre genre : genres) {
             try {
                 genreService.getGenreById(genre.getId());

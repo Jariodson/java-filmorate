@@ -29,13 +29,28 @@ public class DirectorServiceImpl implements DirectorService {
     }
 
     @Override
+    public Collection<Director> getFilmsDirector(Long id) {
+        return directorStorage.getFilmsDirector(id);
+    }
+
+    @Override
     public void addNewDirector(Director director) {
         directorStorage.addNewDirector(director);
     }
 
     @Override
-    public void updateDirector(Director director) {
-        directorStorage.updateDirector(director);
+    public void addFilmsDirector(Long id, Collection<Director> directors) {
+        directorStorage.addFilmsDirector(id, directors);
     }
 
+    @Override
+    public void updateDirector(Director director) {
+        directorStorage.updateDirector(director);
+        director = getDirectorById(director.getId());
+    }
+
+    @Override
+    public void deleteDirector(Long id) {
+        directorStorage.deleteDirector(id);
+    }
 }

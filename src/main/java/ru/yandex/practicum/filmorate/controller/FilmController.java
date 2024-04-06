@@ -29,6 +29,9 @@ public class FilmController {
     public Collection<Film> getFilms() {
         log.info("Получен запрос GET на получение списка всех фильмов");
         Collection<Film> films = filmService.getFilms();
+        for (Film film: films){
+
+        }
         log.info("Вывод фильмов. Размер списка фильмов: {}", films.size());
         return films;
     }
@@ -107,10 +110,10 @@ public class FilmController {
         return films;
     }
 
-    @GetMapping("/films/director/{directorId}")
+    @GetMapping("/director/{directorId}")
     public Collection<Film> getFilmsByDirector(@PathVariable Long directorId,
                                                @RequestParam(required = false) String[] sortBy) {
-        //@todo это тоже недопилено
+
         log.info("Получен запрос GET на получение фильмов по режисёру!");
         Collection<Film> films = filmService.getFilmsByDirectorAndSort(directorId, sortBy);
         return films;

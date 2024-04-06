@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.storage.dal.dao;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
@@ -28,36 +29,19 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public Collection<Film> getAllFilms() {
-        List<Film> films = jdbcTemplate.query("SELECT f.*, m.mpa_name, f.mpa_id, " +
+        List<Film> films = jdbcTemplate.query("SELECT f.*, m.mpa_name, f.mpa_id " +
                 "FROM film AS f " +
                 "JOIN mpa AS m ON m.mpa_id = f.mpa_id", this::makeFilm);
-
-        String sql = "SELECT g.genre_id, g.genre_name FROM genre_of_film AS gf " +
-                "JOIN genre AS g ON g.genre_id = gf.genre_id " +
-                "WHERE gf.film_id = ? " +
-                "ORDER BY g.genre_id";
-        for (Film film : films) {
-            List<Genre> genres = jdbcTemplate.query(sql, this::makeGenre, film.getId());
-            film.setGenres(new HashSet<>(genres));
-        }
         return films;
     }
 
     @Override
     public Film getFilmById(Long id) {
-        Film film = jdbcTemplate.queryForObject("SELECT f.*, mpa.mpa_name, mpa.mpa_id " +
+        Film film = jdbcTemplate.queryForObject("SELECT f.*, mpa.mpa_name " +
                         "FROM film AS f " +
                         "LEFT JOIN mpa ON mpa.mpa_id = f.mpa_id " +
                         "WHERE film_id=?",
                 this::makeFilm, id);
-        String sql = "SELECT g.genre_id, g.genre_name FROM genre AS g " +
-                "JOIN genre_of_film AS gf ON g.genre_id = gf.genre_id " +
-                "WHERE gf.film_id = ? " +
-                "ORDER BY g.genre_id";
-        if (film != null) {
-            List<Genre> genres = jdbcTemplate.query(sql, this::makeGenre, film.getId());
-            film.setGenres(new HashSet<>(genres));
-        }
         return film;
     }
 
@@ -75,12 +59,6 @@ public class FilmDbStorage implements FilmStorage {
         parameters.put("mpa_id", film.getMpa().getId());
         Long id = jdbcInsert.executeAndReturnKey(parameters).longValue();
         film.setId(id);
-        if (!film.getGenres().isEmpty()) {
-            for (Genre genre : film.getGenres()) {
-                jdbcTemplate.update("INSERT INTO genre_of_film (film_id, genre_id) VALUES (?, ?)",
-                        film.getId(), genre.getId());
-            }
-        }
     }
 
     @Override
@@ -93,18 +71,10 @@ public class FilmDbStorage implements FilmStorage {
                 film.getDuration(),
                 film.getMpa().getId(),
                 film.getId());
-
-        jdbcTemplate.update("DELETE FROM genre_of_film WHERE film_id = ?", film.getId());
-        for (Genre genre : film.getGenres()) {
-            jdbcTemplate.update("INSERT INTO genre_of_film (film_id, genre_id) VALUES (?, ?)",
-                    film.getId(), genre.getId());
-        }
     }
 
     @Override
     public void deleteFilm(Long id) {
-        jdbcTemplate.update("DELETE FROM \"like\" WHERE film_id = ?", id);
-        jdbcTemplate.update("DELETE FROM genre_of_film WHERE film_id = ?", id);
         jdbcTemplate.update("DELETE FROM film WHERE film_id = ?", id);
     }
 
@@ -112,24 +82,12 @@ public class FilmDbStorage implements FilmStorage {
     public Collection<Film> getFavouriteFilms(int count) {
         String sql = "SELECT f.*, m.mpa_name, COUNT(l.user_id) AS like_count " +
                 "FROM film AS f " +
-                "JOIN \"like\" AS l ON l.film_id = f.film_id " +
+                "JOIN FILM_LIKE AS l ON l.film_id = f.film_id " +
                 "JOIN mpa AS m ON m.mpa_id = f.mpa_id " +
                 "GROUP BY f.film_id, m.mpa_name " +
                 "ORDER BY like_count DESC " +
                 "LIMIT ? ";
-        Collection<Film> films = jdbcTemplate.query(sql, this::makeFilm, count);
-
-        if (films.isEmpty()) {
-            films = getFilmsByCount(count);
-        }
-        String sqlGenre = "SELECT g.genre_id, g.genre_name FROM genre_of_film AS gf " +
-                "JOIN genre AS g ON g.genre_id = gf.genre_id " +
-                "WHERE gf.film_id = ? " +
-                "ORDER BY g.genre_id";
-        for (Film film : films) {
-            List<Genre> genres = jdbcTemplate.query(sqlGenre, this::makeGenre, film.getId());
-            film.setGenres(new HashSet<>(genres));
-        }
+        List<Film> films = jdbcTemplate.query(sql, this::makeFilm, count);
         return films;
     }
 
@@ -141,19 +99,6 @@ public class FilmDbStorage implements FilmStorage {
                 this::makeFilm, count);
     }
 
-    @Override
-    public Film addLike(Long filmId, Long userId) {
-        String sql = "INSERT INTO \"like\" (film_id, user_id) VALUES (?, ?)";
-        jdbcTemplate.update(sql, filmId, userId);
-        return getFilmById(filmId);
-    }
-
-    @Override
-    public Film removeLike(Long filmId, Long userId) {
-        String sql = "DELETE FROM \"like\" WHERE film_id = ? AND user_id = ?";
-        jdbcTemplate.update(sql, filmId, userId);
-        return getFilmById(filmId);
-    }
 
     private Film makeFilm(ResultSet rs, int rowNum) throws SQLException {
         Film film = Film.builder()
@@ -165,24 +110,36 @@ public class FilmDbStorage implements FilmStorage {
                 .mpa(new Mpa(rs.getLong("mpa_id"), rs.getString("mpa_name")))
                 .build();
 
-        String sql = "SELECT user_id FROM \"like\" WHERE film_id = ? ";
-        Set<Long> likes = jdbcTemplate.query(sql, rs1 -> {
-            Set<Long> list = new HashSet<>();
-            while (rs1.next()) {
-                list.add(rs1.getLong("user_id"));
-            }
-            return list;
-        }, film.getId());
-        if (likes != null) {
-            film.setLikes(likes);
-        }
-
         return film;
     }
 
     @Override
     public Collection<Film> getFilmsByDirectorAndSort(Long directorId, String[] orderBy) {
-        return null;
+        try {
+            // Construct the base SQL query
+            StringBuilder sqlBuilder = new StringBuilder();
+            sqlBuilder.append("SELECT f.* FROM film f ");
+            sqlBuilder.append("JOIN director_of_film df ON f.film_id = df.film_id ");
+            sqlBuilder.append("WHERE df.director_id = ? ");
+
+            // Check if orderBy array is provided and construct ORDER BY clause
+            if (orderBy != null && orderBy.length > 0) {
+                sqlBuilder.append("ORDER BY ");
+                for (int i = 0; i < orderBy.length; i++) {
+                    sqlBuilder.append(orderBy[i]);
+                    if (i < orderBy.length - 1) {
+                        sqlBuilder.append(", ");
+                    }
+                }
+            }
+
+            // Execute the query
+            String sql = sqlBuilder.toString();
+            Collection<Film> films = jdbcTemplate.query(sql, this::makeFilm, directorId);
+            return films;
+        } catch (DataAccessException e) {
+            throw new IllegalArgumentException("Failed to retrieve films by director and sort", e);
+        }
     }
 
     private Genre makeGenre(ResultSet rs, int rowNum) throws SQLException {
