@@ -80,7 +80,7 @@ CREATE TABLE IF NOT EXISTS review
     FOREIGN KEY (film_id) REFERENCES film (film_id)
 );
 
-CREATE TABLE IF NOT EXISTS review_like
+CREATE TABLE IF NOT EXISTS review_likes
 (
     review_id integer,
     user_id   integer,
@@ -88,7 +88,7 @@ CREATE TABLE IF NOT EXISTS review_like
     FOREIGN KEY (user_id) REFERENCES "user" (user_id)
 );
 
-CREATE TABLE IF NOT EXISTS review_dislike
+CREATE TABLE IF NOT EXISTS review_dislikes
 (
     review_id integer,
     user_id   integer,
