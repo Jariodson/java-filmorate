@@ -9,15 +9,19 @@ public interface FilmService {
 
     Film getFilmById(Long id);
 
-    Film addFilm(Film film);
+    Collection<Film> getDirectorFilmsSorted(Long directorId, String[] orderBy);
 
-    Film addLike(Long filmId, Long userId);
+    Film createFilm(Film film);
 
     Film updateFilm(Film film);
 
-    Film deleteFilm(Long id);
+    Film removeFilm(Long id);
+
+    Film createLike(Long filmId, Long userId);
 
     Film removeLike(Long filmId, Long userId);
+
+    Collection<Film> getCommonFilms(Long userId, Long friendId);
 
     Collection<Film> getMostPopularsFilms(Integer count, Long genreId, Integer year);
 }

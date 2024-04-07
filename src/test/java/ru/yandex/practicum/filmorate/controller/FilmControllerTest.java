@@ -86,7 +86,7 @@ class FilmControllerTest {
                 .releaseDate(LocalDate.parse("1967-03-25"))
                 .duration(90)
                 .build();
-        when(filmServiceImpl.addFilm(film1)).thenReturn(film1);
+        when(filmServiceImpl.createFilm(film1)).thenReturn(film1);
         this.mockMvc.perform(post("/films")
                         .content(objectMapper.writeValueAsString(film1))
                         .contentType(MediaType.APPLICATION_JSON))
@@ -129,7 +129,7 @@ class FilmControllerTest {
                 .birthday(LocalDate.parse("1998-03-25"))
                 .build();
         film1.setLikes(Set.of(1L));
-        when(filmServiceImpl.addLike(1L, 1L)).thenReturn(film1);
+        when(filmServiceImpl.createLike(1L, 1L)).thenReturn(film1);
         this.mockMvc.perform(put("/films/1/like/1")
                         .content(objectMapper.writeValueAsString(film1))
                         .contentType(MediaType.APPLICATION_JSON))
@@ -203,6 +203,22 @@ class FilmControllerTest {
 
         when(controller.getMostPopularsFilms(2, null, null)).thenReturn(List.of(film1, film2));
         this.mockMvc.perform(get("/films/popular?count=2"))
+                .andExpect(status().isOk())
+                .andDo(print());
+    }
+
+    @Test
+    void shouldReturnCommonFilms() throws Exception {
+        Film film1 = Film.builder()
+                .id(1L)
+                .name("Aladdin")
+                .description("Cartoon about prince")
+                .releaseDate(LocalDate.parse("1967-03-25"))
+                .duration(90)
+                .build();
+        film1.setLikes(Set.of(1L,2L));
+        when(controller.getCommonFilms(1L, 2L)).thenReturn(List.of(film1));
+        this.mockMvc.perform(get("/films/common?userId=1&friendId=2"))
                 .andExpect(status().isOk())
                 .andDo(print());
     }

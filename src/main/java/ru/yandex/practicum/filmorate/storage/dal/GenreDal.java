@@ -9,5 +9,8 @@ public interface GenreDal {
 
     Genre getGenreById(Long id);
 
-    String getGenreNameById(Long id);
+
+    Collection<Genre> getFilmGenre(Long filmId);
+
+    void updateFilmsGenre(Long id, Collection<Genre> genres);
 }
