@@ -131,7 +131,13 @@ public class FilmServiceImpl implements FilmService {
     public Collection<Film> getCommonFilms(Long userId, Long friendId) {
         userService.getUserById(userId);
         userService.getUserById(friendId);
-        return filmStorage.getCommonFilms(userId, friendId);
+        var films = filmStorage.getCommonFilms(userId, friendId);
+        for (Film film : films) {
+            long id = film.getId();
+            film.setGenres(genreService.getFilmsGenre(id));
+            film.setDirectors(directorService.getFilmsDirector(id));
+        }
+        return films;
     }
 
     private void checkMpa(Long id) {

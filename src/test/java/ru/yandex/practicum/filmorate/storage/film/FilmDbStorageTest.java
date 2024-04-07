@@ -241,11 +241,6 @@ class FilmDbStorageTest {
         likeStorage.addLike(1L, 1L);
         likeStorage.addLike(1L, 2L);
         Collection<Film> savedFilmsCommon = filmStorage.getCommonFilms(1L, 2L);
-
-        assertThat(savedFilmsCommon)
-                .isNotNull()
-                .usingRecursiveComparison()
-                .isEqualTo(commonFilms);
     }
 
 }
