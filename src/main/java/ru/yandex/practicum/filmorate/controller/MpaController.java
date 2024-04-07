@@ -23,8 +23,8 @@ public class MpaController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public Collection<Mpa> getGenres() {
-        log.debug("Получен запрос GET на вывод всех рейтингов");
+    public Collection<Mpa> getMpas() {
+        log.debug("Получен запрос GET на вывод всех mpa");
         Collection<Mpa> mpaCollection = mpaService.getMpas();
         log.debug("Вывод списка всех рейтингов. Размер списка: {}", mpaCollection.size());
         return mpaCollection;
@@ -32,8 +32,8 @@ public class MpaController {
 
     @GetMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public Mpa getGenreById(@NotNull @PathVariable Long id) {
-        log.debug("Получен запрос GET на получение рейтинга по ID: {}", id);
+    public Mpa getMpaById(@NotNull @PathVariable Long id) {
+        log.debug("Получен запрос GET на получение mpa по ID: {}", id);
 
             Mpa mpa = mpaService.getMpaById(id);
             log.debug("Вывод рейтинга с Id: {}", id);
