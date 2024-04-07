@@ -136,6 +136,23 @@ public class FilmServiceImpl implements FilmService {
         return  getFilmById(filmId);
     }
 
+    @Override
+    public Collection<Film> getCommonFilms(Long userId, Long friendId) {
+        userService.findUserById(userId);
+        userService.findUserById(friendId);
+        return filmStorage.getCommonFilms(userId, friendId);
+    }
+
+    private void checkFilmCriteria(Film film) {
+        if (film.getReleaseDate() != null) {
+            LocalDate filmBirthday = LocalDate.of(1895, 12, 28);
+            if (film.getReleaseDate().isBefore(filmBirthday)) {
+                throw new ValidationException("Слишком ранняя дата релиза! " + film.getReleaseDate());
+            }
+        }
+    }
+
+
     private void checkMpa(Long id) {
         try {
             mpaService.getMpaById(id);
