@@ -19,8 +19,6 @@ public interface FilmStorage {
 
     Collection<Film> getFilmsByDirectorAndSort(Long directorId, String[] orderBy);
 
-    Film removeLike(Long filmId, Long userId);
-
     Collection<Film> getCommonFilms(Long userId, Long friendId);
 
 }

@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.service.*;
 import ru.yandex.practicum.filmorate.storage.dal.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.dal.LikeDal;
@@ -47,7 +46,7 @@ public class FilmServiceImpl implements FilmService {
         Collection<Film> films =  filmStorage.getAllFilms();
         for (Film film: films){
             long id =film.getId();
-            film.setMpa(mpaService.getMpaById(id));
+            film.setMpa(mpaService.getMpaById(film.getMpa().getId()));
             film.setGenres( genreService.getFilmsGenre(id));
             film.setDirectors(directorService.getFilmsDirector(id));
         }
@@ -57,7 +56,6 @@ public class FilmServiceImpl implements FilmService {
     public Film getFilmById(Long id) {
         checkFilmInDb(id);
         Film film = filmStorage.getFilmById(id);
-        film.setMpa(mpaService.getMpaById(film.getMpa().getId()));
         film.setGenres( genreService.getFilmsGenre(id));
         film.setDirectors(directorService.getFilmsDirector(id));
         return film;
@@ -68,7 +66,6 @@ public class FilmServiceImpl implements FilmService {
         Collection<Film> films =  filmStorage.getFavouriteFilms(count);
         for (Film film: films){
             long id =film.getId();
-            film.setMpa(mpaService.getMpaById(id));
             film.setGenres( genreService.getFilmsGenre(id));
             film.setDirectors(directorService.getFilmsDirector(id));
         }
@@ -76,10 +73,10 @@ public class FilmServiceImpl implements FilmService {
     }
 
     public Collection<Film> getDirectorFilmsSorted(Long directorId, String[] orderBy) {
+        directorService.getDirectorById(directorId);
         Collection<Film> films =  filmStorage.getFilmsByDirectorAndSort(directorId,orderBy);
         for (Film film: films){
             long id =film.getId();
-            film.setMpa(mpaService.getMpaById(id));
             film.setGenres( genreService.getFilmsGenre(id));
             film.setDirectors(directorService.getFilmsDirector(id));
         }
@@ -89,7 +86,6 @@ public class FilmServiceImpl implements FilmService {
     @Override
     public Film createFilm(Film film) {
         checkMpa(film.getMpa().getId());
-        checkGenre(film.getGenres());
 
         filmStorage.addNewFilm(film);
         long filmId = film.getId();
@@ -107,9 +103,9 @@ public class FilmServiceImpl implements FilmService {
     @Override
     public Film updateFilm(Film film) {
         checkFilmInDb(film.getId());
-        checkMpa(film.getMpa().getId());
-        checkGenre(film.getGenres());
         filmStorage.updateFilm(film);
+        genreService.updateFilmsGenre(film.getId(),film.getGenres());
+        directorService.updateFilmDirectors(film.getId(),film.getDirectors());
         return getFilmById(film.getId());
     }
 
@@ -138,19 +134,11 @@ public class FilmServiceImpl implements FilmService {
 
     @Override
     public Collection<Film> getCommonFilms(Long userId, Long friendId) {
-        userService.findUserById(userId);
-        userService.findUserById(friendId);
+        userService.getUserById(userId);
+        userService.getUserById(friendId);
         return filmStorage.getCommonFilms(userId, friendId);
     }
 
-    private void checkFilmCriteria(Film film) {
-        if (film.getReleaseDate() != null) {
-            LocalDate filmBirthday = LocalDate.of(1895, 12, 28);
-            if (film.getReleaseDate().isBefore(filmBirthday)) {
-                throw new ValidationException("Слишком ранняя дата релиза! " + film.getReleaseDate());
-            }
-        }
-    }
 
 
     private void checkMpa(Long id) {
@@ -161,15 +149,6 @@ public class FilmServiceImpl implements FilmService {
         }
     }
 
-    private void checkGenre(Collection<Genre> genres) {
-        for (Genre genre : genres) {
-            try {
-                genreService.getGenreById(genre.getId());
-            } catch (IllegalArgumentException e) {
-                throw new NotFoundException("Жанр с ID: " + genre.getId() + " не найден!");
-            }
-        }
-    }
 
     private void checkFilmInDb(Long id) {
         try {
