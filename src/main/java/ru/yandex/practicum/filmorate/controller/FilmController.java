@@ -107,7 +107,6 @@ public class FilmController {
         return films;
     }
 
-
     @GetMapping("/common")
     @ResponseStatus(HttpStatus.OK)
     public Collection<Film> getCommonFilms(@RequestParam Long userId,

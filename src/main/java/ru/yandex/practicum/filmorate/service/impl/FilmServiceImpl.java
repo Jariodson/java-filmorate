@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.service.*;
 import ru.yandex.practicum.filmorate.storage.dal.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.dal.LikeDal;
@@ -35,8 +36,6 @@ public class FilmServiceImpl implements FilmService {
         this.genreService = genreService;
         this.directorService = directorService;
     }
-
-
 
     @Override
     public Collection<Film> getFilms() {
@@ -128,20 +127,6 @@ public class FilmServiceImpl implements FilmService {
 
         return getFilmById(filmId);
     }
-
-    @Override
-    public Collection<Film> getCommonFilms(Long userId, Long friendId) {
-        userService.getUserById(userId);
-        userService.getUserById(friendId);
-        var films = filmStorage.getCommonFilms(userId, friendId);
-        for (Film film : films) {
-            long id = film.getId();
-            film.setGenres(genreService.getFilmsGenre(id));
-            film.setDirectors(directorService.getFilmsDirector(id));
-        }
-        return films;
-    }
-
 
     private void checkMpa(Long id) {
         try {

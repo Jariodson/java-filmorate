@@ -153,61 +153,94 @@ class FilmDbStorageTest {
                 .build();
         userStorage.addNewUser(newUser);
 
-       // filmStorage.addLike(film1.getId(), newUser.getId());
+        // filmStorage.addLike(film1.getId(), newUser.getId());
 
         Collection<Film> films = filmStorage.getFavouriteFilms(10);
         assertThat(films).isNotNull();
     }
 
-//    @Test
-//    void addLike() {
-//        Film film1 = Film.builder()
-//                .name("Крестный отец")
-//                .description("Итальянская мафия в США")
-//                .releaseDate(LocalDate.of(1972, 3, 15))
-//                .duration(175)
-//                .mpa(Mpa.builder().id(5L).name("NC-17").build())
-//                .genres(Set.of(Genre.builder().name("Боевик").id(6L).build(),
-//                        Genre.builder().id(2L).name("Драма").build()))
-//                .build();
-//        filmStorage.addNewFilm(film1);
-//
-//        User newUser = User.builder()
-//                .email("user@email.ru")
-//                .name("Ivan Petrov")
-//                .birthday(LocalDate.of(1990, 1, 1))
-//                .login("vanya123")
-//                .build();
-//        userStorage.addNewUser(newUser);
-//
-//        Film film = filmStorage.addLike(film1.getId(), newUser.getId());
-//        assertThat(film).isNotNull();
-//    }
+    @Test
+    void addLike() {
+        Film film1 = Film.builder()
+                .name("Крестный отец")
+                .description("Итальянская мафия в США")
+                .releaseDate(LocalDate.of(1972, 3, 15))
+                .duration(175)
+                .mpa(Mpa.builder().id(5L).name("NC-17").build())
+                .genres(Set.of(Genre.builder().name("Боевик").id(6L).build(),
+                        Genre.builder().id(2L).name("Драма").build()))
+                .build();
+        filmStorage.addNewFilm(film1);
 
-//    @Test
-//    void removeLike() {
-//        Film film1 = Film.builder()
-//                .name("Крестный отец")
-//                .description("Итальянская мафия в США")
-//                .releaseDate(LocalDate.of(1972, 3, 15))
-//                .duration(175)
-//                .mpa(Mpa.builder().id(5L).name("NC-17").build())
-//                .genres(Set.of(Genre.builder().name("Боевик").id(6L).build(),
-//                        Genre.builder().id(2L).name("Драма").build()))
-//                .build();
-//        filmStorage.addNewFilm(film1);
-//
-//        User newUser = User.builder()
-//                .email("user@email.ru")
-//                .name("Ivan Petrov")
-//                .birthday(LocalDate.of(1990, 1, 1))
-//                .login("vanya123")
-//                .build();
-//        userStorage.addNewUser(newUser);
-//        Film film = filmStorage.addLike(film1.getId(), newUser.getId());
-//        assertThat(film).isNotNull();
-//
-//        Film film2 = filmStorage.removeLike(film.getId(), newUser.getId());
-//        assertThat(film2).isNotNull();
-//    }
+        User newUser = User.builder()
+                .email("user@email.ru")
+                .name("Ivan Petrov")
+                .birthday(LocalDate.of(1990, 1, 1))
+                .login("vanya123")
+                .build();
+        userStorage.addNewUser(newUser);
+        likeStorage.addLike(film1.getId(), newUser.getId());
+    }
+
+    @Test
+    void removeLike() {
+        Film film1 = Film.builder()
+                .name("Крестный отец")
+                .description("Итальянская мафия в США")
+                .releaseDate(LocalDate.of(1972, 3, 15))
+                .duration(175)
+                .mpa(Mpa.builder().id(5L).name("NC-17").build())
+                .genres(Set.of(Genre.builder().name("Боевик").id(6L).build(),
+                        Genre.builder().id(2L).name("Драма").build()))
+                .build();
+        filmStorage.addNewFilm(film1);
+
+        User newUser = User.builder()
+                .email("user@email.ru")
+                .name("Ivan Petrov")
+                .birthday(LocalDate.of(1990, 1, 1))
+                .login("vanya123")
+                .build();
+        userStorage.addNewUser(newUser);
+
+        likeStorage.addLike(film1.getId(), newUser.getId());
+
+    }
+
+    @Test
+    void getCommonFilms() {
+        Film film1 = Film.builder()
+                .name("Крестный отец")
+                .description("Итальянская мафия в США")
+                .releaseDate(LocalDate.of(1972, 3, 15))
+                .duration(175)
+                .mpa(Mpa.builder().id(5L).name("NC-17").build())
+                .genres(Set.of(Genre.builder().name("Боевик").id(6L).build(),
+                        Genre.builder().id(2L).name("Драма").build()))
+                .build();
+        film1.setLikes(Set.of(1L, 2L));
+        filmStorage.addNewFilm(film1);
+
+        Collection<Film> commonFilms = new ArrayList<>();
+        commonFilms.add(film1);
+
+        User newUser = User.builder()
+                .email("user@email.ru")
+                .name("Ivan Petrov")
+                .birthday(LocalDate.of(1990, 1, 1))
+                .login("vanya123")
+                .build();
+        userStorage.addNewUser(newUser);
+        User newUser1 = User.builder()
+                .email("user1@email.ru")
+                .name("Ivan1 Petrov1")
+                .birthday(LocalDate.of(1990, 1, 1))
+                .login("vanya1231")
+                .build();
+        userStorage.addNewUser(newUser1);
+        likeStorage.addLike(1L, 1L);
+        likeStorage.addLike(1L, 2L);
+        Collection<Film> savedFilmsCommon = filmStorage.getCommonFilms(1L, 2L);
+    }
+
 }
