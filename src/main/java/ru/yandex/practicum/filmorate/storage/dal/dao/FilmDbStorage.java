@@ -133,7 +133,7 @@ public class FilmDbStorage implements FilmStorage {
         try {
             // Construct the base SQL query
             StringBuilder sqlBuilder = new StringBuilder();
-            sqlBuilder.append( "SELECT f.*, m.mpa_name, COUNT(l.user_id) AS likes " +
+            sqlBuilder.append("SELECT f.*, m.mpa_name, COUNT(l.user_id) AS likes " +
                     "FROM film AS f " +
                     "LEFT JOIN FILM_LIKE AS l ON l.film_id = f.film_id " +
                     "JOIN director_of_film df ON f.film_id = df.film_id " +
@@ -144,7 +144,7 @@ public class FilmDbStorage implements FilmStorage {
             if (orderBy != null && orderBy.length > 0) {
                 sqlBuilder.append("ORDER BY ");
                 for (int i = 0; i < orderBy.length; i++) {
-                    if(orderBy[i].equals("year")){
+                    if (orderBy[i].equals("year")) {
                         orderBy[i] = " f.released_date ";
                     }
                     sqlBuilder.append(orderBy[i]);
