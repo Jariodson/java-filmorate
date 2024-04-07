@@ -87,7 +87,7 @@ public class DirectorDao implements DirectorDal {
 
 
     public void updateFilmsDirector(Long filmId, Director genreId) {
-        String sql =  "INSERT INTO DIRECTOR_OF_FILM (film_id, DIRECTOR_ID)" +
+        String sql = "INSERT INTO DIRECTOR_OF_FILM (film_id, DIRECTOR_ID)" +
                 "SELECT ?, ?" +
                 "WHERE NOT EXISTS (" +
                 "    SELECT 1 FROM DIRECTOR_OF_FILM" +
