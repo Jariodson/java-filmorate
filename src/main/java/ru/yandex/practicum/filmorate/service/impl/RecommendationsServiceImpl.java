@@ -35,7 +35,7 @@ public class RecommendationsServiceImpl implements RecommendationsService {
                     data.get(user1).add(film1);
                 }));
 
-        User targerUser = userService.findUserById(id);
+        User targerUser = userService.getUserById(id);
         List<Film> recommendedFilms = new ArrayList<>();
 
         boolean anyLikes = data.values().stream().anyMatch(list -> !list.isEmpty());
