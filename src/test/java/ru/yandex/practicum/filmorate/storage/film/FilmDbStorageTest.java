@@ -153,7 +153,7 @@ class FilmDbStorageTest {
                 .build();
         userStorage.addNewUser(newUser);
 
-       // filmStorage.addLike(film1.getId(), newUser.getId());
+        // filmStorage.addLike(film1.getId(), newUser.getId());
 
         Collection<Film> films = filmStorage.getFavouriteFilms(10);
         assertThat(films).isNotNull();
@@ -238,9 +238,9 @@ class FilmDbStorageTest {
                 .login("vanya1231")
                 .build();
         userStorage.addNewUser(newUser1);
-        likeStorage.addLike(1L,1L);
-        likeStorage.addLike(1L,2L);
-        Collection<Film> savedFilmsCommon = filmStorage.getCommonFilms(1L,2L);
+        likeStorage.addLike(1L, 1L);
+        likeStorage.addLike(1L, 2L);
+        Collection<Film> savedFilmsCommon = filmStorage.getCommonFilms(1L, 2L);
 
         assertThat(savedFilmsCommon)
                 .isNotNull()
