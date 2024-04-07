@@ -27,8 +27,7 @@ public class FilmServiceImpl implements FilmService {
     private final DirectorService directorService;
 
     @Autowired
-    public FilmServiceImpl(@Qualifier("filmDbStorage") FilmStorage filmStorage, LikeDal likeStorage, UserService userService,
-                           MpaService mpaService, GenreService genreService, DirectorService directorService) {
+    public FilmServiceImpl(@Qualifier("filmDbStorage") FilmStorage filmStorage, LikeDal likeStorage, UserService userService, MpaService mpaService, GenreService genreService, DirectorService directorService) {
         this.filmStorage = filmStorage;
         this.likeStorage = likeStorage;
         this.userService = userService;
