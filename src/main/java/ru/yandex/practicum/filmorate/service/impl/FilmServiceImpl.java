@@ -8,13 +8,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.service.*;
 import ru.yandex.practicum.filmorate.storage.dal.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.dal.LikeDal;
 
 
 import java.util.Collection;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -126,6 +126,13 @@ public class FilmServiceImpl implements FilmService {
         likeStorage.removeLike(filmId, userId);
 
         return getFilmById(filmId);
+    }
+
+    @Override
+    public Collection<Film> getCommonFilms(Long userId, Long friendId) {
+        userService.getUserById(userId);
+        userService.getUserById(friendId);
+        return filmStorage.getCommonFilms(userId, friendId);
     }
 
     private void checkMpa(Long id) {
