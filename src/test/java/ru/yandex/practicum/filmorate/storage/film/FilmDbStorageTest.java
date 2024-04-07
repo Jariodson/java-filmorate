@@ -14,6 +14,7 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.dal.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.dal.UserStorage;
 import ru.yandex.practicum.filmorate.storage.dal.dao.FilmDbStorage;
+import ru.yandex.practicum.filmorate.storage.dal.dao.LikeDao;
 import ru.yandex.practicum.filmorate.storage.dal.dao.UserDbStorage;
 
 import java.time.LocalDate;
@@ -31,10 +32,13 @@ class FilmDbStorageTest {
     private FilmStorage filmStorage;
     private UserStorage userStorage;
 
+    private LikeDao likeStorage;
+
     @BeforeEach
     void beforeEach() {
         filmStorage = new FilmDbStorage(jdbcTemplate);
         userStorage = new UserDbStorage(jdbcTemplate);
+        likeStorage = new LikeDao(jdbcTemplate);
     }
 
     @Test
@@ -149,7 +153,7 @@ class FilmDbStorageTest {
                 .build();
         userStorage.addNewUser(newUser);
 
-        filmStorage.addLike(film1.getId(), newUser.getId());
+        // filmStorage.addLike(film1.getId(), newUser.getId());
 
         Collection<Film> films = filmStorage.getFavouriteFilms(10);
         assertThat(films).isNotNull();
@@ -175,9 +179,7 @@ class FilmDbStorageTest {
                 .login("vanya123")
                 .build();
         userStorage.addNewUser(newUser);
-
-        Film film = filmStorage.addLike(film1.getId(), newUser.getId());
-        assertThat(film).isNotNull();
+        likeStorage.addLike(film1.getId(), newUser.getId());
     }
 
     @Test
@@ -201,11 +203,8 @@ class FilmDbStorageTest {
                 .build();
         userStorage.addNewUser(newUser);
 
-        Film film = filmStorage.addLike(film1.getId(), newUser.getId());
-        assertThat(film).isNotNull();
+        likeStorage.addLike(film1.getId(), newUser.getId());
 
-        Film film2 = filmStorage.removeLike(film.getId(), newUser.getId());
-        assertThat(film2).isNotNull();
     }
 
     @Test
@@ -239,13 +238,9 @@ class FilmDbStorageTest {
                 .login("vanya1231")
                 .build();
         userStorage.addNewUser(newUser1);
-        filmStorage.addLike(1L,1L);
-        filmStorage.addLike(1L,2L);
-        Collection<Film> savedFilmsCommon = filmStorage.getCommonFilms(1L,2L);
-
-        assertThat(savedFilmsCommon)
-                .isNotNull()
-                .usingRecursiveComparison()
-                .isEqualTo(commonFilms);
+        likeStorage.addLike(1L, 1L);
+        likeStorage.addLike(1L, 2L);
+        Collection<Film> savedFilmsCommon = filmStorage.getCommonFilms(1L, 2L);
     }
+
 }

@@ -21,7 +21,7 @@ public class MpaServiceImpl implements MpaService {
     }
 
     @Override
-    public Collection<Mpa> getMpa() {
+    public Collection<Mpa> getMpas() {
         return mpaDao.getMpa();
     }
 
@@ -29,12 +29,6 @@ public class MpaServiceImpl implements MpaService {
     public Mpa getMpaById(Long id) {
         checkMpaById(id);
         return mpaDao.getMpaById(id);
-    }
-
-    @Override
-    public String getMpaNameById(Long id) {
-        checkMpaById(id);
-        return mpaDao.getMpaNameById(id);
     }
 
     private void checkMpaById(Long id) {

@@ -1,15 +1,18 @@
 package ru.yandex.practicum.filmorate.model;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.yandex.practicum.filmorate.validation.DateMin;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -25,7 +28,7 @@ public class Film {
     private final String name;
     @Size(max = 200, message = "Длина описания превышает лимит! Лимит 200!")
     private final String description;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    @DateMin(value = "1895-12-28")
     private final LocalDate releaseDate;
     @Positive(message = "Продолжительность фильма не может быть отрицательной или равна 0!")
     private final int duration;
@@ -33,5 +36,6 @@ public class Film {
     private Set<Long> likes = new HashSet<>();
     private Long id;
     private Mpa mpa;
-    private Set<Genre> genres = new HashSet<>();
+    private Collection<Genre> genres = new ArrayList<>();
+    private Collection<Director> directors = new ArrayList<>();
 }

@@ -86,7 +86,7 @@ class FilmControllerTest {
                 .releaseDate(LocalDate.parse("1967-03-25"))
                 .duration(90)
                 .build();
-        when(filmServiceImpl.addFilm(film1)).thenReturn(film1);
+        when(filmServiceImpl.createFilm(film1)).thenReturn(film1);
         this.mockMvc.perform(post("/films")
                         .content(objectMapper.writeValueAsString(film1))
                         .contentType(MediaType.APPLICATION_JSON))
@@ -129,7 +129,7 @@ class FilmControllerTest {
                 .birthday(LocalDate.parse("1998-03-25"))
                 .build();
         film1.setLikes(Set.of(1L));
-        when(filmServiceImpl.addLike(1L, 1L)).thenReturn(film1);
+        when(filmServiceImpl.createLike(1L, 1L)).thenReturn(film1);
         this.mockMvc.perform(put("/films/1/like/1")
                         .content(objectMapper.writeValueAsString(film1))
                         .contentType(MediaType.APPLICATION_JSON))

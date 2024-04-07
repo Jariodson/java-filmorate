@@ -64,14 +64,10 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public Film addLike(Long filmId, Long userId) {
+    public Collection<Film> getFilmsByDirectorAndSort(Long directorId, String[] orderBy) {
         return null;
     }
 
-    @Override
-    public Film removeLike(Long filmId, Long userId) {
-        return null;
-    }
 
     @Override
     public Collection<Film> getCommonFilms(Long userId, Long friendId) {

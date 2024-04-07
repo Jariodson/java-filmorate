@@ -29,7 +29,7 @@ public class ErrorHandler {
     public ResponseEntity<Map<String, String>> handleNotFoundException(final NotFoundException e) {
         log.warn("Ошибка! {}", e.getMessage());
         return new ResponseEntity<>(
-                Map.of("error", e.getMessage()), HttpStatus.BAD_REQUEST
+                Map.of("error", e.getMessage()), HttpStatus.NOT_FOUND
         );
     }
 

@@ -27,15 +27,14 @@ public class RecommendationsServiceImpl implements RecommendationsService {
     public Collection<Film> getRecommendations(Long id) {
         Collection<Film> films = filmService.getFilms();
         Collection<User> users = userService.getUsers();
-        films.forEach(film1 -> users.stream().filter(user1 -> film1.getLikes().contains(user1.getId()))
-                .forEach(user1 -> {
-                    if (!data.containsKey(user1)) {
-                        data.put(user1, new ArrayList<>());
-                    }
-                    data.get(user1).add(film1);
-                }));
+        films.forEach(film1 -> users.stream().filter(user1 -> film1.getLikes().contains(user1.getId())).forEach(user1 -> {
+            if (!data.containsKey(user1)) {
+                data.put(user1, new ArrayList<>());
+            }
+            data.get(user1).add(film1);
+        }));
 
-        User targerUser = userService.findUserById(id);
+        User targerUser = userService.getUserById(id);
         List<Film> recommendedFilms = new ArrayList<>();
 
         boolean anyLikes = data.values().stream().anyMatch(list -> !list.isEmpty());
