@@ -31,7 +31,6 @@ public class GenreServiceImpl implements GenreService {
     }
 
 
-
     public Collection<Genre> getFilmsGenre(Long id) {
         return genreDao.getFilmGenre(id);
     }
@@ -41,6 +40,7 @@ public class GenreServiceImpl implements GenreService {
         checkGenre(genres);
         genreDao.updateFilmsGenre(id, genres);
     }
+
     private void checkGenre(Collection<Genre> genres) {
         for (Genre genre : genres) {
             try {
