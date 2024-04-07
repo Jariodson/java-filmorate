@@ -56,6 +56,7 @@ public class DirectorServiceImpl implements DirectorService {
     public void deleteDirector(Long id) {
         directorStorage.deleteDirector(id);
     }
+
     private void checkDirector(Collection<Director> directors) {
         for (Director director : directors) {
             try {
