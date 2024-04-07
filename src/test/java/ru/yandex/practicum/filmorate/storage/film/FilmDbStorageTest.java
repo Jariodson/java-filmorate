@@ -14,6 +14,7 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.dal.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.dal.UserStorage;
 import ru.yandex.practicum.filmorate.storage.dal.dao.FilmDbStorage;
+import ru.yandex.practicum.filmorate.storage.dal.dao.LikeDao;
 import ru.yandex.practicum.filmorate.storage.dal.dao.UserDbStorage;
 
 import java.time.LocalDate;
@@ -31,10 +32,13 @@ class FilmDbStorageTest {
     private FilmStorage filmStorage;
     private UserStorage userStorage;
 
+    private LikeDao likeStorage;
+
     @BeforeEach
     void beforeEach() {
         filmStorage = new FilmDbStorage(jdbcTemplate);
         userStorage = new UserDbStorage(jdbcTemplate);
+        likeStorage = new LikeDao(jdbcTemplate);
     }
 
     @Test
