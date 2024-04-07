@@ -13,7 +13,7 @@ public interface DirectorDal {
 
     Director updateDirector(Director director);
 
-    void addFilmsDirector(Long id, Collection<Director> directors);
+    void updateFilmsDirector(Long id, Collection<Director> directors);
 
 
     Collection<Director> getFilmsDirector(Long filmId);

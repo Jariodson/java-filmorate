@@ -71,20 +71,27 @@ public class DirectorDao implements DirectorDal {
     }
 
     @Override
-    public void addFilmsDirector(Long userId, Collection<Director> directors) {
+    public void updateFilmsDirector(Long filmId, Collection<Director> directors) {
+        String sqlDelete = "DELETE FROM DIRECTOR_OF_FILM WHERE film_id = ?";
+        try {
+            jdbcTemplate.update(sqlDelete, filmId);
+        } catch (DataAccessException e) {
+            throw new RuntimeException("Ошибка при удолении жанра");
+        }
         if (directors != null) {
             for (Director g : directors) {
-                addFilmsDirector(userId, g);
+                updateFilmsDirector(filmId, g);
             }
         }
     }
 
-    public void addFilmsDirector(Long filmId, Director genreId) {
-        String sql = "INSERT INTO DIRECTOR_OF_FILM (film_id, director_id)" +
+
+    public void updateFilmsDirector(Long filmId, Director genreId) {
+        String sql =  "INSERT INTO DIRECTOR_OF_FILM (film_id, DIRECTOR_ID)" +
                 "SELECT ?, ?" +
                 "WHERE NOT EXISTS (" +
                 "    SELECT 1 FROM DIRECTOR_OF_FILM" +
-                "    WHERE film_id = ? AND director_id = ?" + ")";
+                "    WHERE film_id = ? AND DIRECTOR_ID = ?" + ")";
         try {
             jdbcTemplate.update(sql, filmId, genreId.getId(), filmId, genreId.getId());
         } catch (DataAccessException e) {

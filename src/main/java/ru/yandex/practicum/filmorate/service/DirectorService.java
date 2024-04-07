@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.service;
 
 import ru.yandex.practicum.filmorate.model.Director;
+
 import java.util.Collection;
 
 public interface DirectorService {
@@ -13,9 +14,9 @@ public interface DirectorService {
 
     Director updateDirector(Director director);
 
-    void addFilmDirectors(Long id, Collection<Director> directors);
-
     void deleteDirector(Long id);
 
     Collection<Director> getFilmsDirector(Long id);
+
+    void updateFilmDirectors(Long id, Collection<Director> directors);
 }

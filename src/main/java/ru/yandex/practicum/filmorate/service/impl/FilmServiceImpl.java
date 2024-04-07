@@ -13,6 +13,7 @@ import ru.yandex.practicum.filmorate.service.*;
 import ru.yandex.practicum.filmorate.storage.dal.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.dal.LikeDal;
 
+
 import java.util.Collection;
 
 @Slf4j
@@ -39,13 +40,15 @@ public class FilmServiceImpl implements FilmService {
         this.directorService = directorService;
     }
 
+
+
     @Override
     public Collection<Film> getFilms() {
-        Collection<Film> films = filmStorage.getAllFilms();
-        for (Film film : films) {
-            long id = film.getId();
+        Collection<Film> films =  filmStorage.getAllFilms();
+        for (Film film: films){
+            long id =film.getId();
             film.setMpa(mpaService.getMpaById(id));
-            film.setGenres(genreService.getFilmsGenre(id));
+            film.setGenres( genreService.getFilmsGenre(id));
             film.setDirectors(directorService.getFilmsDirector(id));
         }
         return films;
@@ -55,29 +58,29 @@ public class FilmServiceImpl implements FilmService {
         checkFilmInDb(id);
         Film film = filmStorage.getFilmById(id);
         film.setMpa(mpaService.getMpaById(film.getMpa().getId()));
-        film.setGenres(genreService.getFilmsGenre(id));
+        film.setGenres( genreService.getFilmsGenre(id));
         film.setDirectors(directorService.getFilmsDirector(id));
         return film;
     }
 
     @Override
     public Collection<Film> getFavoriteFilms(int count) {
-        Collection<Film> films = filmStorage.getFavouriteFilms(count);
-        for (Film film : films) {
-            long id = film.getId();
+        Collection<Film> films =  filmStorage.getFavouriteFilms(count);
+        for (Film film: films){
+            long id =film.getId();
             film.setMpa(mpaService.getMpaById(id));
-            film.setGenres(genreService.getFilmsGenre(id));
+            film.setGenres( genreService.getFilmsGenre(id));
             film.setDirectors(directorService.getFilmsDirector(id));
         }
         return films;
     }
 
     public Collection<Film> getDirectorFilmsSorted(Long directorId, String[] orderBy) {
-        Collection<Film> films = filmStorage.getFilmsByDirectorAndSort(directorId, orderBy);
-        for (Film film : films) {
-            long id = film.getId();
+        Collection<Film> films =  filmStorage.getFilmsByDirectorAndSort(directorId,orderBy);
+        for (Film film: films){
+            long id =film.getId();
             film.setMpa(mpaService.getMpaById(id));
-            film.setGenres(genreService.getFilmsGenre(id));
+            film.setGenres( genreService.getFilmsGenre(id));
             film.setDirectors(directorService.getFilmsDirector(id));
         }
         return films;
@@ -90,14 +93,16 @@ public class FilmServiceImpl implements FilmService {
 
         filmStorage.addNewFilm(film);
         long filmId = film.getId();
-        if (film.getGenres() != null) {
-            genreService.addFilmsGenre(filmId, film.getGenres());
+        if (film.getGenres()!=null) {
+            genreService.updateFilmsGenre(filmId, film.getGenres());
         }
-        if (film.getDirectors() != null) {
-            directorService.addFilmDirectors(filmId, film.getDirectors());
+        if (film.getDirectors()!=null){
+            directorService.updateFilmDirectors(filmId, film.getDirectors());
         }
         return getFilmById(film.getId());
     }
+
+
 
     @Override
     public Film updateFilm(Film film) {
@@ -115,29 +120,27 @@ public class FilmServiceImpl implements FilmService {
         filmStorage.deleteFilm(id);
         return film;
     }
-
     @Override
     public Film createLike(Long filmId, Long userId) {
         checkFilmInDb(filmId);
         checkUserInDb(userId);
         likeStorage.addLike(filmId, userId);
-        return getFilmById(filmId);
+        return  getFilmById(filmId);
     }
-
     @Override
     public Film removeLike(Long filmId, Long userId) {
         checkFilmInDb(filmId);
         checkUserInDb(userId);
         likeStorage.removeLike(filmId, userId);
 
-        return getFilmById(filmId);
+        return  getFilmById(filmId);
     }
 
     private void checkMpa(Long id) {
         try {
             mpaService.getMpaById(id);
         } catch (IllegalArgumentException e) {
-            throw new NotFoundException("Рейтинг с ID: " + id + " не найден!");
+            throw new NotFoundException("Рейтин с ID: " + id + " не найден!");
         }
     }
 
@@ -158,12 +161,11 @@ public class FilmServiceImpl implements FilmService {
             throw new IllegalArgumentException("Фильм с ID: " + id + " не найден!");
         }
     }
-
     private void checkUserInDb(Long id) {
         try {
             userService.getUserById(id);
         } catch (EmptyResultDataAccessException e) {
-            throw new IllegalArgumentException("Пользователь с ID: " + id + " не найден!");
+            throw new IllegalArgumentException("Фильм с ID: " + id + " не найден!");
         }
     }
 }

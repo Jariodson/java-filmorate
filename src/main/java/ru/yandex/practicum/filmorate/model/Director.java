@@ -5,7 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import ru.yandex.practicum.filmorate.validation.WithoutParent;
 
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotBlank;
+
 
 @Data
 @Builder
@@ -13,7 +14,7 @@ import javax.validation.constraints.NotEmpty;
 public class Director {
 
     private Long id;
-    @NotEmpty(groups = WithoutParent.class)
+    @NotBlank(groups = WithoutParent.class)
     private String name;
 }
 

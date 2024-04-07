@@ -10,9 +10,7 @@ public interface GenreService {
 
     Genre getGenreById(Long id);
 
-    String getGenreNameById(Long id);
-
     Collection<Genre> getFilmsGenre(Long id);
 
-    void addFilmsGenre(Long userId, Collection<Genre> genres);
+    void updateFilmsGenre(Long id, Collection<Genre> genres);
 }

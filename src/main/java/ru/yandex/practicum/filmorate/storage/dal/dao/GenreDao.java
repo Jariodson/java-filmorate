@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.storage.dal.GenreDal;
 
@@ -29,14 +30,13 @@ public class GenreDao implements GenreDal {
     @Override
     public Genre getGenreById(Long id) {
         String sql = "SELECT * FROM genre WHERE genre_id = ?";
-        return jdbcTemplate.queryForObject(sql, this::makeGenre, id);
+        try {
+            return jdbcTemplate.queryForObject(sql, this::makeGenre, id);
+        } catch (Exception e) {
+            throw new NotFoundException("жанр не найден");
+        }
     }
 
-    @Override
-    public String getGenreNameById(Long id) {
-        String sql = "SELECT genre_name FROM genre WHERE genre_id = ?";
-        return jdbcTemplate.queryForObject(sql, String.class, id);
-    }
 
     @Override
     public Collection<Genre> getFilmGenre(Long filmId) {
@@ -46,15 +46,22 @@ public class GenreDao implements GenreDal {
     }
 
     @Override
-    public void addFilmsGenre(Long userId, Collection<Genre> genres) {
+    public void updateFilmsGenre(Long filmId, Collection<Genre> genres) {
+
+        String sqlDelete = "DELETE FROM GENRE_OF_FILM WHERE film_id = ?";
+        try {
+            jdbcTemplate.update(sqlDelete, filmId);
+        } catch (DataAccessException e) {
+            throw new RuntimeException("Ошибка при удолении жанра");
+        }
         if (genres != null) {
             for (Genre g : genres) {
-                addFilmGenre(userId, g);
+                updateFilmGenre(filmId, g);
             }
         }
     }
 
-    public void addFilmGenre(Long filmId, Genre genreId) {
+    public void updateFilmGenre(Long filmId, Genre genreId) {
         String sql = "INSERT INTO GENRE_OF_FILM (film_id, genre_id)" +
                 "SELECT ?, ?" +
                 "WHERE NOT EXISTS (" +

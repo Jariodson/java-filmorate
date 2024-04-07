@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
@@ -28,31 +27,27 @@ public class GenreServiceImpl implements GenreService {
 
     @Override
     public Genre getGenreById(Long id) throws NotFoundException {
-        checkGenre(id);
         return genreDao.getGenreById(id);
     }
 
-    @Override
-    public String getGenreNameById(Long id) {
-        checkGenre(id);
-        return genreDao.getGenreNameById(id);
-    }
 
-    private void checkGenre(Long id) {
-        try {
-            genreDao.getGenreById(id);
-        } catch (EmptyResultDataAccessException e) {
-            throw new IllegalArgumentException("Жанр с ID: " + id + " не найден!");
-        }
-    }
 
     public Collection<Genre> getFilmsGenre(Long id) {
         return genreDao.getFilmGenre(id);
-
     }
 
     @Override
-    public void addFilmsGenre(Long userId,Collection<Genre> genres) {
-        genreDao.addFilmsGenre(userId, genres);
+    public void updateFilmsGenre(Long id, Collection<Genre> genres) {
+        checkGenre(genres);
+        genreDao.updateFilmsGenre(id, genres);
+    }
+    private void checkGenre(Collection<Genre> genres) {
+        for (Genre genre : genres) {
+            try {
+                genreDao.getGenreById(genre.getId());
+            } catch (IllegalArgumentException e) {
+                throw new NotFoundException("Жанр с ID: " + genre.getId() + " не найден!");
+            }
+        }
     }
 }

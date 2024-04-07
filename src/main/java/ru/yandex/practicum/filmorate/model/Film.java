@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import ru.yandex.practicum.filmorate.validation.DateMin;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Past;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
@@ -29,7 +28,6 @@ public class Film {
     private final String name;
     @Size(max = 200, message = "Длина описания превышает лимит! Лимит 200!")
     private final String description;
-    @Past
     @DateMin(value = "1895-12-28")
     private final LocalDate releaseDate;
     @Positive(message = "Продолжительность фильма не может быть отрицательной или равна 0!")

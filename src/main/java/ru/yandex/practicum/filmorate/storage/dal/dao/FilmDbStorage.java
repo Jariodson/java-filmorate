@@ -8,7 +8,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.storage.dal.FilmStorage;
 
@@ -82,7 +81,7 @@ public class FilmDbStorage implements FilmStorage {
     public Collection<Film> getFavouriteFilms(int count) {
         String sql = "SELECT f.*, m.mpa_name, COUNT(l.user_id) AS like_count " +
                 "FROM film AS f " +
-                "JOIN FILM_LIKE AS l ON l.film_id = f.film_id " +
+                "LEFT JOIN FILM_LIKE AS l ON l.film_id = f.film_id " +
                 "JOIN mpa AS m ON m.mpa_id = f.mpa_id " +
                 "GROUP BY f.film_id, m.mpa_name " +
                 "ORDER BY like_count DESC " +
@@ -118,21 +117,26 @@ public class FilmDbStorage implements FilmStorage {
         try {
             // Construct the base SQL query
             StringBuilder sqlBuilder = new StringBuilder();
-            sqlBuilder.append("SELECT f.* FROM film f ");
-            sqlBuilder.append("JOIN director_of_film df ON f.film_id = df.film_id ");
+            sqlBuilder.append( "SELECT f.*, m.mpa_name, COUNT(l.user_id) AS likes " +
+                    "FROM film AS f " +
+                    "LEFT JOIN FILM_LIKE AS l ON l.film_id = f.film_id " +
+                    "JOIN director_of_film df ON f.film_id = df.film_id " +
+                    "JOIN mpa AS m ON m.mpa_id = f.mpa_id ");
             sqlBuilder.append("WHERE df.director_id = ? ");
-
+            sqlBuilder.append("GROUP BY f.film_id, m.mpa_name ");
             // Check if orderBy array is provided and construct ORDER BY clause
             if (orderBy != null && orderBy.length > 0) {
                 sqlBuilder.append("ORDER BY ");
                 for (int i = 0; i < orderBy.length; i++) {
+                    if(orderBy[i].equals("year")){
+                        orderBy[i] = " f.released_date ";
+                    }
                     sqlBuilder.append(orderBy[i]);
                     if (i < orderBy.length - 1) {
                         sqlBuilder.append(", ");
                     }
                 }
             }
-
             // Execute the query
             String sql = sqlBuilder.toString();
             Collection<Film> films = jdbcTemplate.query(sql, this::makeFilm, directorId);
@@ -142,10 +146,4 @@ public class FilmDbStorage implements FilmStorage {
         }
     }
 
-    private Genre makeGenre(ResultSet rs, int rowNum) throws SQLException {
-        return Genre.builder()
-                .id(rs.getLong("genre_id"))
-                .name(rs.getString("genre_name"))
-                .build();
-    }
 }

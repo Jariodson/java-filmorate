@@ -1,11 +1,4 @@
-DROP TABLE IF EXISTS film_like CASCADE;
-DROP TABLE IF EXISTS genre_of_film CASCADE;
-DROP TABLE IF EXISTS friendship CASCADE;
-DROP TABLE IF EXISTS review_dislikes CASCADE;
-DROP TABLE IF EXISTS review_likes CASCADE;
-DROP TABLE IF EXISTS review CASCADE;
-DROP TABLE IF EXISTS "user" CASCADE;
-DROP TABLE IF EXISTS film CASCADE;
+
 
 CREATE TABLE IF NOT EXISTS "user"
 (
@@ -117,4 +110,9 @@ ALTER TABLE genre_of_film
 
 ALTER TABLE film
     ADD FOREIGN KEY (mpa_id) REFERENCES mpa (mpa_id);
+ALTER TABLE director_of_film
+    ADD CONSTRAINT fk_director FOREIGN KEY (director_id) REFERENCES director (director_id) ON DELETE CASCADE;
+
+ALTER TABLE director_of_film
+    ADD FOREIGN KEY (film_id) REFERENCES film (film_id) ;
 
