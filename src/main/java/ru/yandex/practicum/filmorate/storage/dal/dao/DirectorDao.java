@@ -102,7 +102,9 @@ public class DirectorDao implements DirectorDal {
     @Override
     public Collection<Director> getFilmsDirector(Long filmId) {
         try {
-            String sql = "SELECT g.director_id, g.director_name FROM director_of_film f LEFT JOIN director g ON g.director_id = f.director_id WHERE f.FILM_ID = ?";
+            String sql = "SELECT g.director_id, g.director_name FROM director_of_film f " +
+                    "JOIN director g ON g.director_id = f.director_id " +
+                    "WHERE f.FILM_ID = ?";
             return jdbcTemplate.query(sql, this::makeDirector, filmId);
         } catch (EmptyResultDataAccessException e) {
             throw new IllegalArgumentException("Фильм с не найден!");
@@ -113,8 +115,10 @@ public class DirectorDao implements DirectorDal {
     @Override
     public void deleteDirector(Long id) {
         String sql = "DELETE FROM director WHERE director_id = ?";
+        String sqlStr = "DELETE FROM director_of_film WHERE director_id = ?";
         try {
-            int rowsAffected = jdbcTemplate.update(sql, id);
+            int rowsAffected = jdbcTemplate.update(sqlStr, id);
+            jdbcTemplate.update(sql, id);
             if (rowsAffected == 0) {
                 throw new IllegalArgumentException("Director with ID: " + id + " does not exist.");
             }
