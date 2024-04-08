@@ -32,10 +32,12 @@ public class Film {
     private final LocalDate releaseDate;
     @Positive(message = "Продолжительность фильма не может быть отрицательной или равна 0!")
     private final int duration;
-
+    @Builder.Default
     private Set<Long> likes = new HashSet<>();
     private Long id;
     private Mpa mpa;
+    @Builder.Default
     private Collection<Genre> genres = new ArrayList<>();
+    @Builder.Default
     private Collection<Director> directors = new ArrayList<>();
 }

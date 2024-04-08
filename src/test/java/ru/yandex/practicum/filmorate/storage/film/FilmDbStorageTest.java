@@ -11,11 +11,8 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.dal.FilmStorage;
-import ru.yandex.practicum.filmorate.storage.dal.UserStorage;
-import ru.yandex.practicum.filmorate.storage.dal.dao.FilmDbStorage;
-import ru.yandex.practicum.filmorate.storage.dal.dao.LikeDao;
-import ru.yandex.practicum.filmorate.storage.dal.dao.UserDbStorage;
+import ru.yandex.practicum.filmorate.storage.dal.*;
+import ru.yandex.practicum.filmorate.storage.dal.dao.*;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -31,14 +28,17 @@ class FilmDbStorageTest {
     private JdbcTemplate jdbcTemplate;
     private FilmStorage filmStorage;
     private UserStorage userStorage;
-
-    private LikeDao likeStorage;
+    private GenreDal genreDal;
+    private LikeDal likeStorage;
+    private DirectorDal directorDal;
 
     @BeforeEach
     void beforeEach() {
-        filmStorage = new FilmDbStorage(jdbcTemplate);
-        userStorage = new UserDbStorage(jdbcTemplate);
         likeStorage = new LikeDao(jdbcTemplate);
+        genreDal = new GenreDao(jdbcTemplate);
+        directorDal = new DirectorDao(jdbcTemplate);
+        filmStorage = new FilmDbStorage(jdbcTemplate, genreDal, likeStorage, directorDal);
+        userStorage = new UserDbStorage(jdbcTemplate);
     }
 
     @Test
@@ -155,7 +155,7 @@ class FilmDbStorageTest {
 
         // filmStorage.addLike(film1.getId(), newUser.getId());
 
-        Collection<Film> films = filmStorage.getFavouriteFilms(10);
+        Collection<Film> films = filmStorage.getMostPopularsFilms(10, null, null);
         assertThat(films).isNotNull();
     }
 

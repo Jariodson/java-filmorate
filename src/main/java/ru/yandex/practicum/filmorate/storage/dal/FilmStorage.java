@@ -15,10 +15,9 @@ public interface FilmStorage {
 
     void deleteFilm(Long id);
 
-    Collection<Film> getFavouriteFilms(int count);
-
     Collection<Film> getFilmsByDirectorAndSort(Long directorId, String[] orderBy);
 
     Collection<Film> getCommonFilms(Long userId, Long friendId);
 
+    Collection<Film> getMostPopularsFilms(Integer count, Long genreId, Integer year);
 }

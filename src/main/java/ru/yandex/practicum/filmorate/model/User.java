@@ -24,6 +24,7 @@ public class User {
     private String login;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate birthday;
+    @Builder.Default
     private Set<Long> friendsIds = new HashSet<>();
     private String name;
 }

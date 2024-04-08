@@ -57,17 +57,6 @@ public class FilmServiceImpl implements FilmService {
         return film;
     }
 
-    @Override
-    public Collection<Film> getFavoriteFilms(int count) {
-        Collection<Film> films = filmStorage.getFavouriteFilms(count);
-        for (Film film : films) {
-            long id = film.getId();
-            film.setGenres(genreService.getFilmsGenre(id));
-            film.setDirectors(directorService.getFilmsDirector(id));
-        }
-        return films;
-    }
-
     public Collection<Film> getDirectorFilmsSorted(Long directorId, String[] orderBy) {
         directorService.getDirectorById(directorId);
         Collection<Film> films = filmStorage.getFilmsByDirectorAndSort(directorId, orderBy);
@@ -133,6 +122,11 @@ public class FilmServiceImpl implements FilmService {
         userService.getUserById(userId);
         userService.getUserById(friendId);
         return filmStorage.getCommonFilms(userId, friendId);
+    }
+
+    @Override
+    public Collection<Film> getMostPopularsFilms(Integer count, Long genreId, Integer year) {
+        return filmStorage.getMostPopularsFilms(count, genreId, year);
     }
 
     private void checkMpa(Long id) {

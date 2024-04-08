@@ -90,11 +90,12 @@ public class FilmController {
 
     @GetMapping("/popular")
     @ResponseStatus(HttpStatus.OK)
-    public Collection<Film> getFavouriteFilms(@RequestParam(defaultValue = "10") int count) {
-        log.debug("Получен запрос GET на получение самых популярных фильмов!");
-        Collection<Film> films = filmService.getFavoriteFilms(count);
-        log.debug("Вывод {} популярных фильмов", count);
-        return films;
+    public Collection<Film> getMostPopularsFilms(@RequestParam(defaultValue = "10") Integer count,
+                                                 @RequestParam(required = false) Long genreId,
+                                                 @RequestParam(required = false) Integer year) {
+        log.info("Получен запрос GET на получение самых популярных фильмов!");
+        log.info("Вывод {} популярных фильмов", count);
+        return filmService.getMostPopularsFilms(count, genreId, year);
     }
 
     @GetMapping("/director/{directorId}")

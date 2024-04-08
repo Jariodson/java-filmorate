@@ -8,9 +8,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 import ru.yandex.practicum.filmorate.model.*;
-import ru.yandex.practicum.filmorate.storage.dal.FilmStorage;
-import ru.yandex.practicum.filmorate.storage.dal.ReviewDal;
-import ru.yandex.practicum.filmorate.storage.dal.UserStorage;
+import ru.yandex.practicum.filmorate.storage.dal.*;
 
 import java.time.LocalDate;
 import java.util.Collection;
@@ -25,15 +23,19 @@ import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFOR
 class ReviewDaoTest {
     @Autowired
     private JdbcTemplate jdbcTemplate;
-
     private ReviewDal reviewDao;
-
     private Review review;
+    private GenreDal genreDal;
+    private LikeDal likeDal;
+    private DirectorDal directorDal;
 
     @BeforeEach
     void beforeEach() {
         reviewDao = new ReviewDao(jdbcTemplate);
-        FilmStorage filmStorage = new FilmDbStorage(jdbcTemplate);
+        likeDal = new LikeDao(jdbcTemplate);
+        genreDal = new GenreDao(jdbcTemplate);
+        directorDal = new DirectorDao(jdbcTemplate);
+        FilmStorage filmStorage = new FilmDbStorage(jdbcTemplate, genreDal, likeDal, directorDal);
         UserStorage userStorage = new UserDbStorage(jdbcTemplate);
 
         User user = User.builder()

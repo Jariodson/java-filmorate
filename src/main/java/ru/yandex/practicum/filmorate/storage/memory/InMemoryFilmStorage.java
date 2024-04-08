@@ -59,11 +59,6 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public Collection<Film> getFavouriteFilms(int count) {
-        return null;
-    }
-
-    @Override
     public Collection<Film> getFilmsByDirectorAndSort(Long directorId, String[] orderBy) {
         return null;
     }
@@ -71,6 +66,11 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public Collection<Film> getCommonFilms(Long userId, Long friendId) {
+        return null;
+    }
+
+    @Override
+    public Collection<Film> getMostPopularsFilms(Integer count, Long genreId, Integer year) {
         return null;
     }
 

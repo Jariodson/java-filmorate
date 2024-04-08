@@ -9,8 +9,6 @@ public interface FilmService {
 
     Film getFilmById(Long id);
 
-    Collection<Film> getFavoriteFilms(int count);
-
     Collection<Film> getDirectorFilmsSorted(Long directorId, String[] orderBy);
 
     Film createFilm(Film film);
@@ -24,4 +22,6 @@ public interface FilmService {
     Film removeLike(Long filmId, Long userId);
 
     Collection<Film> getCommonFilms(Long userId, Long friendId);
+
+    Collection<Film> getMostPopularsFilms(Integer count, Long genreId, Integer year);
 }
