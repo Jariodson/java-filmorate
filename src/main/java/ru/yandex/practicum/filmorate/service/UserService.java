@@ -22,4 +22,6 @@ public interface UserService {
     Collection<User> getCommonFriends(long userId, long friendId);
 
     User getUserById(long id);
+
+    void validate(Long userId);
 }
