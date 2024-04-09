@@ -6,12 +6,10 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 import ru.yandex.practicum.filmorate.storage.dal.UserStorage;
 
-import java.time.LocalDate;
 import java.util.Collection;
 
 @Slf4j
@@ -40,14 +38,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public User updateUser(User user) {
         checkUserCriteria(user);
-        checkUserInDb(user.getId());
+        validate(user.getId());
         userStorage.updateUser(user);
         return user;
     }
 
     @Override
     public User removeUser(Long id) {
-        checkUserInDb(id);
+        validate(id);
         User user = userStorage.getUserById(id);
         userStorage.deleteUser(id);
         return user;
@@ -55,34 +53,34 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Collection<User> getFriends(long userId) {
-        checkUserInDb(userId);
+        validate(userId);
         return userStorage.getFriends(userId);
     }
 
     @Override
     public User addFriend(long userId, long friendId) {
-        checkUserInDb(userId);
-        checkUserInDb(friendId);
+        validate(userId);
+        validate(friendId);
         return userStorage.addFriend(userId, friendId);
     }
 
     @Override
     public User deleteFriend(long userId, long friendId) {
-        checkUserInDb(userId);
-        checkUserInDb(friendId);
+        validate(userId);
+        validate(friendId);
         return userStorage.deleteFriend(userId, friendId);
     }
 
     @Override
     public Collection<User> getCommonFriends(long userId, long friendId) {
-        checkUserInDb(userId);
-        checkUserInDb(friendId);
+        validate(userId);
+        validate(friendId);
         return userStorage.getCommonFriends(userId, friendId);
     }
 
     @Override
     public User getUserById(long id) {
-        checkUserInDb(id);
+        validate(id);
         return userStorage.getUserById(id);
     }
 
@@ -91,12 +89,9 @@ public class UserServiceImpl implements UserService {
             user.setName(user.getLogin());
             log.info("Введено пустое имя, поэтому имя изменено на логин: {}", user.getLogin());
         }
-        if (user.getBirthday().isAfter(LocalDate.now().plusDays(1))) {
-            throw new ValidationException("Дата рождения не может быть в будущем");
-        }
     }
 
-    private void checkUserInDb(Long id) {
+    public void validate(Long id) {
         try {
             userStorage.getUserById(id);
         } catch (EmptyResultDataAccessException e) {

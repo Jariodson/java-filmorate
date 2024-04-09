@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Past;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
@@ -22,6 +23,7 @@ public class User {
     private String email;
     @NotBlank(message = "Логин не может быть пустым и содержать пробелы")
     private String login;
+    @Past
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate birthday;
     @Builder.Default

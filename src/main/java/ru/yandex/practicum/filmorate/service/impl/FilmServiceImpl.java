@@ -49,7 +49,7 @@ public class FilmServiceImpl implements FilmService {
     }
 
     public Film getFilmById(Long id) {
-        checkFilmInDb(id);
+        validate(id);
         Film film = filmStorage.getFilmById(id);
         film.setGenres(genreService.getFilmsGenre(id));
         film.setDirectors(directorService.getFilmsDirector(id));
@@ -84,7 +84,7 @@ public class FilmServiceImpl implements FilmService {
 
     @Override
     public Film updateFilm(Film film) {
-        checkFilmInDb(film.getId());
+        validate(film.getId());
         filmStorage.updateFilm(film);
         genreService.updateFilmsGenre(film.getId(), film.getGenres());
         directorService.updateFilmDirectors(film.getId(), film.getDirectors());
@@ -93,7 +93,7 @@ public class FilmServiceImpl implements FilmService {
 
     @Override
     public Film removeFilm(Long id) {
-        checkFilmInDb(id);
+        validate(id);
         Film film = filmStorage.getFilmById(id);
         filmStorage.deleteFilm(id);
         return film;
@@ -101,16 +101,16 @@ public class FilmServiceImpl implements FilmService {
 
     @Override
     public Film createLike(Long filmId, Long userId) {
-        checkFilmInDb(filmId);
-        checkUserInDb(userId);
+        validate(filmId);
+        userService.validate(userId);
         likeStorage.addLike(filmId, userId);
         return getFilmById(filmId);
     }
 
     @Override
     public Film removeLike(Long filmId, Long userId) {
-        checkFilmInDb(filmId);
-        checkUserInDb(userId);
+        validate(filmId);
+        userService.validate(userId);
         likeStorage.removeLike(filmId, userId);
 
         return getFilmById(filmId);
@@ -136,17 +136,9 @@ public class FilmServiceImpl implements FilmService {
         }
     }
 
-    private void checkFilmInDb(Long id) {
+    private void validate(Long id) {
         try {
             filmStorage.getFilmById(id);
-        } catch (EmptyResultDataAccessException e) {
-            throw new IllegalArgumentException("Фильм с ID: " + id + " не найден!");
-        }
-    }
-
-    private void checkUserInDb(Long id) {
-        try {
-            userService.getUserById(id);
         } catch (EmptyResultDataAccessException e) {
             throw new IllegalArgumentException("Фильм с ID: " + id + " не найден!");
         }
