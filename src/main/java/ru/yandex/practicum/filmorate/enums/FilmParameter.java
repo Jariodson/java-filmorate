@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.enums;
 
 
-
 public enum FilmParameter {
     DIRECTOR("director"),
     TITLE("title"),

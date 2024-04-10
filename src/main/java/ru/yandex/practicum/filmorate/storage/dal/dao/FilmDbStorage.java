@@ -25,9 +25,9 @@ import java.util.stream.Collectors;
 @Qualifier("filmDbStorage")
 public class FilmDbStorage implements FilmStorage {
     private final JdbcTemplate jdbcTemplate;
-    private GenreDal genreDal;
-    private LikeDal likeDal;
-    private DirectorDal directorDal;
+    private final GenreDal genreDal;
+    private final LikeDal likeDal;
+    private final DirectorDal directorDal;
     private final FilmMapper filmMapper;
 
     public FilmDbStorage(JdbcTemplate jdbcTemplate,

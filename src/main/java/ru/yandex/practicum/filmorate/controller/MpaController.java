@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.service.MpaService;
+
 import javax.validation.constraints.NotNull;
 import java.util.Collection;
 
@@ -34,9 +35,9 @@ public class MpaController {
     public Mpa getMpaById(@NotNull @PathVariable Long id) {
         log.debug("Получен запрос GET на получение mpa по ID: {}", id);
 
-            Mpa mpa = mpaService.getMpaById(id);
-            log.debug("Вывод рейтинга с Id: {}", id);
-            return mpa;
+        Mpa mpa = mpaService.getMpaById(id);
+        log.debug("Вывод рейтинга с Id: {}", id);
+        return mpa;
 
     }
 
