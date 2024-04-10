@@ -6,10 +6,15 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.yandex.practicum.filmorate.model.EventType;
+import ru.yandex.practicum.filmorate.model.Operation;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.model.UserFeed;
 import ru.yandex.practicum.filmorate.service.UserService;
+import ru.yandex.practicum.filmorate.storage.dal.UserFeedDal;
 import ru.yandex.practicum.filmorate.storage.dal.UserStorage;
 
+import java.time.Instant;
 import java.util.Collection;
 
 @Slf4j
@@ -17,10 +22,12 @@ import java.util.Collection;
 @Transactional
 public class UserServiceImpl implements UserService {
     private final UserStorage userStorage;
+    private final UserFeedDal feedStorage;
 
     @Autowired
-    public UserServiceImpl(@Qualifier("userDbStorage") UserStorage userStorage) {
+    public UserServiceImpl(@Qualifier("userDbStorage") UserStorage userStorage, UserFeedDal feedStorage) {
         this.userStorage = userStorage;
+        this.feedStorage = feedStorage;
     }
 
     @Override
@@ -61,14 +68,24 @@ public class UserServiceImpl implements UserService {
     public User addFriend(long userId, long friendId) {
         validate(userId);
         validate(friendId);
-        return userStorage.addFriend(userId, friendId);
+        User user = userStorage.addFriend(userId, friendId);
+        feedStorage.addUserFeed(new UserFeed(0L,
+                Instant.now(), userId,
+                EventType.FRIEND, Operation.ADD,
+                friendId));
+        return user;
     }
 
     @Override
     public User deleteFriend(long userId, long friendId) {
         validate(userId);
         validate(friendId);
-        return userStorage.deleteFriend(userId, friendId);
+        User user = userStorage.deleteFriend(userId, friendId);
+        feedStorage.addUserFeed(new UserFeed(0L,
+                Instant.now(), userId,
+                EventType.FRIEND, Operation.REMOVE,
+                friendId));
+        return user;
     }
 
     @Override
@@ -97,5 +114,11 @@ public class UserServiceImpl implements UserService {
         } catch (EmptyResultDataAccessException e) {
             throw new IllegalArgumentException("Пользователь с ID: " + id + " не найден!");
         }
+    }
+
+    @Override
+    public Collection<UserFeed> getUserFeed(Long userId) {
+        validate(userId);
+        return feedStorage.getUserFeed(userId);
     }
 }

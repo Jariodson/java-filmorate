@@ -7,11 +7,17 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
+import ru.yandex.practicum.filmorate.model.EventType;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Operation;
+import ru.yandex.practicum.filmorate.model.UserFeed;
 import ru.yandex.practicum.filmorate.service.*;
 import ru.yandex.practicum.filmorate.storage.dal.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.dal.LikeDal;
+import ru.yandex.practicum.filmorate.storage.dal.UserFeedDal;
 
+
+import java.time.Instant;
 import java.util.Collection;
 
 
@@ -21,15 +27,17 @@ import java.util.Collection;
 public class FilmServiceImpl implements FilmService {
     private final FilmStorage filmStorage;
     private final LikeDal likeStorage;
+    private final UserFeedDal feedStorage;
     private final UserService userService;
     private final MpaService mpaService;
     private final GenreService genreService;
     private final DirectorService directorService;
 
     @Autowired
-    public FilmServiceImpl(@Qualifier("filmDbStorage") FilmStorage filmStorage, LikeDal likeStorage, UserService userService, MpaService mpaService, GenreService genreService, DirectorService directorService) {
+    public FilmServiceImpl(@Qualifier("filmDbStorage") FilmStorage filmStorage, LikeDal likeStorage, UserFeedDal userFeedStorage, UserService userService, MpaService mpaService, GenreService genreService, DirectorService directorService) {
         this.filmStorage = filmStorage;
         this.likeStorage = likeStorage;
+        this.feedStorage = userFeedStorage;
         this.userService = userService;
         this.mpaService = mpaService;
         this.genreService = genreService;
@@ -104,6 +112,10 @@ public class FilmServiceImpl implements FilmService {
         validate(filmId);
         userService.validate(userId);
         likeStorage.addLike(filmId, userId);
+        feedStorage.addUserFeed(new UserFeed(0L,
+                Instant.now(), userId,
+                EventType.LIKE, Operation.ADD,
+                filmId));
         return getFilmById(filmId);
     }
 
@@ -112,7 +124,10 @@ public class FilmServiceImpl implements FilmService {
         validate(filmId);
         userService.validate(userId);
         likeStorage.removeLike(filmId, userId);
-
+        feedStorage.addUserFeed(new UserFeed(0L,
+                Instant.now(), userId,
+                EventType.LIKE, Operation.REMOVE,
+                filmId));
         return getFilmById(filmId);
     }
 

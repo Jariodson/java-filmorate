@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.model.UserFeed;
 import ru.yandex.practicum.filmorate.service.UserService;
 
 import javax.validation.Valid;
@@ -107,5 +108,14 @@ public class UserController {
         log.debug("Вывод общих друзей пользователя с Id: {} и Id: {}", userId, friendId);
         log.debug("Общие друзья: {}", commonFriends);
         return commonFriends;
+    }
+
+    @GetMapping("/{id}/feed")
+    @ResponseStatus(HttpStatus.OK)
+    public Collection<UserFeed> getCommonFriends(@NotNull @PathVariable(value = "id") @NotNull Long userId) {
+        log.debug("Получен запрос GET на получение истории пользователя: {} ", userId);
+        Collection<UserFeed> userFeed = userService.getUserFeed(userId);
+        log.debug("Вывод общих истории действий пользователя с Id: {}", userId);
+        return userFeed;
     }
 }
