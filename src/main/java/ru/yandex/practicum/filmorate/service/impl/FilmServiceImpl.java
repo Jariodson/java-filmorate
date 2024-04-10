@@ -14,6 +14,7 @@ import ru.yandex.practicum.filmorate.storage.dal.LikeDal;
 
 
 import java.util.Collection;
+import java.util.List;
 
 
 @Slf4j
@@ -151,5 +152,9 @@ public class FilmServiceImpl implements FilmService {
         } catch (EmptyResultDataAccessException e) {
             throw new IllegalArgumentException("Фильм с ID: " + id + " не найден!");
         }
+    }
+
+    public List<Film> searchFilmByParameter(String query, String filmSearchParameter) {
+        return filmStorage.searchFilmByParameter(query, filmSearchParameter);
     }
 }

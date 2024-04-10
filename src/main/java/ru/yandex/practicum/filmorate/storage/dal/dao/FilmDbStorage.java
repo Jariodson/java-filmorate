@@ -6,12 +6,14 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
+import ru.yandex.practicum.filmorate.enums.FilmParameter;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.storage.dal.DirectorDal;
 import ru.yandex.practicum.filmorate.storage.dal.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.dal.GenreDal;
 import ru.yandex.practicum.filmorate.storage.dal.LikeDal;
+import ru.yandex.practicum.filmorate.storage.mapper.FilmMapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -26,15 +28,17 @@ public class FilmDbStorage implements FilmStorage {
     private GenreDal genreDal;
     private LikeDal likeDal;
     private DirectorDal directorDal;
+    private final FilmMapper filmMapper;
 
     public FilmDbStorage(JdbcTemplate jdbcTemplate,
                          GenreDal genreDal,
                          LikeDal likeDal,
-                         DirectorDal directorDal) {
+                         DirectorDal directorDal, FilmMapper filmMapper) {
         this.jdbcTemplate = jdbcTemplate;
         this.genreDal = genreDal;
         this.likeDal = likeDal;
         this.directorDal = directorDal;
+        this.filmMapper = filmMapper;
     }
 
     @Override
@@ -203,5 +207,62 @@ public class FilmDbStorage implements FilmStorage {
                 .build();
 
         return film;
+    }
+    @Override
+    public List<Film> searchFilmByParameter(String query, String filmSearchParameter) {
+        FilmParameter sortTypes = FilmParameter.validateFilmParameter(filmSearchParameter);
+        switch (sortTypes) {
+            case DIRECTOR:
+
+                return searchFilmByDirector(query);
+            case TITLE:
+                return searchFilmByTitle(query);
+            case DIR_AND_TITLE:
+            case TITLE_AND_DIR:
+                return searchFilmByDirectorAndTitle(query);
+            default:
+                throw new IllegalArgumentException(FilmParameter.UNKNOWN + filmSearchParameter);
+        }
+    }
+
+    public List<Film> searchFilmByDirector(String query) {
+        String sqlQuery;
+        sqlQuery = "SELECT f.* " +
+                "FROM film AS f " +
+                "LEFT JOIN film_like AS l ON f.film_id=l.film_id " +
+                "LEFT JOIN director_of_film   AS fd ON f.film_id=fd.film_id " +
+                "LEFT JOIN director AS d ON d.director_id=fd.director_id " +
+                "WHERE d.DIRECTOR_NAME LIKE ? " +
+                "GROUP BY f.film_id " +
+                "ORDER BY count(l.user_id);";
+
+        return jdbcTemplate.query(sqlQuery, filmMapper, '%' + query + '%');
+    }
+
+    public List<Film> searchFilmByTitle(String query) {
+        String sqlQuery;
+        sqlQuery = "SELECT f.* " +
+                "FROM film AS f " +
+                "LEFT JOIN film_like  AS l ON f.film_id=l.film_id " +
+                "WHERE LOWER(f.name) LIKE ? " +
+                "GROUP BY f.film_id " +
+                "ORDER BY count(l.user_id);";
+
+        return jdbcTemplate.query(sqlQuery, filmMapper, '%' + query + '%');
+    }
+
+    public List<Film> searchFilmByDirectorAndTitle(String query) {
+        String sqlQuery;
+        sqlQuery = "SELECT f.* " +
+                "FROM film AS f " +
+                "LEFT JOIN film_like AS l ON f.film_id=l.film_id " +
+                "LEFT JOIN director_of_film  AS fd ON f.film_id=fd.film_id " +
+                "LEFT JOIN director AS d ON d.director_id=fd.director_id " +
+                "WHERE d.director_name LIKE ? " +
+                "OR LOWER(f.name) LIKE ? " +
+                "GROUP BY f.film_id " +
+                "ORDER BY count(l.user_id) DESC;";
+
+        return jdbcTemplate.query(sqlQuery, filmMapper, '%' + query + '%', '%' + query + '%');
     }
 }
