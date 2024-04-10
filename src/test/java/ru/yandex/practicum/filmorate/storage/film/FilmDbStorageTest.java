@@ -13,9 +13,13 @@ import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.dal.*;
 import ru.yandex.practicum.filmorate.storage.dal.dao.*;
+import ru.yandex.practicum.filmorate.storage.mapper.FilmMapper;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Set;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD;
@@ -31,13 +35,14 @@ class FilmDbStorageTest {
     private GenreDal genreDal;
     private LikeDal likeStorage;
     private DirectorDal directorDal;
+    private FilmMapper filmMapper;
 
     @BeforeEach
     void beforeEach() {
         likeStorage = new LikeDao(jdbcTemplate);
         genreDal = new GenreDao(jdbcTemplate);
         directorDal = new DirectorDao(jdbcTemplate);
-        filmStorage = new FilmDbStorage(jdbcTemplate, genreDal, likeStorage, directorDal);
+        filmStorage = new FilmDbStorage(jdbcTemplate, genreDal, likeStorage, directorDal, filmMapper);
         userStorage = new UserDbStorage(jdbcTemplate);
     }
 

@@ -46,7 +46,7 @@ public class DirectorController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Director addNewDirector(@Validated(WithoutParent.class)
-                                                   @RequestBody Director director) {
+                                   @RequestBody Director director) {
         log.debug("Получен запрос POST на добавление режисёра");
         directorService.createDirector(director);
         log.debug("Вывод режисёра. ID режисёра: {}", director.getId());
@@ -56,7 +56,7 @@ public class DirectorController {
     @PutMapping
     @ResponseStatus(HttpStatus.OK)
     public Director updateDirector(@Validated(WithoutParent.class)
-                                                   @RequestBody Director director) {
+                                   @RequestBody Director director) {
         log.debug("Получен запрос PUT на обновление режисёра");
         directorService.updateDirector(director);
         log.debug("Вывод режисёра. ID режисёра: {}  Имя режисёра: {}", director.getId(), director.getName());

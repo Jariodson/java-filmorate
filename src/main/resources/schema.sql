@@ -62,7 +62,7 @@ CREATE TABLE IF NOT EXISTS mpa
 
 CREATE TABLE IF NOT EXISTS director_of_film
 (
-    film_id  integer,
+    film_id     integer,
     director_id integer
 );
 
@@ -126,5 +126,5 @@ ALTER TABLE director_of_film
     ADD CONSTRAINT fk_director FOREIGN KEY (director_id) REFERENCES director (director_id) ON DELETE CASCADE;
 
 ALTER TABLE director_of_film
-    ADD FOREIGN KEY (film_id) REFERENCES film (film_id) ;
+    ADD FOREIGN KEY (film_id) REFERENCES film (film_id);
 

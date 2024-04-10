@@ -12,7 +12,6 @@ import ru.yandex.practicum.filmorate.service.*;
 import ru.yandex.practicum.filmorate.storage.dal.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.dal.LikeDal;
 
-
 import java.util.Collection;
 
 
@@ -151,5 +150,9 @@ public class FilmServiceImpl implements FilmService {
         } catch (EmptyResultDataAccessException e) {
             throw new IllegalArgumentException("Фильм с ID: " + id + " не найден!");
         }
+    }
+
+    public Collection<Film> searchFilmByParameter(String query, String filmSearchParameter) {
+        return filmStorage.searchFilmByParameter(query, filmSearchParameter);
     }
 }

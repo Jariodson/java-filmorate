@@ -9,6 +9,7 @@ import ru.yandex.practicum.filmorate.storage.dal.FilmStorage;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Component
@@ -74,10 +75,16 @@ public class InMemoryFilmStorage implements FilmStorage {
         return null;
     }
 
+    @Override
+    public List<Film> searchFilmByParameter(String query, String filmSearchParameter) {
+        return null;
+    }
+
     private void checkFilmCriteria(Film film) {
         LocalDate filmBirthday = LocalDate.of(1895, 12, 28);
         if (film.getReleaseDate().isBefore(filmBirthday)) {
             throw new ValidationException("Слишком ранняя дата релиза! " + film.getReleaseDate());
         }
     }
+
 }

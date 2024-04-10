@@ -115,4 +115,12 @@ public class FilmController {
         log.info("Получен запрос GET для общих фильмов с другом по популярности");
         return filmService.getCommonFilms(userId, friendId);
     }
+
+    @GetMapping("/search")
+    @ResponseStatus(HttpStatus.OK)
+    public Collection<Film> searchFilmByParameter(@RequestParam(name = "query") String query,
+                                                  @RequestParam(name = "by") String filmSearchParameter) {
+        log.info("Получен GET запрос на поиск: {}", filmSearchParameter);
+        return filmService.searchFilmByParameter(query.toLowerCase(), filmSearchParameter.toLowerCase());
+    }
 }
