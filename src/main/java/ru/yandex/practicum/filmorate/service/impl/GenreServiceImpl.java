@@ -30,7 +30,6 @@ public class GenreServiceImpl implements GenreService {
         return genreDao.getGenreById(id);
     }
 
-
     public Collection<Genre> getFilmsGenre(Long id) {
         return genreDao.getFilmGenre(id);
     }

@@ -27,8 +27,8 @@ public class UserFeedDao implements UserFeedDal {
     public void addUserFeed(UserFeed feed) {
         String sql = "INSERT INTO user_feed (instant, user_id, event_type, operation, entity_id) " +
                 "VALUES (?, ?, ?, ?, ?)";
-        jdbcTemplate.update(sql, feed.getTimestamp(), feed.getUserId(), feed.getEventType(),
-                feed.getOperation(), feed.getEntityId());
+        jdbcTemplate.update(sql, feed.getTimestamp(), feed.getUserId(), feed.getEventType().toString(),
+                feed.getOperation().toString(), feed.getEntityId());
     }
 
     @Override

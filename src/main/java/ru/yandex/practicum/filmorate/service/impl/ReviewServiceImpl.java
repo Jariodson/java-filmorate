@@ -4,12 +4,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
+import ru.yandex.practicum.filmorate.model.EventType;
+import ru.yandex.practicum.filmorate.model.Operation;
 import ru.yandex.practicum.filmorate.model.Review;
+import ru.yandex.practicum.filmorate.model.UserFeed;
 import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.service.ReviewService;
 import ru.yandex.practicum.filmorate.service.UserService;
 import ru.yandex.practicum.filmorate.storage.dal.ReviewDal;
+import ru.yandex.practicum.filmorate.storage.dal.UserFeedDal;
 
+import java.time.Instant;
 import java.util.Collection;
 
 @Service
@@ -18,30 +23,41 @@ public class ReviewServiceImpl implements ReviewService {
 
     private final UserService userService;
     private final FilmService filmService;
+    private final UserFeedDal feedService;
 
     @Autowired
-    public ReviewServiceImpl(ReviewDal reviewDao, UserService userService, FilmService filmService) {
+    public ReviewServiceImpl(ReviewDal reviewDao, UserService userService, FilmService filmService, UserFeedDal feedService) {
         this.reviewDao = reviewDao;
         this.userService = userService;
         this.filmService = filmService;
+        this.feedService = feedService;
     }
 
     @Override
     public void createReview(Review review) {
         checkReview(review);
         reviewDao.makeReview(review);
+        feedService.addUserFeed(new UserFeed(0L, Instant.now(), review.getUserId(), EventType.REVIEW, Operation.ADD, review.getFilmId()));
     }
 
     @Override
     public void updateReview(Review review) {
         checkReview(review);
         reviewDao.updateReview(review);
+        feedService.addUserFeed(new UserFeed(0L,
+                Instant.now(), review.getUserId(),
+                EventType.REVIEW, Operation.UPDATE,
+                review.getFilmId()));
     }
 
     @Override
     public Review deleteReview(Long id) {
         Review review = reviewDao.getReviewById(id);
         reviewDao.deleteReview(id);
+        feedService.addUserFeed(new UserFeed(0L,
+                Instant.now(), review.getUserId(),
+                EventType.REVIEW, Operation.REMOVE,
+                review.getFilmId()));
         return review;
     }
 
