@@ -153,7 +153,7 @@ public class FilmServiceImpl implements FilmService {
         }
     }
 
-    public List<Film> searchFilmByParameter(String query, String filmSearchParameter) {
+    public Collection<Film> searchFilmByParameter(String query, String filmSearchParameter) {
         return filmStorage.searchFilmByParameter(query, filmSearchParameter);
     }
 }

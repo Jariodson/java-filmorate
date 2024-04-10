@@ -118,7 +118,7 @@ public class FilmController {
     }
 
     @GetMapping("/search")
-    public List<Film> searchFilmByParameter(@RequestParam(name = "query") String query,
+    public Collection<Film> searchFilmByParameter(@RequestParam(name = "query") String query,
                                             @RequestParam(name = "by") String filmSearchParameter) {
         log.info("Получен GET запрос на поиск");
         return filmService.searchFilmByParameter(query.toLowerCase(), filmSearchParameter.toLowerCase());

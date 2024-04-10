@@ -22,5 +22,5 @@ public interface FilmStorage {
 
     Collection<Film> getMostPopularsFilms(Integer count, Long genreId, Integer year);
 
-    List<Film> searchFilmByParameter(String query, String filmSearchParameter);
+    Collection<Film> searchFilmByParameter(String query, String filmSearchParameter);
 }

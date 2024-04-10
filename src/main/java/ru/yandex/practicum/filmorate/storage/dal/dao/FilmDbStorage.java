@@ -25,9 +25,9 @@ import java.util.stream.Collectors;
 @Qualifier("filmDbStorage")
 public class FilmDbStorage implements FilmStorage {
     private final JdbcTemplate jdbcTemplate;
-    private final GenreDal genreDal;
-    private final LikeDal likeDal;
-    private final DirectorDal directorDal;
+    private GenreDal genreDal;
+    private LikeDal likeDal;
+    private DirectorDal directorDal;
     private final FilmMapper filmMapper;
 
     public FilmDbStorage(JdbcTemplate jdbcTemplate,
@@ -210,7 +210,7 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
-    public List<Film> searchFilmByParameter(String query, String filmSearchParameter) {
+    public Collection<Film> searchFilmByParameter(String query, String filmSearchParameter) {
         FilmParameter sortTypes = FilmParameter.validateFilmParameter(filmSearchParameter);
         switch (sortTypes) {
             case DIRECTOR:
@@ -226,7 +226,7 @@ public class FilmDbStorage implements FilmStorage {
         }
     }
 
-    public List<Film> searchFilmByDirector(String query) {
+    public Collection<Film> searchFilmByDirector(String query) {
         String sqlQuery;
         sqlQuery = "SELECT f.* " +
                 "FROM film AS f " +
@@ -240,7 +240,7 @@ public class FilmDbStorage implements FilmStorage {
         return jdbcTemplate.query(sqlQuery, filmMapper, '%' + query + '%');
     }
 
-    public List<Film> searchFilmByTitle(String query) {
+    public Collection<Film> searchFilmByTitle(String query) {
         String sqlQuery;
         sqlQuery = "SELECT f.* " +
                 "FROM film AS f " +
@@ -252,7 +252,7 @@ public class FilmDbStorage implements FilmStorage {
         return jdbcTemplate.query(sqlQuery, filmMapper, '%' + query + '%');
     }
 
-    public List<Film> searchFilmByDirectorAndTitle(String query) {
+    public Collection<Film> searchFilmByDirectorAndTitle(String query) {
         String sqlQuery;
         sqlQuery = "SELECT f.* " +
                 "FROM film AS f " +

@@ -26,5 +26,5 @@ public interface FilmService {
 
     Collection<Film> getMostPopularsFilms(Integer count, Long genreId, Integer year);
 
-    List<Film> searchFilmByParameter(String lowerCase, String lowerCase1);
+    Collection<Film> searchFilmByParameter(String lowerCase, String lowerCase1);
 }
