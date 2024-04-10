@@ -29,8 +29,8 @@ class ReviewDaoTest {
     private GenreDal genreDal;
     private LikeDal likeDal;
     private DirectorDal directorDal;
-    @Autowired
     private FilmMapper filmMapper;
+
 
     @BeforeEach
     void beforeEach() {
