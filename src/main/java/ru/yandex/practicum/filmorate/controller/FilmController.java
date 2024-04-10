@@ -10,7 +10,6 @@ import ru.yandex.practicum.filmorate.service.FilmService;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.Collection;
-import java.util.List;
 
 @RestController
 @RequestMapping("/films")
@@ -119,7 +118,7 @@ public class FilmController {
 
     @GetMapping("/search")
     public Collection<Film> searchFilmByParameter(@RequestParam(name = "query") String query,
-                                            @RequestParam(name = "by") String filmSearchParameter) {
+                                                  @RequestParam(name = "by") String filmSearchParameter) {
         log.info("Получен GET запрос на поиск");
         return filmService.searchFilmByParameter(query.toLowerCase(), filmSearchParameter.toLowerCase());
     }
