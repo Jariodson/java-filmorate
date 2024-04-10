@@ -13,6 +13,7 @@ import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.dal.*;
 import ru.yandex.practicum.filmorate.storage.dal.dao.*;
+import ru.yandex.practicum.filmorate.storage.mapper.FilmMapper;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -31,13 +32,15 @@ class FilmDbStorageTest {
     private GenreDal genreDal;
     private LikeDal likeStorage;
     private DirectorDal directorDal;
+    @Autowired
+    private FilmMapper filmMapper;
 
     @BeforeEach
     void beforeEach() {
         likeStorage = new LikeDao(jdbcTemplate);
         genreDal = new GenreDao(jdbcTemplate);
         directorDal = new DirectorDao(jdbcTemplate);
-        filmStorage = new FilmDbStorage(jdbcTemplate, genreDal, likeStorage, directorDal);
+        filmStorage = new FilmDbStorage(jdbcTemplate, genreDal, likeStorage, directorDal, filmMapper);
         userStorage = new UserDbStorage(jdbcTemplate);
     }
 

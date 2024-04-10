@@ -9,6 +9,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 import ru.yandex.practicum.filmorate.model.*;
 import ru.yandex.practicum.filmorate.storage.dal.*;
+import ru.yandex.practicum.filmorate.storage.mapper.FilmMapper;
 
 import java.time.LocalDate;
 import java.util.Collection;
@@ -28,6 +29,8 @@ class ReviewDaoTest {
     private GenreDal genreDal;
     private LikeDal likeDal;
     private DirectorDal directorDal;
+    @Autowired
+    private FilmMapper filmMapper;
 
     @BeforeEach
     void beforeEach() {
@@ -35,7 +38,7 @@ class ReviewDaoTest {
         likeDal = new LikeDao(jdbcTemplate);
         genreDal = new GenreDao(jdbcTemplate);
         directorDal = new DirectorDao(jdbcTemplate);
-        FilmStorage filmStorage = new FilmDbStorage(jdbcTemplate, genreDal, likeDal, directorDal);
+        FilmStorage filmStorage = new FilmDbStorage(jdbcTemplate, genreDal, likeDal, directorDal, filmMapper);
         UserStorage userStorage = new UserDbStorage(jdbcTemplate);
 
         User user = User.builder()
