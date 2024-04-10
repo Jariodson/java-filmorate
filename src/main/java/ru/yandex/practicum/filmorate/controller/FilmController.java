@@ -120,7 +120,7 @@ public class FilmController {
     @ResponseStatus(HttpStatus.OK)
     public Collection<Film> searchFilmByParameter(@RequestParam(name = "query") String query,
                                                   @RequestParam(name = "by") String filmSearchParameter) {
-        log.info("Получен GET запрос на поиск");
+        log.info("Получен GET запрос на поиск: {}", filmSearchParameter);
         return filmService.searchFilmByParameter(query.toLowerCase(), filmSearchParameter.toLowerCase());
     }
 }
