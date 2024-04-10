@@ -208,6 +208,7 @@ public class FilmDbStorage implements FilmStorage {
 
         return film;
     }
+
     @Override
     public List<Film> searchFilmByParameter(String query, String filmSearchParameter) {
         FilmParameter sortTypes = FilmParameter.validateFilmParameter(filmSearchParameter);
