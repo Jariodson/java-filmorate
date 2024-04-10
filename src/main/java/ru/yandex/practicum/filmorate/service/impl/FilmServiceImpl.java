@@ -16,7 +16,6 @@ import ru.yandex.practicum.filmorate.storage.dal.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.dal.LikeDal;
 import ru.yandex.practicum.filmorate.storage.dal.UserFeedDal;
 
-
 import java.time.Instant;
 import java.util.Collection;
 
@@ -113,9 +112,9 @@ public class FilmServiceImpl implements FilmService {
         userService.validate(userId);
         likeStorage.addLike(filmId, userId);
         feedStorage.addUserFeed(new UserFeed(0L,
-                Instant.now(), userId,
-                EventType.LIKE, Operation.ADD,
-                filmId));
+                userId, filmId, Instant.now(),
+                EventType.LIKE, Operation.ADD
+        ));
         return getFilmById(filmId);
     }
 
@@ -125,9 +124,9 @@ public class FilmServiceImpl implements FilmService {
         userService.validate(userId);
         likeStorage.removeLike(filmId, userId);
         feedStorage.addUserFeed(new UserFeed(0L,
-                Instant.now(), userId,
-                EventType.LIKE, Operation.REMOVE,
-                filmId));
+                userId, filmId, Instant.now(),
+                EventType.LIKE, Operation.REMOVE
+        ));
         return getFilmById(filmId);
     }
 

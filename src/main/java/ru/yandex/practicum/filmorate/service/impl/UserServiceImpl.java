@@ -70,9 +70,8 @@ public class UserServiceImpl implements UserService {
         validate(friendId);
         User user = userStorage.addFriend(userId, friendId);
         feedStorage.addUserFeed(new UserFeed(0L,
-                Instant.now(), userId,
-                EventType.FRIEND, Operation.ADD,
-                friendId));
+                userId, friendId, Instant.now(),
+                EventType.FRIEND, Operation.ADD));
         return user;
     }
 
@@ -82,9 +81,9 @@ public class UserServiceImpl implements UserService {
         validate(friendId);
         User user = userStorage.deleteFriend(userId, friendId);
         feedStorage.addUserFeed(new UserFeed(0L,
-                Instant.now(), userId,
-                EventType.FRIEND, Operation.REMOVE,
-                friendId));
+                userId, friendId, Instant.now(),
+                EventType.FRIEND, Operation.REMOVE
+        ));
         return user;
     }
 

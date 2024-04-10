@@ -80,7 +80,7 @@ public class UserController {
                                           @NotNull @PathVariable @NotNull Long friendId) {
         log.debug("Получен запрос PUT на добавление нового друга пользователя. " +
                 "Id пользователя: {}, Id друга: {}", friendId, userId);
-        User user = userService.addFriend(friendId, userId);
+        User user = userService.addFriend(userId, friendId);
         log.debug("Пользователь с Id: {} успешно добавил друга с Id: {}", friendId, userId);
         log.debug("{}", user);
         return new ResponseEntity<>(user, HttpStatus.OK);
@@ -93,7 +93,7 @@ public class UserController {
 
         log.debug("Получен запрос DELETE на удаление пользователя из друзей" +
                 "Id пользователя: {}, Id друга: {}", friendId, userId);
-        User user = userService.deleteFriend(friendId, userId);
+        User user = userService.deleteFriend(userId, friendId);
         log.debug("Пользователь с Id: {} успешно удалил друга с Id: {}", friendId, userId);
         log.debug("Пользователь: {}", user);
         return new ResponseEntity<>(user, HttpStatus.OK);

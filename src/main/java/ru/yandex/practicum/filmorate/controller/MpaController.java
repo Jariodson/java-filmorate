@@ -35,9 +35,9 @@ public class MpaController {
     public Mpa getMpaById(@NotNull @PathVariable Long id) {
         log.debug("Получен запрос GET на получение mpa по ID: {}", id);
 
-            Mpa mpa = mpaService.getMpaById(id);
-            log.debug("Вывод рейтинга с Id: {}", id);
-            return mpa;
+        Mpa mpa = mpaService.getMpaById(id);
+        log.debug("Вывод рейтинга с Id: {}", id);
+        return mpa;
 
     }
 }

@@ -216,7 +216,7 @@ class FilmControllerTest {
                 .releaseDate(LocalDate.parse("1967-03-25"))
                 .duration(90)
                 .build();
-        film1.setLikes(Set.of(1L,2L));
+        film1.setLikes(Set.of(1L, 2L));
         when(controller.getCommonFilms(1L, 2L)).thenReturn(List.of(film1));
         this.mockMvc.perform(get("/films/common?userId=1&friendId=2"))
                 .andExpect(status().isOk())
