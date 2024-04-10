@@ -27,18 +27,18 @@ public class ReviewController {
     @PostMapping
     public ResponseEntity<Review> makeReview(@Valid @RequestBody Review review) {
         log.debug("Получен запрос POST на добовление нового отзыва");
-        reviewService.createReview(review);
-        System.out.println(review);
+        Review newReview = reviewService.createReview(review);
+        System.out.println(newReview);
         log.debug("Отзыв сохранён!");
-        return new ResponseEntity<>(review, HttpStatus.CREATED);
+        return new ResponseEntity<>(newReview, HttpStatus.CREATED);
     }
 
     @PutMapping
     public ResponseEntity<Review> updateReview(@Valid @RequestBody Review review) {
         log.debug("Получен запрос UPDATE на обновление отзыва");
-        reviewService.updateReview(review);
+        Review newReview = reviewService.updateReview(review);
         log.debug("Отзыв с ID: {} успешно обновлён!", review.getReviewId());
-        return new ResponseEntity<>(review, HttpStatus.OK);
+        return new ResponseEntity<>(newReview, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")

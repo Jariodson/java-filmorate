@@ -34,20 +34,26 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public void createReview(Review review) {
+    public Review createReview(Review review) {
         checkReview(review);
         reviewDao.makeReview(review);
-        feedService.addUserFeed(new UserFeed(0L, Instant.now(), review.getUserId(), EventType.REVIEW, Operation.ADD, review.getFilmId()));
+        feedService.addUserFeed(new UserFeed(0L,
+                review.getUserId(), review.getReviewId(), Instant.now(),
+                EventType.REVIEW, Operation.ADD
+        ));
+        return reviewDao.getReviewById(review.getReviewId());
     }
 
     @Override
-    public void updateReview(Review review) {
+    public Review updateReview(Review review) {
         checkReview(review);
         reviewDao.updateReview(review);
+        Review oldReview = reviewDao.getReviewById(review.getReviewId());
         feedService.addUserFeed(new UserFeed(0L,
-                Instant.now(), review.getUserId(),
-                EventType.REVIEW, Operation.UPDATE,
-                review.getFilmId()));
+                oldReview.getUserId(), oldReview.getReviewId(), Instant.now(),
+                EventType.REVIEW, Operation.UPDATE
+        ));
+        return oldReview;
     }
 
     @Override
@@ -55,9 +61,9 @@ public class ReviewServiceImpl implements ReviewService {
         Review review = reviewDao.getReviewById(id);
         reviewDao.deleteReview(id);
         feedService.addUserFeed(new UserFeed(0L,
-                Instant.now(), review.getUserId(),
-                EventType.REVIEW, Operation.REMOVE,
-                review.getFilmId()));
+                review.getUserId(), review.getReviewId(), Instant.now(),
+                EventType.REVIEW, Operation.REMOVE
+        ));
         return review;
     }
 

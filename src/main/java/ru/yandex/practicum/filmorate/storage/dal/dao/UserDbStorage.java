@@ -71,8 +71,8 @@ public class UserDbStorage implements UserStorage {
     @Override
     public Collection<User> getFriends(long userId) {
         String sql = "SELECT u.* FROM \"user\" AS u " +
-                "JOIN friendship AS f ON f.user_id = u.user_id " +
-                "WHERE friendUser_id = ?";
+                "JOIN friendship AS f ON f.FRIENDUSER_ID = u.user_id " +
+                "WHERE f.user_id = ?";
         return jdbcTemplate.query(sql, this::makeUser, userId);
     }
 
@@ -92,9 +92,9 @@ public class UserDbStorage implements UserStorage {
     public Collection<User> getCommonFriends(long userId, long friendId) {
         String sql = "SELECT u.* " +
                 "FROM friendship f1 " +
-                "JOIN friendship f2 ON f1.user_id = f2.user_id " +
-                "JOIN \"user\" AS u ON f1.user_id = u.user_id " +
-                "WHERE f1.friendUser_id = ? AND f2.friendUser_id = ?";
+                "JOIN friendship f2 ON f1.FRIENDUSER_ID = f2.FRIENDUSER_ID " +
+                "JOIN \"user\" AS u ON f1.FRIENDUSER_ID = u.user_id " +
+                "WHERE f1.user_id = ? AND f2.user_id = ?";
         return jdbcTemplate.query(sql, this::makeUser, userId, friendId);
     }
 

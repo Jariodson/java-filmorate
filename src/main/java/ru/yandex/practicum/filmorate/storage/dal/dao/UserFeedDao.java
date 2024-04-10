@@ -25,10 +25,10 @@ public class UserFeedDao implements UserFeedDal {
 
     @Override
     public void addUserFeed(UserFeed feed) {
-        String sql = "INSERT INTO user_feed (instant, user_id, event_type, operation, entity_id) " +
+        String sql = "INSERT INTO user_feed ( user_id, entity_id,instant, event_type, operation) " +
                 "VALUES (?, ?, ?, ?, ?)";
-        jdbcTemplate.update(sql, feed.getTimestamp(), feed.getUserId(), feed.getEventType().toString(),
-                feed.getOperation().toString(), feed.getEntityId());
+        jdbcTemplate.update(sql, feed.getUserId(), feed.getEntityId(), feed.getTimestamp(),
+                feed.getEventType().toString(), feed.getOperation().toString());
     }
 
     @Override
@@ -40,11 +40,11 @@ public class UserFeedDao implements UserFeedDal {
     private UserFeed makeFeed(ResultSet rs, int rowNum) throws SQLException {
         return UserFeed.builder()
                 .eventId(rs.getLong("event_id"))
-                .timestamp(rs.getTimestamp("instant").toInstant())
                 .userId(rs.getLong("user_id"))
+                .entityId(rs.getLong("entity_id"))
+                .timestamp(rs.getTimestamp("instant").toInstant())
                 .eventType(EventType.valueOf(rs.getString("event_type")))
                 .operation(Operation.valueOf(rs.getString("operation")))
-                .entityId(rs.getLong("entity_id"))
                 .build();
     }
 

@@ -44,17 +44,11 @@ public class ReviewDao implements ReviewDal {
     public void updateReview(Review review) {
         String sql = "UPDATE review SET " +
                 "content = ?, " +
-                "is_positive = ?, " +
-                "user_id = ?, " +
-                "film_id = ?, " +
-                "useful = ? " +
+                "is_positive = ? " +
                 "WHERE review_id = ?";
         jdbcTemplate.update(sql,
                 review.getContent(),
                 review.getIsPositive(),
-                review.getUserId(),
-                review.getFilmId(),
-                review.getUseful(),
                 review.getReviewId());
     }
 
