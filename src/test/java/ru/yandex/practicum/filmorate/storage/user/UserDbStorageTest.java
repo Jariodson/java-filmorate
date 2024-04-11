@@ -13,7 +13,6 @@ import ru.yandex.practicum.filmorate.storage.dal.dao.UserDbStorage;
 
 import java.time.LocalDate;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -27,6 +26,34 @@ public class UserDbStorageTest {
     @Autowired
     private JdbcTemplate jdbcTemplate;
     private UserStorage userDbStorage;
+
+    public static User createUser(int num) {
+        if (num == 1) {
+            return User.builder()
+                    .id(1L)
+                    .email("mail@mail.mail")
+                    .name("login")
+                    .birthday(LocalDate.of(1999, 8, 17))
+                    .login("login")
+                    .build();
+        } else if (num == 2) {
+            return User.builder()
+                    .id(2L)
+                    .email("nemail@mail.mail")
+                    .name("nelogin")
+                    .birthday(LocalDate.of(1999, 8, 17))
+                    .login("nelogin")
+                    .build();
+        } else {
+            return User.builder()
+                    .id(3L)
+                    .email("mutual@mail.mail")
+                    .name("mutual")
+                    .birthday(LocalDate.of(1999, 8, 17))
+                    .login("mutual")
+                    .build();
+        }
+    }
 
     @BeforeEach
     void beforeEach() {
@@ -107,34 +134,6 @@ public class UserDbStorageTest {
 
         userDbStorage.updateUser(user2);
         assertThat(userDbStorage.getUserById(1L)).isNotNull();
-    }
-
-    public static User createUser(int num) {
-        if (num == 1) {
-            return User.builder()
-                    .id(1L)
-                    .email("mail@mail.mail")
-                    .name("login")
-                    .birthday(LocalDate.of(1999, 8, 17))
-                    .login("login")
-                    .build();
-        } else if (num == 2) {
-            return User.builder()
-                    .id(2L)
-                    .email("nemail@mail.mail")
-                    .name("nelogin")
-                    .birthday(LocalDate.of(1999, 8, 17))
-                    .login("nelogin")
-                    .build();
-        } else {
-            return User.builder()
-                    .id(3L)
-                    .email("mutual@mail.mail")
-                    .name("mutual")
-                    .birthday(LocalDate.of(1999, 8, 17))
-                    .login("mutual")
-                    .build();
-        }
     }
 
     @Test

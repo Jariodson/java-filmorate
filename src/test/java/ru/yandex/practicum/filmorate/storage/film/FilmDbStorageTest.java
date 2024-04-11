@@ -3,7 +3,6 @@ package ru.yandex.practicum.filmorate.storage.film;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -15,10 +14,12 @@ import ru.yandex.practicum.filmorate.storage.mapper.DirectorMapper;
 import ru.yandex.practicum.filmorate.storage.mapper.FilmMapper;
 import ru.yandex.practicum.filmorate.storage.mapper.GenreMapper;
 import ru.yandex.practicum.filmorate.storage.mapper.MpaMapper;
-import ru.yandex.practicum.filmorate.storage.user.UserDbStorageTest;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Set;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD;
@@ -35,11 +36,6 @@ class FilmDbStorageTest {
     private LikeDal likeStorage;
     private DirectorDal directorDal;
     private FilmMapper filmMapper;
-    Film film;
-    Film secondFilm;
-    User user;
-    User secondUser;
-
 
 
     @BeforeEach
@@ -50,14 +46,7 @@ class FilmDbStorageTest {
         filmStorage = new FilmDbStorage(jdbcTemplate, genreDal, likeStorage, directorDal, filmMapper);
         userStorage = new UserDbStorage(jdbcTemplate);
         filmMapper = new FilmMapper(jdbcTemplate, new MpaMapper(), new GenreMapper(), new DirectorMapper());
-        film = createFilm();
-        secondFilm = createSecondFilm();
-        user = UserDbStorageTest.createUser(1);
-        secondUser = UserDbStorageTest.createUser(2);
-
     }
-
-
 
 
     @Test
@@ -301,18 +290,30 @@ class FilmDbStorageTest {
     }
 
     @Test
-    public void testSearchFilmByParameter() {
-
+    public void testSearchFilmByTitle() {
         FilmDbStorage filmDbStorage = new FilmDbStorage(jdbcTemplate, null, null, null, filmMapper);
-
         String query = "Some query";
         String filmSearchParameter = "title";
-
         Collection<Film> films = filmDbStorage.searchFilmByParameter(query, filmSearchParameter);
-
         assertThat(films).isNotNull();
-
     }
 
+    @Test
+    public void testSearchFilmByDirector() {
+        FilmDbStorage filmDbStorage = new FilmDbStorage(jdbcTemplate, null, null, null, filmMapper);
+        String query = "Some query";
+        String filmSearchParameter = "director";
+        Collection<Film> films = filmDbStorage.searchFilmByParameter(query, filmSearchParameter);
+        assertThat(films).isNotNull();
+    }
+
+    @Test
+    public void testSearchFilmByDirectorAndTitle() {
+        FilmDbStorage filmDbStorage = new FilmDbStorage(jdbcTemplate, null, null, null, filmMapper);
+        String query = "Some query";
+        String filmSearchParameter = "director,title";
+        Collection<Film> films = filmDbStorage.searchFilmByParameter(query, filmSearchParameter);
+        assertThat(films).isNotNull();
+    }
 
 }
