@@ -42,13 +42,13 @@ public class DirectorServiceImpl implements DirectorService {
 
     @Override
     public void updateFilmDirectors(Long id, Collection<Director> directors) {
-        checkDirector(directors);
+        validate(directors);
         directorStorage.updateFilmsDirector(id, directors);
     }
 
     @Override
     public Director updateDirector(Director director) {
-        checkDirector(List.of(director));
+        validate(List.of(director));
         return directorStorage.updateDirector(director);
     }
 
@@ -57,7 +57,7 @@ public class DirectorServiceImpl implements DirectorService {
         directorStorage.deleteDirector(id);
     }
 
-    private void checkDirector(Collection<Director> directors) {
+    private void validate(Collection<Director> directors) {
         for (Director director : directors) {
             try {
                 directorStorage.getDirectorById(director.getId());

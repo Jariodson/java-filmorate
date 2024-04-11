@@ -27,11 +27,11 @@ public class MpaServiceImpl implements MpaService {
 
     @Override
     public Mpa getMpaById(Long id) {
-        checkMpaById(id);
+        validate(id);
         return mpaDao.getMpaById(id);
     }
 
-    private void checkMpaById(Long id) {
+    private void validate(Long id) {
         try {
             mpaDao.getMpaById(id);
         } catch (EmptyResultDataAccessException e) {

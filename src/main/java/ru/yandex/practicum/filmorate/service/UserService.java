@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.service;
 
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.model.UserFeed;
 
 import java.util.Collection;
 
@@ -22,4 +23,8 @@ public interface UserService {
     Collection<User> getCommonFriends(long userId, long friendId);
 
     User getUserById(long id);
+
+    void validate(Long userId);
+
+    Collection<UserFeed> getUserFeed(Long userId);
 }
