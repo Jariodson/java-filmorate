@@ -81,24 +81,24 @@ CREATE TABLE IF NOT EXISTS review
     user_id     integer,
     film_id     integer,
     useful      integer DEFAULT 0,
-    FOREIGN KEY (user_id) REFERENCES "user" (user_id),
-    FOREIGN KEY (film_id) REFERENCES film (film_id)
+    FOREIGN KEY (user_id) REFERENCES "user" (user_id) ON DELETE CASCADE,
+    FOREIGN KEY (film_id) REFERENCES film (film_id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS review_likes
 (
     review_id integer,
     user_id   integer,
-    FOREIGN KEY (review_id) REFERENCES review (review_id),
-    FOREIGN KEY (user_id) REFERENCES "user" (user_id)
+    FOREIGN KEY (review_id) REFERENCES review (review_id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES "user" (user_id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS review_dislikes
 (
     review_id integer,
     user_id   integer,
-    FOREIGN KEY (review_id) REFERENCES review (review_id),
-    FOREIGN KEY (user_id) REFERENCES "user" (user_id)
+    FOREIGN KEY (review_id) REFERENCES review (review_id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES "user" (user_id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS user_feed
@@ -109,33 +109,33 @@ CREATE TABLE IF NOT EXISTS user_feed
     instant    timestamp,
     event_type varchar,
     operation  varchar,
-    FOREIGN KEY (user_id) REFERENCES "user" (user_id)
+    FOREIGN KEY (user_id) REFERENCES "user" (user_id) ON DELETE CASCADE
 );
 
 ALTER TABLE friendship
-    ADD FOREIGN KEY (user_id) REFERENCES "user" (user_id);
+   ADD FOREIGN KEY (user_id) REFERENCES "user" (user_id) ON DELETE CASCADE;
 
 ALTER TABLE friendship
-    ADD FOREIGN KEY (friendUser_id) REFERENCES "user" (user_id);
+    ADD FOREIGN KEY (friendUser_id) REFERENCES "user" (user_id) ON DELETE CASCADE;
 
 ALTER TABLE film_like
-    ADD FOREIGN KEY (film_id) REFERENCES film (film_id);
+    ADD FOREIGN KEY (film_id) REFERENCES film (film_id) ON DELETE CASCADE;
 
 ALTER TABLE film_like
-    ADD FOREIGN KEY (user_id) REFERENCES "user" (user_id);
+    ADD FOREIGN KEY (user_id) REFERENCES "user" (user_id) ON DELETE CASCADE;
 
 ALTER TABLE genre_of_film
-    ADD FOREIGN KEY (film_id) REFERENCES film (film_id);
+    ADD FOREIGN KEY (film_id) REFERENCES film (film_id) ON DELETE CASCADE;
 
 ALTER TABLE genre_of_film
-    ADD FOREIGN KEY (genre_id) REFERENCES genre (genre_id);
+    ADD FOREIGN KEY (genre_id) REFERENCES genre (genre_id) ON DELETE CASCADE;
 
 ALTER TABLE film
-    ADD FOREIGN KEY (mpa_id) REFERENCES mpa (mpa_id);
+    ADD FOREIGN KEY (mpa_id) REFERENCES mpa (mpa_id) ON DELETE CASCADE;
 
 ALTER TABLE director_of_film
     ADD CONSTRAINT fk_director FOREIGN KEY (director_id) REFERENCES director (director_id) ON DELETE CASCADE;
 
 ALTER TABLE director_of_film
-    ADD FOREIGN KEY (film_id) REFERENCES film (film_id);
+    ADD FOREIGN KEY (film_id) REFERENCES film (film_id) ON DELETE CASCADE;
 
