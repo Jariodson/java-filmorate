@@ -18,6 +18,7 @@ import ru.yandex.practicum.filmorate.storage.dal.UserFeedDal;
 
 import java.time.Instant;
 import java.util.Collection;
+import java.util.HashSet;
 
 
 @Slf4j
@@ -51,6 +52,7 @@ public class FilmServiceImpl implements FilmService {
             film.setMpa(mpaService.getMpaById(film.getMpa().getId()));
             film.setGenres(genreService.getFilmsGenre(id));
             film.setDirectors(directorService.getFilmsDirector(id));
+            film.setLikes(new HashSet<>(likeStorage.getLikes(id)));
         }
         return films;
     }
@@ -60,6 +62,7 @@ public class FilmServiceImpl implements FilmService {
         Film film = filmStorage.getFilmById(id);
         film.setGenres(genreService.getFilmsGenre(id));
         film.setDirectors(directorService.getFilmsDirector(id));
+        film.setLikes(new HashSet<>(likeStorage.getLikes(id)));
         return film;
     }
 
@@ -115,7 +118,8 @@ public class FilmServiceImpl implements FilmService {
                 userId, filmId, Instant.now(),
                 EventType.LIKE, Operation.ADD
         ));
-        return getFilmById(filmId);
+        Film film = getFilmById(filmId);
+        return film;
     }
 
     @Override
