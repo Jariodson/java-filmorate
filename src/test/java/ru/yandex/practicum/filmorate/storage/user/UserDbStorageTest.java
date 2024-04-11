@@ -27,34 +27,6 @@ public class UserDbStorageTest {
     private JdbcTemplate jdbcTemplate;
     private UserStorage userDbStorage;
 
-    public static User createUser(int num) {
-        if (num == 1) {
-            return User.builder()
-                    .id(1L)
-                    .email("mail@mail.mail")
-                    .name("login")
-                    .birthday(LocalDate.of(1999, 8, 17))
-                    .login("login")
-                    .build();
-        } else if (num == 2) {
-            return User.builder()
-                    .id(2L)
-                    .email("nemail@mail.mail")
-                    .name("nelogin")
-                    .birthday(LocalDate.of(1999, 8, 17))
-                    .login("nelogin")
-                    .build();
-        } else {
-            return User.builder()
-                    .id(3L)
-                    .email("mutual@mail.mail")
-                    .name("mutual")
-                    .birthday(LocalDate.of(1999, 8, 17))
-                    .login("mutual")
-                    .build();
-        }
-    }
-
     @BeforeEach
     void beforeEach() {
         userDbStorage = new UserDbStorage(jdbcTemplate);
