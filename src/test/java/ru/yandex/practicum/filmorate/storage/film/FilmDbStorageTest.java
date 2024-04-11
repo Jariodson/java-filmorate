@@ -3,23 +3,22 @@ package ru.yandex.practicum.filmorate.storage.film;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.DirtiesContext;
-import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.Genre;
-import ru.yandex.practicum.filmorate.model.Mpa;
-import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.model.*;
 import ru.yandex.practicum.filmorate.storage.dal.*;
 import ru.yandex.practicum.filmorate.storage.dal.dao.*;
+import ru.yandex.practicum.filmorate.storage.mapper.DirectorMapper;
 import ru.yandex.practicum.filmorate.storage.mapper.FilmMapper;
+import ru.yandex.practicum.filmorate.storage.mapper.GenreMapper;
+import ru.yandex.practicum.filmorate.storage.mapper.MpaMapper;
+import ru.yandex.practicum.filmorate.storage.user.UserDbStorageTest;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Set;
+import java.util.*;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD;
@@ -36,6 +35,12 @@ class FilmDbStorageTest {
     private LikeDal likeStorage;
     private DirectorDal directorDal;
     private FilmMapper filmMapper;
+    Film film;
+    Film secondFilm;
+    User user;
+    User secondUser;
+
+
 
     @BeforeEach
     void beforeEach() {
@@ -44,7 +49,16 @@ class FilmDbStorageTest {
         directorDal = new DirectorDao(jdbcTemplate);
         filmStorage = new FilmDbStorage(jdbcTemplate, genreDal, likeStorage, directorDal, filmMapper);
         userStorage = new UserDbStorage(jdbcTemplate);
+        filmMapper = new FilmMapper(jdbcTemplate, new MpaMapper(), new GenreMapper(), new DirectorMapper());
+        film = createFilm();
+        secondFilm = createSecondFilm();
+        user = UserDbStorageTest.createUser(1);
+        secondUser = UserDbStorageTest.createUser(2);
+
     }
+
+
+
 
     @Test
     void getAllFilms() {
@@ -212,6 +226,44 @@ class FilmDbStorageTest {
 
     }
 
+
+    private Film createFilm() {
+        return Film.builder()
+                .name("Pulp Fiction")
+                .description("The lives of two mob hitmen, a boxer, a gangster and his wife, and a pair of diner bandits intertwine in four tales of violence and redemption.")
+                .duration(154)
+                .releaseDate(LocalDate.of(1994, 10, 14))
+                .mpa(Mpa.builder().id(4L).name("R").build())
+                .genres(Set.of(
+                        Genre.builder().id(1L).name("Crime").build(),
+                        Genre.builder().id(2L).name("Drama").build(),
+                        Genre.builder().id(6L).name("Thriller").build()
+                ))
+                .directors(Set.of(
+                        Director.builder().id(1L).name("Quentin Tarantino").build(),
+                        Director.builder().id(2L).name("Tony Scott").build()
+                ))
+                .build();
+    }
+
+    private Film createSecondFilm() {
+        return Film.builder()
+                .name("Inception")
+                .description("A thief who steals corporate secrets through the use of dream-sharing technology is given the inverse task of planting an idea into the mind of a C.E.O.")
+                .duration(148)
+                .releaseDate(LocalDate.of(2010, 7, 16))
+                .mpa(Mpa.builder().id(4L).name("R").build())
+                .genres(Set.of(
+                        Genre.builder().id(2L).name("Drama").build(),
+                        Genre.builder().id(3L).name("Mystery").build(),
+                        Genre.builder().id(6L).name("Thriller").build()
+                ))
+                .directors(Set.of(
+                        Director.builder().id(3L).name("Christopher Nolan").build()
+                ))
+                .build();
+    }
+
     @Test
     void getCommonFilms() {
         Film film1 = Film.builder()
@@ -247,5 +299,20 @@ class FilmDbStorageTest {
         likeStorage.addLike(1L, 2L);
         Collection<Film> savedFilmsCommon = filmStorage.getCommonFilms(1L, 2L);
     }
+
+    @Test
+    public void testSearchFilmByParameter() {
+
+        FilmDbStorage filmDbStorage = new FilmDbStorage(jdbcTemplate, null, null, null, filmMapper);
+
+        String query = "Some query";
+        String filmSearchParameter = "title";
+
+        Collection<Film> films = filmDbStorage.searchFilmByParameter(query, filmSearchParameter);
+
+        assertThat(films).isNotNull();
+
+    }
+
 
 }
