@@ -21,7 +21,7 @@ import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFOR
 @JdbcTest
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
-class UserDbStorageTest {
+public class UserDbStorageTest {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
