@@ -29,9 +29,7 @@ public class FilmDbStorage implements FilmStorage {
     private final LikeDal likeDal;
     private final DirectorDal directorDal;
     private final FilmMapper filmMapper;
-    private final GenreDal genreDal;
-    private final LikeDal likeDal;
-    private final DirectorDal directorDal;
+
 
     public FilmDbStorage(JdbcTemplate jdbcTemplate,
                          GenreDal genreDal,
