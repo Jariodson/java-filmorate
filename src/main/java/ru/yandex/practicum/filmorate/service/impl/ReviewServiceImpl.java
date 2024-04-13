@@ -26,7 +26,8 @@ public class ReviewServiceImpl implements ReviewService {
     private final UserFeedDal feedService;
 
     @Autowired
-    public ReviewServiceImpl(ReviewDal reviewDao, UserService userService, FilmService filmService, UserFeedDal feedService) {
+    public ReviewServiceImpl(ReviewDal reviewDao, UserService userService,
+                             FilmService filmService, UserFeedDal feedService) {
         this.reviewDao = reviewDao;
         this.userService = userService;
         this.filmService = filmService;
