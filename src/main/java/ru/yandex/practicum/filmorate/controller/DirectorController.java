@@ -28,18 +28,18 @@ public class DirectorController {
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public Collection<Director> getAllDirectors() {
-        log.debug("Получен запрос GET на получение списка всех режисёров");
+        log.info("Получен запрос GET на получение списка всех режисёров");
         Collection<Director> directors = directorService.getDirectors();
-        log.debug("Вывод фильмов. Размер списка режисёров: {}", directors.size());
+        log.info("Вывод фильмов. Размер списка режисёров: {}", directors.size());
         return directors;
     }
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public Director getDirectorById(@NotNull @PathVariable Long id) {
-        log.debug("Получен запрос GET на получение режисёра по его id");
+    public Director getDirectorById(@PathVariable Long id) {
+        log.info("Получен запрос GET на получение режисёра по его id");
         Director director = directorService.getDirectorById(id);
-        log.debug("Вывод режисёра. Имя режисёра: {}", director.getName());
+        log.info("Вывод режисёра. Имя режисёра: {}", director.getName());
         return director;
     }
 
@@ -47,9 +47,9 @@ public class DirectorController {
     @ResponseStatus(HttpStatus.CREATED)
     public Director addNewDirector(@Validated(WithoutParent.class)
                                    @RequestBody Director director) {
-        log.debug("Получен запрос POST на добавление режисёра");
+        log.info("Получен запрос POST на добавление режисёра");
         directorService.createDirector(director);
-        log.debug("Вывод режисёра. ID режисёра: {}", director.getId());
+        log.info("Вывод режисёра. ID режисёра: {}", director.getId());
         return director;
     }
 
@@ -57,16 +57,16 @@ public class DirectorController {
     @ResponseStatus(HttpStatus.OK)
     public Director updateDirector(@Validated(WithoutParent.class)
                                    @RequestBody Director director) {
-        log.debug("Получен запрос PUT на обновление режисёра");
+        log.info("Получен запрос PUT на обновление режисёра");
         directorService.updateDirector(director);
-        log.debug("Вывод режисёра. ID режисёра: {}  Имя режисёра: {}", director.getId(), director.getName());
+        log.info("Вывод режисёра. ID режисёра: {}  Имя режисёра: {}", director.getId(), director.getName());
         return director;
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public void deleteDirector(@NotNull @PathVariable Long id) {
-        log.debug("Получен запрос DELETE на удоление режисёра");
+        log.info("Получен запрос DELETE на удоление режисёра");
         directorService.deleteDirector(id);
     }
 }

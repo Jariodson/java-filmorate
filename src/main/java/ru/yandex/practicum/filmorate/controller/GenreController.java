@@ -24,18 +24,18 @@ public class GenreController {
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public Collection<Genre> getGenres() {
-        log.debug("Получен запрос GET на вывод всех жанров");
+        log.info("Получен запрос GET на вывод всех жанров");
         Collection<Genre> genres = genreService.getGenres();
-        log.debug("Вывод списка всех жанров. Размер списка: {}", genres.size());
+        log.info("Вывод списка всех жанров. Размер списка: {}", genres.size());
         return genres;
     }
 
     @GetMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
     public Genre getGenreById(@NotNull @PathVariable Long id) {
-        log.debug("Получен запрос GET на получение жанра по ID: {}", id);
+        log.info("Получен запрос GET на получение жанра по ID: {}", id);
         Genre genre = genreService.getGenreById(id);
-        log.debug("Вывод жанра с Id: {}", id);
+        log.info("Вывод жанра с Id: {}", id);
         return genre;
     }
 }

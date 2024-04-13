@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.service.MpaService;
-import ru.yandex.practicum.filmorate.storage.dal.MpaDal;
+import ru.yandex.practicum.filmorate.storage.dao.MpaDal;
 
 import java.util.Collection;
 

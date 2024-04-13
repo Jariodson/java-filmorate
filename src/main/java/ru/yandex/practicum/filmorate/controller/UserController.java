@@ -27,62 +27,62 @@ public class UserController {
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public Collection<User> getUsers() {
-        log.debug("Полчен запрос GET на получение всех пользователей");
+        log.info("Полчен запрос GET на получение всех пользователей");
         Collection<User> users = userService.getUsers();
-        log.debug("Вывод пользователей! Размер списка: {}", users.size());
+        log.info("Вывод пользователей! Размер списка: {}", users.size());
         return users;
     }
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public User getUserById(@NotNull @PathVariable Long id) {
-        log.debug("Получен запрос GET на получение пользователя с ID: {}", id);
+        log.info("Получен запрос GET на получение пользователя с ID: {}", id);
         User user = userService.getUserById(id);
-        log.debug("Вывод пользоваля с Id: {}", id);
+        log.info("Вывод пользоваля с Id: {}", id);
         return user;
     }
 
     @PostMapping
     public ResponseEntity<User> addUser(@Valid @RequestBody User user) {
-        log.debug("Получен запрос POST на добавление пользователя в список");
+        log.info("Получен запрос POST на добавление пользователя в список");
         userService.createUser(user);
-        log.debug("Пользователь: {} добавлен!", user);
+        log.info("Пользователь: {} добавлен!", user);
         return new ResponseEntity<>(user, HttpStatus.CREATED);
     }
 
     @PutMapping
     public ResponseEntity<User> updateUser(@Valid @RequestBody User user) {
-        log.debug("Получен запрос PUT на обновление пользователя в списке. Id пользователя: {}", user.getId());
+        log.info("Получен запрос PUT на обновление пользователя в списке. Id пользователя: {}", user.getId());
         userService.updateUser(user);
-        log.debug("Информация о пользователе: {} обновлена!", user);
+        log.info("Информация о пользователе: {} обновлена!", user);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
     @DeleteMapping("/{userId}")
     public ResponseEntity<User> deleteUser(@NotNull @PathVariable(value = "userId") Long id) {
-        log.debug("Получен запрос DELETE на удаление пользователя: {}", id);
+        log.info("Получен запрос DELETE на удаление пользователя: {}", id);
         User user = userService.removeUser(id);
-        log.debug("Пользователя c ID {} успешно удалён!", id);
+        log.info("Пользователя c ID {} успешно удалён!", id);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
     @GetMapping("/{id}/friends")
     @ResponseStatus(HttpStatus.OK)
     public Collection<User> getUserFriends(@NotNull @PathVariable Long id) {
-        log.debug("Получен запрос GET на вывод всех друзей пользователя");
+        log.info("Получен запрос GET на вывод всех друзей пользователя");
         Collection<User> friendId = userService.getFriends(id);
-        log.debug("Вывод друзей пользователя с Id: {}. Id друзей: {}", id, friendId);
+        log.info("Вывод друзей пользователя с Id: {}. Id друзей: {}", id, friendId);
         return friendId;
     }
 
     @PutMapping("/{id}/friends/{friendId}")
     public ResponseEntity<User> addFriend(@NotNull @PathVariable(value = "id") @NotNull Long userId,
                                           @NotNull @PathVariable @NotNull Long friendId) {
-        log.debug("Получен запрос PUT на добавление нового друга пользователя. " +
+        log.info("Получен запрос PUT на добавление нового друга пользователя. " +
                 "Id пользователя: {}, Id друга: {}", friendId, userId);
         User user = userService.addFriend(userId, friendId);
-        log.debug("Пользователь с Id: {} успешно добавил друга с Id: {}", friendId, userId);
-        log.debug("{}", user);
+        log.info("Пользователь с Id: {} успешно добавил друга с Id: {}", friendId, userId);
+        log.info("{}", user);
         return new ResponseEntity<>(user, HttpStatus.OK);
 
     }
@@ -91,11 +91,11 @@ public class UserController {
     public ResponseEntity<User> removeFriend(@NotNull @PathVariable(value = "id") @NotNull Long userId,
                                              @NotNull @PathVariable @NotNull Long friendId) {
 
-        log.debug("Получен запрос DELETE на удаление пользователя из друзей" +
+        log.info("Получен запрос DELETE на удаление пользователя из друзей" +
                 "Id пользователя: {}, Id друга: {}", friendId, userId);
         User user = userService.deleteFriend(userId, friendId);
-        log.debug("Пользователь с Id: {} успешно удалил друга с Id: {}", friendId, userId);
-        log.debug("Пользователь: {}", user);
+        log.info("Пользователь с Id: {} успешно удалил друга с Id: {}", friendId, userId);
+        log.info("Пользователь: {}", user);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
@@ -103,19 +103,19 @@ public class UserController {
     @ResponseStatus(HttpStatus.OK)
     public Collection<User> getCommonFriends(@NotNull @PathVariable(value = "id") @NotNull Long userId,
                                              @NotNull @PathVariable(value = "otherId") @NotNull Long friendId) {
-        log.debug("Получен запрос GET на получение общих друзей пользователей: {} и {}", userId, friendId);
+        log.info("Получен запрос GET на получение общих друзей пользователей: {} и {}", userId, friendId);
         Collection<User> commonFriends = userService.getCommonFriends(userId, friendId);
-        log.debug("Вывод общих друзей пользователя с Id: {} и Id: {}", userId, friendId);
-        log.debug("Общие друзья: {}", commonFriends);
+        log.info("Вывод общих друзей пользователя с Id: {} и Id: {}", userId, friendId);
+        log.info("Общие друзья: {}", commonFriends);
         return commonFriends;
     }
 
     @GetMapping("/{id}/feed")
     @ResponseStatus(HttpStatus.OK)
     public Collection<UserFeed> getCommonFriends(@NotNull @PathVariable(value = "id") @NotNull Long userId) {
-        log.debug("Получен запрос GET на получение истории пользователя: {} ", userId);
+        log.info("Получен запрос GET на получение истории пользователя: {} ", userId);
         Collection<UserFeed> userFeed = userService.getUserFeed(userId);
-        log.debug("Вывод общих истории действий пользователя с Id: {}", userId);
+        log.info("Вывод общих истории действий пользователя с Id: {}", userId);
         return userFeed;
     }
 }

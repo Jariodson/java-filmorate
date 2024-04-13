@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.service.DirectorService;
-import ru.yandex.practicum.filmorate.storage.dal.DirectorDal;
+import ru.yandex.practicum.filmorate.storage.dao.DirectorDal;
 
 import java.util.Collection;
 import java.util.List;

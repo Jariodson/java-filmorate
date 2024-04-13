@@ -24,19 +24,19 @@ public class MpaController {
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public Collection<Mpa> getMpas() {
-        log.debug("Получен запрос GET на вывод всех mpa");
+        log.info("Получен запрос GET на вывод всех mpa");
         Collection<Mpa> mpaCollection = mpaService.getMpas();
-        log.debug("Вывод списка всех рейтингов. Размер списка: {}", mpaCollection.size());
+        log.info("Вывод списка всех рейтингов. Размер списка: {}", mpaCollection.size());
         return mpaCollection;
     }
 
     @GetMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
     public Mpa getMpaById(@NotNull @PathVariable Long id) {
-        log.debug("Получен запрос GET на получение mpa по ID: {}", id);
+        log.info("Получен запрос GET на получение mpa по ID: {}", id);
 
         Mpa mpa = mpaService.getMpaById(id);
-        log.debug("Вывод рейтинга с Id: {}", id);
+        log.info("Вывод рейтинга с Id: {}", id);
         return mpa;
 
     }

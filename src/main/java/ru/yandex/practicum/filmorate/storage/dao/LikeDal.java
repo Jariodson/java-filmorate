@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.storage.dal;
+package ru.yandex.practicum.filmorate.storage.dao;
 
 import java.util.Collection;
 

@@ -6,7 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.service.GenreService;
-import ru.yandex.practicum.filmorate.storage.dal.GenreDal;
+import ru.yandex.practicum.filmorate.storage.dao.GenreDal;
 
 import java.util.Collection;
 

@@ -11,8 +11,8 @@ import ru.yandex.practicum.filmorate.model.Operation;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.model.UserFeed;
 import ru.yandex.practicum.filmorate.service.UserService;
-import ru.yandex.practicum.filmorate.storage.dal.UserFeedDal;
-import ru.yandex.practicum.filmorate.storage.dal.UserStorage;
+import ru.yandex.practicum.filmorate.storage.dao.UserFeedDal;
+import ru.yandex.practicum.filmorate.storage.dao.UserStorage;
 
 import java.time.Instant;
 import java.util.Collection;

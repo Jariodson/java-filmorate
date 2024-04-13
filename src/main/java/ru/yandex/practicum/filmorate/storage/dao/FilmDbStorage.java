@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.storage.dal.dao;
+package ru.yandex.practicum.filmorate.storage.dao;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -9,10 +9,6 @@ import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.enums.FilmParameter;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Mpa;
-import ru.yandex.practicum.filmorate.storage.dal.DirectorDal;
-import ru.yandex.practicum.filmorate.storage.dal.FilmStorage;
-import ru.yandex.practicum.filmorate.storage.dal.GenreDal;
-import ru.yandex.practicum.filmorate.storage.dal.LikeDal;
 import ru.yandex.practicum.filmorate.storage.mapper.FilmMapper;
 
 import java.sql.ResultSet;

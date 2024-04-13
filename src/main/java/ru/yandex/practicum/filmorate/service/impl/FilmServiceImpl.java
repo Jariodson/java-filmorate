@@ -12,9 +12,9 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Operation;
 import ru.yandex.practicum.filmorate.model.UserFeed;
 import ru.yandex.practicum.filmorate.service.*;
-import ru.yandex.practicum.filmorate.storage.dal.FilmStorage;
-import ru.yandex.practicum.filmorate.storage.dal.LikeDal;
-import ru.yandex.practicum.filmorate.storage.dal.UserFeedDal;
+import ru.yandex.practicum.filmorate.storage.dao.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.dao.LikeDal;
+import ru.yandex.practicum.filmorate.storage.dao.UserFeedDal;
 
 import java.time.Instant;
 import java.util.Collection;
