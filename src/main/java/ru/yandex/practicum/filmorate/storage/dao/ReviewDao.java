@@ -9,9 +9,8 @@ import ru.yandex.practicum.filmorate.model.Review;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Repository
@@ -28,13 +27,12 @@ public class ReviewDao implements ReviewDal {
         SimpleJdbcInsert jdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("review")
                 .usingGeneratedKeyColumns("review_id")
-                .usingColumns("content", "is_positive", "user_id", "film_id", "useful");
+                .usingColumns("content", "is_positive", "user_id", "film_id");
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("content", review.getContent());
         parameters.put("is_positive", review.getIsPositive());
         parameters.put("user_id", review.getUserId());
         parameters.put("film_id", review.getFilmId());
-        parameters.put("useful", review.getUseful());
         Long id = jdbcInsert.executeAndReturnKey(parameters).longValue();
         review.setReviewId(id);
     }
@@ -71,67 +69,65 @@ public class ReviewDao implements ReviewDal {
     public Collection<Review> getReviewByFilmId(Long filmId, int count) {
         String sql = "SELECT * FROM review " +
                 "WHERE film_id = ? " +
-                "ORDER BY useful DESC " +
                 "LIMIT ?; ";
-        return jdbcTemplate.query(sql, this::buildReview, filmId, count);
+        Collection<Review> reviews = jdbcTemplate.query(sql, this::buildReview, filmId, count);
+        return reviews.stream().sorted(Comparator.comparingInt(Review::getUseful).reversed())
+                .collect(Collectors.toList());
     }
 
     @Override
     public Collection<Review> getAllReviews(int count) {
         String sql = "SELECT * FROM review " +
-                "ORDER BY useful DESC " +
                 "LIMIT ?";
-        return jdbcTemplate.query(sql, this::buildReview, count);
+        Collection<Review> reviews = jdbcTemplate.query(sql, this::buildReview, count);
+        return reviews.stream().sorted(Comparator.comparingInt(Review::getUseful).reversed())
+                .collect(Collectors.toList());
     }
 
     @Override
     public void postLike(Long id, Long userId) {
         String sql = "INSERT INTO review_likes VALUES (?, ?)";
         jdbcTemplate.update(sql, id, userId);
-        updateUseful(id);
     }
 
     @Override
     public void postDislike(Long id, Long userId) {
         String sql = "INSERT INTO review_dislikes VALUES (?, ?)";
         jdbcTemplate.update(sql, id, userId);
-        updateUseful(id);
     }
 
     @Override
     public void deleteLike(Long id, Long userId) {
         String sql = "DELETE FROM review_likes WHERE review_id = ? AND user_id = ?";
         jdbcTemplate.update(sql, id, userId);
-        updateUseful(id);
     }
 
     @Override
     public void deleteDislike(Long id, Long userId) {
         String sql = "DELETE FROM review_dislikes WHERE review_id = ? AND user_id = ?";
         jdbcTemplate.update(sql, id, userId);
-        updateUseful(id);
     }
 
     private Review buildReview(ResultSet rs, int rowNum) throws SQLException {
-        return Review.builder()
+        Review review = Review.builder()
                 .reviewId(rs.getLong("review_id"))
                 .content(rs.getString("content"))
                 .isPositive(rs.getBoolean("is_positive"))
                 .userId(rs.getLong("user_id"))
                 .filmId(rs.getLong("film_id"))
-                .useful(rs.getInt("useful")).build();
+                .build();
+        review.setUseful(updateUseful(review.getReviewId()));
+        return review;
     }
 
-    private void updateUseful(Long reviewId) {
+    private Integer updateUseful(Long reviewId){
         String sqlFromLikes = "SELECT COUNT(*) FROM review_likes WHERE review_id = ?";
         Integer countLikes = jdbcTemplate.queryForObject(sqlFromLikes, Integer.class, reviewId);
         String sqlFromDislikes = "SELECT COUNT(*) FROM review_dislikes WHERE review_id = ?";
         Integer countDislikes = jdbcTemplate.queryForObject(sqlFromDislikes, Integer.class, reviewId);
-        int useful = 0;
         if (countLikes != null && countDislikes != null) {
-            useful = countLikes - countDislikes;
+            return countLikes - countDislikes;
         }
-        String sqlUpdate = "UPDATE review SET useful = ? WHERE review_id = ?";
-        jdbcTemplate.update(sqlUpdate, useful, reviewId);
+        return 0;
     }
 }
