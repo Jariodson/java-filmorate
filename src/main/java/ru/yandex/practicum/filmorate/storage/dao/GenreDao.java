@@ -36,12 +36,10 @@ public class GenreDao implements GenreDal {
         }
     }
 
-
     @Override
     public Collection<Genre> getFilmGenre(Long filmId) {
         String sql = "SELECT g.* FROM GENRE_OF_FILM f LEFT JOIN GENRE g ON g.GENRE_ID = f.GENRE_ID WHERE f.FILM_ID = ?";
-        Collection<Genre> genres = jdbcTemplate.query(sql, this::makeGenre, filmId);
-        return genres;
+        return jdbcTemplate.query(sql, this::makeGenre, filmId);
     }
 
     @Override
@@ -72,7 +70,6 @@ public class GenreDao implements GenreDal {
             throw new RuntimeException("Ошибка при добавлении жанра");
         }
     }
-
 
     private Genre makeGenre(ResultSet rs, int rowNum) throws SQLException {
         return Genre.builder()

@@ -21,7 +21,6 @@ public class UserFeedDao implements UserFeedDal {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-
     @Override
     public void addUserFeed(UserFeed feed) {
         String sql = "INSERT INTO user_feed ( user_id, entity_id,instant, event_type, operation) " +
@@ -46,5 +45,4 @@ public class UserFeedDao implements UserFeedDal {
                 .operation(Operation.valueOf(rs.getString("operation")))
                 .build();
     }
-
 }

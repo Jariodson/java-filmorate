@@ -64,7 +64,6 @@ public class FilmMapper implements RowMapper<Film> {
         return jdbcTemplate.query(genreSql, genreMapper, filmId);
     }
 
-
     public List<Director> findDirector(Long id) {
         String sqlQuery =
                 "SELECT * FROM director d " +
