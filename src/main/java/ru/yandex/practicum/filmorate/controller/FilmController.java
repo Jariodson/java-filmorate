@@ -8,7 +8,6 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.util.Collection;
 
 @RestController
@@ -33,7 +32,7 @@ public class FilmController {
 
     @GetMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public Film getFilmById(@NotNull @PathVariable Long id) {
+    public Film getFilmById(@PathVariable Long id) {
         log.info("Получен запрос GET на получение фильма по ID: {}", id);
         Film film = filmService.getFilmById(id);
         log.info("Вывод фильма с Id: {}", id);
@@ -60,7 +59,7 @@ public class FilmController {
 
     @DeleteMapping("{filmId}")
     @ResponseStatus(HttpStatus.OK)
-    public Film deleteFilm(@NotNull @PathVariable(value = "filmId") Long id) {
+    public Film deleteFilm(@PathVariable(value = "filmId") Long id) {
         log.info("Получен запрос DELETE на удаление фильма");
         Film film = filmService.removeFilm(id);
         log.info("Фильм c ID: {} удалён!", id);
@@ -69,8 +68,8 @@ public class FilmController {
 
     @PutMapping("/{id}/like/{userId}")
     @ResponseStatus(HttpStatus.OK)
-    public Film addLike(@NotNull @PathVariable(value = "id") Long filmId,
-                        @NotNull @PathVariable Long userId) {
+    public Film addLike(@PathVariable(value = "id") Long filmId,
+                        @PathVariable Long userId) {
         log.info("Получен запрос PUT на добавление лайка. Id фильма: {}, Id пользователя: {}", filmId, userId);
         Film film = filmService.createLike(filmId, userId);
         log.info("Лайк успешно поставлен! Id фильма: {} ,Id пользователя: {}", filmId, userId);
@@ -80,8 +79,8 @@ public class FilmController {
 
     @DeleteMapping("/{id}/like/{userId}")
     @ResponseStatus(HttpStatus.OK)
-    public Film removeLike(@NotNull @PathVariable(value = "id") Long filmId,
-                           @NotNull @PathVariable Long userId) {
+    public Film removeLike(@PathVariable(value = "id") Long filmId,
+                           @PathVariable Long userId) {
         log.info("Получен запрос DELETE на удаление лайка");
         Film film = filmService.removeLike(filmId, userId);
         log.info("Лайк пользователя {} успешно удалён!", userId);
@@ -100,7 +99,7 @@ public class FilmController {
 
     @GetMapping("/director/{directorId}")
     @ResponseStatus(HttpStatus.OK)
-    public Collection<Film> getFilmsByDirector(@NotNull @PathVariable Long directorId,
+    public Collection<Film> getFilmsByDirector(@PathVariable Long directorId,
                                                @RequestParam(required = false) String[] sortBy) {
         log.info("Получен запрос GET на получение фильмов по режисёру!");
         Collection<Film> films = filmService.getDirectorFilmsSorted(directorId, sortBy);

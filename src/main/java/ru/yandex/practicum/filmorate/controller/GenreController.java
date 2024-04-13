@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.service.GenreService;
 
-import javax.validation.constraints.NotNull;
 import java.util.Collection;
 
 @Slf4j
@@ -32,7 +31,7 @@ public class GenreController {
 
     @GetMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public Genre getGenreById(@NotNull @PathVariable Long id) {
+    public Genre getGenreById(@PathVariable Long id) {
         log.info("Получен запрос GET на получение жанра по ID: {}", id);
         Genre genre = genreService.getGenreById(id);
         log.info("Вывод жанра с Id: {}", id);

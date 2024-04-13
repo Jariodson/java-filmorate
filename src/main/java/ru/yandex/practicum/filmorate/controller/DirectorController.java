@@ -10,14 +10,12 @@ import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.service.DirectorService;
 import ru.yandex.practicum.filmorate.validation.WithoutParent;
 
-import javax.validation.constraints.NotNull;
 import java.util.Collection;
 
 @RestController
 @RequestMapping("/directors")
 @Slf4j
 public class DirectorController {
-
     private final DirectorService directorService;
 
     @Autowired
@@ -65,7 +63,7 @@ public class DirectorController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public void deleteDirector(@NotNull @PathVariable Long id) {
+    public void deleteDirector(@PathVariable Long id) {
         log.info("Получен запрос DELETE на удоление режисёра");
         directorService.deleteDirector(id);
     }

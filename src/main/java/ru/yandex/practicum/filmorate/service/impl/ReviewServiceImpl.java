@@ -69,13 +69,11 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     public Review getReviewById(Long id) {
-        Review review;
         try {
-            review = reviewDao.getReviewById(id);
+           return reviewDao.getReviewById(id);
         } catch (EmptyResultDataAccessException e) {
             throw new IllegalArgumentException("Отзыва с ID: " + id + "не найдено!");
         }
-        return review;
     }
 
     @Override
