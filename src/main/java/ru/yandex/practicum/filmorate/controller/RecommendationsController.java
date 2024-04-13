@@ -8,7 +8,6 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.RecommendationsService;
 
 import java.util.Collection;
-import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -24,13 +23,10 @@ public class RecommendationsController {
 
     @GetMapping("/{id}/recommendations")
     @ResponseStatus(HttpStatus.OK)
-    public Collection<Film> getUserRecommendations(@PathVariable Optional<Long> id) {
-        if (id.isPresent()) {
-            log.info("Получен запрос GET на получение рекомендаций для пользователя с ID: {}", id.get());
-            Collection<Film> films = service.getRecommendations(id.get());
-            log.info("Вывод рекомендованных фильмов для пользователя с ID: {}", id.get());
+    public Collection<Film> getUserRecommendations(@PathVariable Long id) {
+            log.info("Получен запрос GET на получение рекомендаций для пользователя с ID: {}", id);
+            Collection<Film> films = service.getRecommendations(id);
+            log.info("Вывод рекомендованных фильмов для пользователя с ID: {}", id);
             return films;
-        }
-        throw new IllegalArgumentException("Введен неверный идентефикатор! ID: " + id);
     }
 }

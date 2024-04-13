@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.service.MpaService;
 
-import javax.validation.constraints.NotNull;
 import java.util.Collection;
 
 @Slf4j
@@ -32,7 +31,7 @@ public class MpaController {
 
     @GetMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public Mpa getMpaById(@NotNull @PathVariable Long id) {
+    public Mpa getMpaById(@PathVariable Long id) {
         log.info("Получен запрос GET на получение mpa по ID: {}", id);
 
         Mpa mpa = mpaService.getMpaById(id);

@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.controller;
 
-
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -10,14 +9,12 @@ import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.service.DirectorService;
 import ru.yandex.practicum.filmorate.validation.WithoutParent;
 
-import javax.validation.constraints.NotNull;
 import java.util.Collection;
 
 @RestController
 @RequestMapping("/directors")
 @Slf4j
 public class DirectorController {
-
     private final DirectorService directorService;
 
     @Autowired
@@ -65,7 +62,7 @@ public class DirectorController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public void deleteDirector(@NotNull @PathVariable Long id) {
+    public void deleteDirector(@PathVariable Long id) {
         log.info("Получен запрос DELETE на удоление режисёра");
         directorService.deleteDirector(id);
     }

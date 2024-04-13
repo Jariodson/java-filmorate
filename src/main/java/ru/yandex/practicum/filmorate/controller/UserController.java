@@ -10,7 +10,6 @@ import ru.yandex.practicum.filmorate.model.UserFeed;
 import ru.yandex.practicum.filmorate.service.UserService;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.util.Collection;
 
 @RestController
@@ -35,7 +34,7 @@ public class UserController {
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public User getUserById(@NotNull @PathVariable Long id) {
+    public User getUserById(@PathVariable Long id) {
         log.info("Получен запрос GET на получение пользователя с ID: {}", id);
         User user = userService.getUserById(id);
         log.info("Вывод пользоваля с Id: {}", id);
@@ -59,7 +58,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{userId}")
-    public ResponseEntity<User> deleteUser(@NotNull @PathVariable(value = "userId") Long id) {
+    public ResponseEntity<User> deleteUser(@PathVariable(value = "userId") Long id) {
         log.info("Получен запрос DELETE на удаление пользователя: {}", id);
         User user = userService.removeUser(id);
         log.info("Пользователя c ID {} успешно удалён!", id);
@@ -68,7 +67,7 @@ public class UserController {
 
     @GetMapping("/{id}/friends")
     @ResponseStatus(HttpStatus.OK)
-    public Collection<User> getUserFriends(@NotNull @PathVariable Long id) {
+    public Collection<User> getUserFriends(@PathVariable Long id) {
         log.info("Получен запрос GET на вывод всех друзей пользователя");
         Collection<User> friendId = userService.getFriends(id);
         log.info("Вывод друзей пользователя с Id: {}. Id друзей: {}", id, friendId);
@@ -76,8 +75,8 @@ public class UserController {
     }
 
     @PutMapping("/{id}/friends/{friendId}")
-    public ResponseEntity<User> addFriend(@NotNull @PathVariable(value = "id") @NotNull Long userId,
-                                          @NotNull @PathVariable @NotNull Long friendId) {
+    public ResponseEntity<User> addFriend(@PathVariable(value = "id") Long userId,
+                                          @PathVariable Long friendId) {
         log.info("Получен запрос PUT на добавление нового друга пользователя. " +
                 "Id пользователя: {}, Id друга: {}", friendId, userId);
         User user = userService.addFriend(userId, friendId);
@@ -88,8 +87,8 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}/friends/{friendId}")
-    public ResponseEntity<User> removeFriend(@NotNull @PathVariable(value = "id") @NotNull Long userId,
-                                             @NotNull @PathVariable @NotNull Long friendId) {
+    public ResponseEntity<User> removeFriend(@PathVariable(value = "id") Long userId,
+                                             @PathVariable Long friendId) {
 
         log.info("Получен запрос DELETE на удаление пользователя из друзей" +
                 "Id пользователя: {}, Id друга: {}", friendId, userId);
@@ -101,8 +100,8 @@ public class UserController {
 
     @GetMapping("/{id}/friends/common/{otherId}")
     @ResponseStatus(HttpStatus.OK)
-    public Collection<User> getCommonFriends(@NotNull @PathVariable(value = "id") @NotNull Long userId,
-                                             @NotNull @PathVariable(value = "otherId") @NotNull Long friendId) {
+    public Collection<User> getCommonFriends(@PathVariable(value = "id") Long userId,
+                                             @PathVariable(value = "otherId") Long friendId) {
         log.info("Получен запрос GET на получение общих друзей пользователей: {} и {}", userId, friendId);
         Collection<User> commonFriends = userService.getCommonFriends(userId, friendId);
         log.info("Вывод общих друзей пользователя с Id: {} и Id: {}", userId, friendId);
@@ -112,7 +111,7 @@ public class UserController {
 
     @GetMapping("/{id}/feed")
     @ResponseStatus(HttpStatus.OK)
-    public Collection<UserFeed> getCommonFriends(@NotNull @PathVariable(value = "id") @NotNull Long userId) {
+    public Collection<UserFeed> getCommonFriends(@PathVariable(value = "id") Long userId) {
         log.info("Получен запрос GET на получение истории пользователя: {} ", userId);
         Collection<UserFeed> userFeed = userService.getUserFeed(userId);
         log.info("Вывод общих истории действий пользователя с Id: {}", userId);

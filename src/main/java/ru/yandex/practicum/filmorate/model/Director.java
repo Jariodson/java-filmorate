@@ -7,7 +7,6 @@ import ru.yandex.practicum.filmorate.validation.WithoutParent;
 
 import javax.validation.constraints.NotBlank;
 
-
 @Data
 @Builder
 @AllArgsConstructor

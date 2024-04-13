@@ -10,7 +10,6 @@ import ru.yandex.practicum.filmorate.service.ReviewService;
 
 import javax.validation.Valid;
 import java.util.Collection;
-import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -41,25 +40,19 @@ public class ReviewController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Review> deleteReview(@PathVariable Optional<Long> id) {
-        if (id.isPresent()) {
+    public ResponseEntity<Review> deleteReview(@PathVariable Long id) {
             log.info("Получен запрос DELETE на удаление отзыва");
-            Review review = reviewService.deleteReview(id.get());
-            log.info("Отзыв с ID: {} успешно удалён!", id.get());
+            Review review = reviewService.deleteReview(id);
+            log.info("Отзыв с ID: {} успешно удалён!", id);
             return new ResponseEntity<>(review, HttpStatus.OK);
-        }
-        throw new IllegalArgumentException("Введён неверный индефикатор! Id: " + id);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Review> getReviewById(@PathVariable Optional<Long> id) {
-        if (id.isPresent()) {
-            log.info("Получен запрос GET на получение отзыва с ID: {}", id.get());
-            Review review = reviewService.getReviewById(id.get());
-            log.info("Вывод отзыва с ID: {}", id.get());
+    public ResponseEntity<Review> getReviewById(@PathVariable Long id) {
+            log.info("Получен запрос GET на получение отзыва с ID: {}", id);
+            Review review = reviewService.getReviewById(id);
+            log.info("Вывод отзыва с ID: {}", id);
             return new ResponseEntity<>(review, HttpStatus.OK);
-        }
-        throw new IllegalArgumentException("Введён неверный индефикатор! Id: " + id);
     }
 
     @GetMapping
@@ -84,54 +77,42 @@ public class ReviewController {
     }
 
     @PutMapping("/{id}/like/{userId}")
-    public ResponseEntity<Review> postLike(@PathVariable(value = "id") Optional<Long> id,
-                                           @PathVariable(value = "userId") Optional<Long> userId) {
-        if (id.isPresent() && userId.isPresent()) {
+    public ResponseEntity<Review> postLike(@PathVariable(value = "id") Long id,
+                                           @PathVariable(value = "userId") Long userId) {
             log.info("Получен запрос PUT на добавление лайка отзыву с ID: {} пользователем с ID: {}",
-                    id.get(), userId.get());
-            Review review = reviewService.postLike(id.get(), userId.get());
-            log.info("Пользователь с ID: {} успешно поставил лайк посту с ID: {}", userId.get(), id.get());
+                    id, userId);
+            Review review = reviewService.postLike(id, userId);
+            log.info("Пользователь с ID: {} успешно поставил лайк посту с ID: {}", userId, id);
             return new ResponseEntity<>(review, HttpStatus.OK);
-        }
-        throw new IllegalArgumentException("Введён неверный индефикатор! Id: " + id + " или UserId: " + userId);
     }
 
     @PutMapping("/{id}/dislike/{userId}")
-    public ResponseEntity<Review> postDislike(@PathVariable(value = "id") Optional<Long> id,
-                                              @PathVariable(value = "userId") Optional<Long> userId) {
-        if (id.isPresent() && userId.isPresent()) {
+    public ResponseEntity<Review> postDislike(@PathVariable(value = "id") Long id,
+                                              @PathVariable(value = "userId") Long userId) {
             log.info("Получен запрос PUT на добавление дизлайка отзыву с ID: {} пользователем с ID: {}",
-                    id.get(), userId.get());
-            Review review = reviewService.postDislike(id.get(), userId.get());
-            log.info("Пользователь с ID: {} успешно поставил дизлайк посту с ID: {}", userId.get(), id.get());
+                    id, userId);
+            Review review = reviewService.postDislike(id, userId);
+            log.info("Пользователь с ID: {} успешно поставил дизлайк посту с ID: {}", userId, id);
             return new ResponseEntity<>(review, HttpStatus.OK);
-        }
-        throw new IllegalArgumentException("Введён неверный индефикатор! Id: " + id + " или UserId: " + userId);
     }
 
     @DeleteMapping("/{id}/like/{userId}")
-    public ResponseEntity<Review> deleteLike(@PathVariable(value = "id") Optional<Long> id,
-                                             @PathVariable(value = "userId") Optional<Long> userId) {
-        if (id.isPresent() && userId.isPresent()) {
+    public ResponseEntity<Review> deleteLike(@PathVariable(value = "id") Long id,
+                                             @PathVariable(value = "userId") Long userId) {
             log.info("Получен запрос DELETE на удаление лайка отзыву с ID: {} пользователем с ID: {}",
-                    id.get(), userId.get());
-            Review review = reviewService.deleteLike(id.get(), userId.get());
-            log.info("Пользователь с ID: {} успешно удлалил лайк посту с ID: {}", userId.get(), id.get());
+                    id, userId);
+            Review review = reviewService.deleteLike(id, userId);
+            log.info("Пользователь с ID: {} успешно удлалил лайк посту с ID: {}", userId, id);
             return new ResponseEntity<>(review, HttpStatus.OK);
-        }
-        throw new IllegalArgumentException("Введён неверный индефикатор! Id: " + id + " или UserId: " + userId);
     }
 
     @DeleteMapping("/{id}/dislike/{userId}")
-    public ResponseEntity<Review> deleteDislike(@PathVariable(value = "id") Optional<Long> id,
-                                                @PathVariable(value = "userId") Optional<Long> userId) {
-        if (id.isPresent() && userId.isPresent()) {
+    public ResponseEntity<Review> deleteDislike(@PathVariable(value = "id") Long id,
+                                                @PathVariable(value = "userId") Long userId) {
             log.info("Получен запрос DELETE на удаление дизлайка отзыву с ID: {} пользователем с ID: {}",
-                    id.get(), userId.get());
-            Review review = reviewService.deleteDislike(id.get(), userId.get());
-            log.info("Пользователь с ID: {} успешно удлалил дизлайк посту с ID: {}", userId.get(), id.get());
+                    id, userId);
+            Review review = reviewService.deleteDislike(id, userId);
+            log.info("Пользователь с ID: {} успешно удлалил дизлайк посту с ID: {}", userId, id);
             return new ResponseEntity<>(review, HttpStatus.OK);
-        }
-        throw new IllegalArgumentException("Введён неверный индефикатор! Id: " + id + " или UserId: " + userId);
     }
 }
