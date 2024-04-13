@@ -14,17 +14,16 @@ import java.util.*;
 public class RecommendationsServiceImpl implements RecommendationsService {
     private final UserService userService;
     private final FilmService filmService;
-    Map<User, ArrayList<Film>> data;
 
     @Autowired
     public RecommendationsServiceImpl(UserService userService, FilmService filmService) {
         this.userService = userService;
         this.filmService = filmService;
-        data = new HashMap<>();
     }
 
     @Override
     public Collection<Film> getRecommendations(Long id) {
+        Map<User, ArrayList<Film>> data = new HashMap<>();
         Collection<Film> films = filmService.getFilms();
         Collection<User> users = userService.getUsers();
         films.forEach(film1 -> users.stream().filter(user1 -> film1.getLikes().contains(user1.getId())).forEach(user1 -> {

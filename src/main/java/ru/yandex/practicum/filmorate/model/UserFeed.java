@@ -14,12 +14,12 @@ import java.time.Instant;
 @NoArgsConstructor(force = true)
 @AllArgsConstructor
 public class UserFeed {
-    Long eventId;
-    Long userId;
-    Long entityId;
+    private Long eventId;
+    private Long userId;
+    private Long entityId;
     @JsonSerialize(using = InstantSerializer.class)
-    Instant timestamp;
-    EventType eventType;
-    Operation operation;
+    private Instant timestamp;
+    private EventType eventType;
+    private Operation operation;
 
 }
