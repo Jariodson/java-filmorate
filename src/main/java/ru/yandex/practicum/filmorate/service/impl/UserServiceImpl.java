@@ -6,13 +6,13 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.yandex.practicum.filmorate.model.EventType;
-import ru.yandex.practicum.filmorate.model.Operation;
+import ru.yandex.practicum.filmorate.model.enums.EventType;
+import ru.yandex.practicum.filmorate.model.enums.Operation;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.model.UserFeed;
 import ru.yandex.practicum.filmorate.service.UserService;
-import ru.yandex.practicum.filmorate.storage.dao.UserFeedDal;
-import ru.yandex.practicum.filmorate.storage.dao.UserStorage;
+import ru.yandex.practicum.filmorate.storage.UserFeedStorage;
+import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.time.Instant;
 import java.util.Collection;
@@ -22,10 +22,10 @@ import java.util.Collection;
 @Transactional
 public class UserServiceImpl implements UserService {
     private final UserStorage userStorage;
-    private final UserFeedDal feedStorage;
+    private final UserFeedStorage feedStorage;
 
     @Autowired
-    public UserServiceImpl(@Qualifier("userDbStorage") UserStorage userStorage, UserFeedDal feedStorage) {
+    public UserServiceImpl(@Qualifier("dbUserStorage") UserStorage userStorage, UserFeedStorage feedStorage) {
         this.userStorage = userStorage;
         this.feedStorage = feedStorage;
     }
