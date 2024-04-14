@@ -7,18 +7,21 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
-import ru.yandex.practicum.filmorate.model.EventType;
+import ru.yandex.practicum.filmorate.model.enums.EventType;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.Operation;
+import ru.yandex.practicum.filmorate.model.enums.FilmParameter;
+import ru.yandex.practicum.filmorate.model.enums.Operation;
 import ru.yandex.practicum.filmorate.model.UserFeed;
+import ru.yandex.practicum.filmorate.model.enums.SortParam;
 import ru.yandex.practicum.filmorate.service.*;
-import ru.yandex.practicum.filmorate.storage.dao.FilmStorage;
-import ru.yandex.practicum.filmorate.storage.dao.LikeDal;
-import ru.yandex.practicum.filmorate.storage.dao.UserFeedDal;
+import ru.yandex.practicum.filmorate.storage.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.LikeStorage;
+import ru.yandex.practicum.filmorate.storage.UserFeedStorage;
 
 import java.time.Instant;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Optional;
 
 
 @Slf4j
@@ -26,15 +29,15 @@ import java.util.HashSet;
 @Transactional
 public class FilmServiceImpl implements FilmService {
     private final FilmStorage filmStorage;
-    private final LikeDal likeStorage;
-    private final UserFeedDal feedStorage;
+    private final LikeStorage likeStorage;
+    private final UserFeedStorage feedStorage;
     private final UserService userService;
     private final MpaService mpaService;
     private final GenreService genreService;
     private final DirectorService directorService;
 
     @Autowired
-    public FilmServiceImpl(@Qualifier("filmDbStorage") FilmStorage filmStorage, LikeDal likeStorage, UserFeedDal userFeedStorage, UserService userService, MpaService mpaService, GenreService genreService, DirectorService directorService) {
+    public FilmServiceImpl(@Qualifier("dbFilmStorage") FilmStorage filmStorage, LikeStorage likeStorage, UserFeedStorage userFeedStorage, UserService userService, MpaService mpaService, GenreService genreService, DirectorService directorService) {
         this.filmStorage = filmStorage;
         this.likeStorage = likeStorage;
         this.feedStorage = userFeedStorage;
@@ -66,7 +69,7 @@ public class FilmServiceImpl implements FilmService {
         return film;
     }
 
-    public Collection<Film> getDirectorFilmsSorted(Long directorId, String[] orderBy) {
+    public Collection<Film> getDirectorFilmsSorted(Long directorId, Optional<SortParam[]> orderBy) {
         directorService.getDirectorById(directorId);
         Collection<Film> films = filmStorage.getFilmsByDirectorAndSort(directorId, orderBy);
         for (Film film : films) {
@@ -142,7 +145,7 @@ public class FilmServiceImpl implements FilmService {
     }
 
     @Override
-    public Collection<Film> getMostPopularsFilms(Integer count, Long genreId, Integer year) {
+    public Collection<Film> getMostPopularsFilms(Integer count, Optional<Long> genreId, Optional<Integer> year) {
         return filmStorage.getMostPopularsFilms(count, genreId, year);
     }
 
@@ -162,7 +165,19 @@ public class FilmServiceImpl implements FilmService {
         }
     }
 
-    public Collection<Film> searchFilmByParameter(String query, String filmSearchParameter) {
-        return filmStorage.searchFilmByParameter(query, filmSearchParameter);
+
+    public Collection<Film> searchFilmByParameter(String query, FilmParameter sortTypes) {
+        Collection<Film> films = null;
+        switch (sortTypes) {
+            case DIRECTOR:
+                films =  filmStorage.searchFilmByDirector(query);
+            case TITLE:
+                films =  filmStorage.searchFilmByTitle(query);
+            case DIR_AND_TITLE:
+            case TITLE_AND_DIR:
+                films =  filmStorage.searchFilmByDirectorAndTitle(query);
+        }
+        return films;
     }
+
 }
