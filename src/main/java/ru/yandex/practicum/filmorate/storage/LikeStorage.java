@@ -1,8 +1,8 @@
-package ru.yandex.practicum.filmorate.storage.dao;
+package ru.yandex.practicum.filmorate.storage;
 
 import java.util.Collection;
 
-public interface LikeDal {
+public interface LikeStorage {
 
     void addLike(Long filmId, Long userId);
 

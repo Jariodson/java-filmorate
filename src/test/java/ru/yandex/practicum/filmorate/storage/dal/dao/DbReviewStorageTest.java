@@ -8,7 +8,9 @@ import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 import ru.yandex.practicum.filmorate.model.*;
-import ru.yandex.practicum.filmorate.storage.dao.*;
+import ru.yandex.practicum.filmorate.storage.*;
+import ru.yandex.practicum.filmorate.storage.database.*;
+import ru.yandex.practicum.filmorate.storage.database.DbGenreStorage;
 import ru.yandex.practicum.filmorate.storage.mapper.FilmMapper;
 
 import java.time.LocalDate;
@@ -21,25 +23,25 @@ import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFOR
 @JdbcTest
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
-class ReviewDaoTest {
+class DbReviewStorageTest {
     @Autowired
     private JdbcTemplate jdbcTemplate;
-    private ReviewDal reviewDao;
+    private ReviewStorage reviewDao;
     private Review review;
-    private GenreDal genreDal;
-    private LikeDal likeDal;
-    private DirectorDal directorDal;
+    private ru.yandex.practicum.filmorate.storage.GenreStorage genreStorage;
+    private LikeStorage likeStorage;
+    private DirectorStorage directorStorage;
     private FilmMapper filmMapper;
 
 
     @BeforeEach
     void beforeEach() {
-        reviewDao = new ReviewDao(jdbcTemplate);
-        likeDal = new LikeDao(jdbcTemplate);
-        genreDal = new GenreDao(jdbcTemplate);
-        directorDal = new DirectorDao(jdbcTemplate);
-        FilmStorage filmStorage = new FilmDbStorage(jdbcTemplate, genreDal, likeDal, directorDal, filmMapper);
-        UserStorage userStorage = new UserDbStorage(jdbcTemplate);
+        reviewDao = new DbReviewStorage(jdbcTemplate);
+        likeStorage = new DbLikeStorage(jdbcTemplate);
+        genreStorage = new DbGenreStorage(jdbcTemplate);
+        directorStorage = new DbDirectorStorage(jdbcTemplate);
+        FilmStorage filmStorage = new DbFilmStorage(jdbcTemplate, filmMapper);
+        UserStorage userStorage = new DbUserStorage(jdbcTemplate);
 
         User user = User.builder()
                 .id(1L)

@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.storage.dao;
+package ru.yandex.practicum.filmorate.storage.database;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -6,35 +6,26 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
-import ru.yandex.practicum.filmorate.enums.FilmParameter;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Mpa;
+import ru.yandex.practicum.filmorate.model.enums.SortParam;
+import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.mapper.FilmMapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Repository
 @Qualifier("filmDbStorage")
-public class FilmDbStorage implements FilmStorage {
+public class DbFilmStorage implements FilmStorage {
     private final JdbcTemplate jdbcTemplate;
-    private final GenreDal genreDal;
-    private final LikeDal likeDal;
-    private final DirectorDal directorDal;
     private final FilmMapper filmMapper;
 
 
-    public FilmDbStorage(JdbcTemplate jdbcTemplate,
-                         GenreDal genreDal,
-                         LikeDal likeDal,
-                         DirectorDal directorDal, FilmMapper filmMapper) {
+    public DbFilmStorage(JdbcTemplate jdbcTemplate,FilmMapper filmMapper) {
         this.jdbcTemplate = jdbcTemplate;
-        this.genreDal = genreDal;
-        this.likeDal = likeDal;
-        this.directorDal = directorDal;
         this.filmMapper = filmMapper;
     }
 
@@ -115,9 +106,8 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
-    public Collection<Film> getFilmsByDirectorAndSort(Long directorId, String[] orderBy) {
+    public Collection<Film> getFilmsByDirectorAndSort(Long directorId, Optional<SortParam[]> orderBy) {
         try {
-            // Construct the base SQL query
             StringBuilder sqlBuilder = new StringBuilder();
             sqlBuilder.append("SELECT f.*, m.mpa_name, COUNT(l.user_id) AS likes " +
                     "FROM film AS f " +
@@ -126,20 +116,20 @@ public class FilmDbStorage implements FilmStorage {
                     "JOIN mpa AS m ON m.mpa_id = f.mpa_id ");
             sqlBuilder.append("WHERE df.director_id = ? ");
             sqlBuilder.append("GROUP BY f.film_id, m.mpa_name ");
-            // Check if orderBy array is provided and construct ORDER BY clause
-            if (orderBy != null && orderBy.length > 0) {
+            if (orderBy.isPresent()) {
                 sqlBuilder.append("ORDER BY ");
-                for (int i = 0; i < orderBy.length; i++) {
-                    if (orderBy[i].equals("year")) {
-                        orderBy[i] = " f.released_date ";
+                for (SortParam param :orderBy.get()) {
+                    switch (param){
+                        case like:
+                            sqlBuilder.append(" like ");
+                        case year:
+                            sqlBuilder.append(" f.released_date ");
                     }
-                    sqlBuilder.append(orderBy[i]);
-                    if (i < orderBy.length - 1) {
                         sqlBuilder.append(", ");
-                    }
                 }
+                sqlBuilder.delete(sqlBuilder.length() - 2, sqlBuilder.length());
             }
-            // Execute the query
+
             String sql = sqlBuilder.toString();
             Collection<Film> films = jdbcTemplate.query(sql, this::makeFilm, directorId);
             return films;
@@ -149,7 +139,7 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
-    public Collection<Film> getMostPopularsFilms(Integer count, Long genreId, Integer year) {
+    public Collection<Film> getMostPopularsFilms(Integer count, Optional<Long> genreId, Optional<Integer> year) {
         String sql = "SELECT f.*, m.mpa_name, COUNT(l.user_id) AS like_count " +
                 "FROM film AS f " +
                 "LEFT JOIN film_like AS l ON l.film_id = f.film_id " +
@@ -184,13 +174,7 @@ public class FilmDbStorage implements FilmStorage {
             films = jdbcTemplate.query(sql, this::makeFilm, count);
         }
 
-        return films.stream().peek(film -> {
-                            film.setGenres(genreDal.getFilmGenre(film.getId()));
-                            film.setLikes(new HashSet<>(likeDal.getLikes(film.getId())));
-                            film.setDirectors(directorDal.getFilmsDirector(film.getId()));
-                        }
-                )
-                .collect(Collectors.toList());
+        return films;
     }
 
     private Film makeFilm(ResultSet rs, int rowNum) throws SQLException {
@@ -207,22 +191,6 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
-    public Collection<Film> searchFilmByParameter(String query, String filmSearchParameter) {
-        FilmParameter sortTypes = FilmParameter.validateFilmParameter(filmSearchParameter);
-        switch (sortTypes) {
-            case DIRECTOR:
-
-                return searchFilmByDirector(query);
-            case TITLE:
-                return searchFilmByTitle(query);
-            case DIR_AND_TITLE:
-            case TITLE_AND_DIR:
-                return searchFilmByDirectorAndTitle(query);
-            default:
-                throw new IllegalArgumentException(FilmParameter.UNKNOWN + filmSearchParameter);
-        }
-    }
-
     public Collection<Film> searchFilmByDirector(String query) {
         String sqlQuery;
         sqlQuery = "SELECT f.* " +
@@ -237,6 +205,7 @@ public class FilmDbStorage implements FilmStorage {
         return jdbcTemplate.query(sqlQuery, filmMapper, '%' + query + '%');
     }
 
+    @Override
     public Collection<Film> searchFilmByTitle(String query) {
         String sqlQuery;
         sqlQuery = "SELECT f.* " +
@@ -249,6 +218,7 @@ public class FilmDbStorage implements FilmStorage {
         return jdbcTemplate.query(sqlQuery, filmMapper, '%' + query + '%');
     }
 
+    @Override
     public Collection<Film> searchFilmByDirectorAndTitle(String query) {
         String sqlQuery;
         sqlQuery = "SELECT f.* " +

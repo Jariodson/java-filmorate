@@ -1,10 +1,10 @@
-package ru.yandex.practicum.filmorate.storage.dao;
+package ru.yandex.practicum.filmorate.storage;
 
 import ru.yandex.practicum.filmorate.model.Genre;
 
 import java.util.Collection;
 
-public interface GenreDal {
+public interface GenreStorage {
     Collection<Genre> getGenres();
 
     Genre getGenreById(Long id);

@@ -1,10 +1,10 @@
-package ru.yandex.practicum.filmorate.storage.dao;
+package ru.yandex.practicum.filmorate.storage;
 
 import ru.yandex.practicum.filmorate.model.UserFeed;
 
 import java.util.Collection;
 
-public interface UserFeedDal {
+public interface UserFeedStorage {
 
     void addUserFeed(UserFeed feed);
 

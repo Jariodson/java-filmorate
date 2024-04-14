@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.storage.dao;
+package ru.yandex.practicum.filmorate.storage.database;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -6,6 +6,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.model.Review;
+import ru.yandex.practicum.filmorate.storage.ReviewStorage;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -14,11 +15,11 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Repository
-public class ReviewDao implements ReviewDal {
+public class DbReviewStorage implements ReviewStorage {
     private final JdbcTemplate jdbcTemplate;
 
     @Autowired
-    public ReviewDao(JdbcTemplate jdbcTemplate) {
+    public DbReviewStorage(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 

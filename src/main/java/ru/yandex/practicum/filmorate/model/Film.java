@@ -20,7 +20,7 @@ import java.util.Set;
  * Film.
  */
 @Data
-@Builder(toBuilder = true)
+@Builder
 @NoArgsConstructor(force = true)
 @AllArgsConstructor
 public class Film {
