@@ -1,11 +1,12 @@
-package ru.yandex.practicum.filmorate.storage.dao;
+package ru.yandex.practicum.filmorate.storage.database;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-import ru.yandex.practicum.filmorate.model.EventType;
-import ru.yandex.practicum.filmorate.model.Operation;
 import ru.yandex.practicum.filmorate.model.UserFeed;
+import ru.yandex.practicum.filmorate.model.enums.EventType;
+import ru.yandex.practicum.filmorate.model.enums.Operation;
+import ru.yandex.practicum.filmorate.storage.UserFeedStorage;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -13,11 +14,11 @@ import java.util.Collection;
 
 @Slf4j
 @Repository
-public class UserFeedDao implements UserFeedDal {
+public class DbUserFeedStorage implements UserFeedStorage {
 
     private final JdbcTemplate jdbcTemplate;
 
-    public UserFeedDao(JdbcTemplate jdbcTemplate) {
+    public DbUserFeedStorage(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 

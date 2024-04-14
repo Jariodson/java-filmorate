@@ -24,7 +24,7 @@ public interface UserService {
 
     User getUserById(long id);
 
-    void validate(Long userId);
+    void validateUserId(Long userId);
 
     Collection<UserFeed> getUserFeed(Long userId);
 }

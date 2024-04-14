@@ -10,8 +10,8 @@ import javax.validation.constraints.NotNull;
 
 @Data
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor(force = true)
+@AllArgsConstructor
 public class Review {
     private Long reviewId;
     @NotNull

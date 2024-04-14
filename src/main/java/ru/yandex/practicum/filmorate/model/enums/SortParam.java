@@ -1,10 +1,9 @@
-package ru.yandex.practicum.filmorate.model;
+package ru.yandex.practicum.filmorate.model.enums;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 @JsonFormat(shape = JsonFormat.Shape.STRING)
-public enum Operation {
-    REMOVE,
-    ADD,
-    UPDATE
+public enum SortParam {
+    year,
+    likes
 }

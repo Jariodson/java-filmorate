@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.storage.dao;
+package ru.yandex.practicum.filmorate.storage.database;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -7,6 +7,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.model.Director;
+import ru.yandex.practicum.filmorate.storage.DirectorStorage;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -16,11 +17,11 @@ import java.util.Map;
 
 
 @Repository
-public class DirectorDao implements DirectorDal {
+public class DbDirectorStorage implements DirectorStorage {
     private final JdbcTemplate jdbcTemplate;
 
     @Autowired
-    public DirectorDao(JdbcTemplate jdbcTemplate) {
+    public DbDirectorStorage(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 

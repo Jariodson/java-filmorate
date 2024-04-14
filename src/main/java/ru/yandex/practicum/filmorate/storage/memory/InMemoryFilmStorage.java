@@ -4,13 +4,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.storage.dao.FilmStorage;
+import ru.yandex.practicum.filmorate.model.enums.FilmParameter;
+import ru.yandex.practicum.filmorate.model.enums.SortParam;
+import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Component
 @Slf4j
@@ -60,7 +62,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public Collection<Film> getFilmsByDirectorAndSort(Long directorId, String[] orderBy) {
+    public Collection<Film> getFilmsByDirectorAndSort(Long directorId, Optional<SortParam[]> orderBy) {
         return null;
     }
 
@@ -71,14 +73,15 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public Collection<Film> getMostPopularsFilms(Integer count, Long genreId, Integer year) {
+    public Collection<Film> getMostPopularsFilms(Integer count, Optional<Long> genreId, Optional<Integer> year) {
         return null;
     }
 
     @Override
-    public List<Film> searchFilmByParameter(String query, String filmSearchParameter) {
+    public Collection<Film> searchFilmByParameter(String query, FilmParameter[] sortTypes) {
         return null;
     }
+
 
     private void checkFilmCriteria(Film film) {
         LocalDate filmBirthday = LocalDate.of(1895, 12, 28);

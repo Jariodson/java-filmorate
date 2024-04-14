@@ -1,10 +1,10 @@
-package ru.yandex.practicum.filmorate.storage.dao;
+package ru.yandex.practicum.filmorate.storage;
 
 import ru.yandex.practicum.filmorate.model.Review;
 
 import java.util.Collection;
 
-public interface ReviewDal {
+public interface ReviewStorage {
     void makeReview(Review review);
 
     void updateReview(Review review);

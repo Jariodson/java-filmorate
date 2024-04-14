@@ -76,7 +76,7 @@ public class UserController {
 
     @PutMapping("/{id}/friends/{friendId}")
     public ResponseEntity<User> addFriend(@PathVariable(value = "id") Long userId,
-                                          @PathVariable Long friendId) {
+                                          @PathVariable(value = "friendId") Long friendId) {
         log.info("Получен запрос PUT на добавление нового друга пользователя. " +
                 "Id пользователя: {}, Id друга: {}", friendId, userId);
         User user = userService.addFriend(userId, friendId);
@@ -88,7 +88,7 @@ public class UserController {
 
     @DeleteMapping("/{id}/friends/{friendId}")
     public ResponseEntity<User> removeFriend(@PathVariable(value = "id") Long userId,
-                                             @PathVariable Long friendId) {
+                                             @PathVariable(value = "friendId") Long friendId) {
 
         log.info("Получен запрос DELETE на удаление пользователя из друзей" +
                 "Id пользователя: {}, Id друга: {}", friendId, userId);

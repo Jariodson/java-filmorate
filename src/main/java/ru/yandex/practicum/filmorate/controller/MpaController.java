@@ -33,11 +33,8 @@ public class MpaController {
     @ResponseStatus(HttpStatus.OK)
     public Mpa getMpaById(@PathVariable Long id) {
         log.info("Получен запрос GET на получение mpa по ID: {}", id);
-
         Mpa mpa = mpaService.getMpaById(id);
         log.info("Вывод рейтинга с Id: {}", id);
         return mpa;
-
     }
-
 }

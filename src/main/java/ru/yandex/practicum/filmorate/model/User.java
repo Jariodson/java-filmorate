@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
 import java.time.LocalDate;
 import java.util.HashSet;
@@ -15,10 +16,11 @@ import java.util.Set;
 
 @Data
 @Builder
-@NoArgsConstructor(force = true)
 @AllArgsConstructor
+@NoArgsConstructor(force = true)
 public class User {
     private Long id;
+    @NotNull
     @Email(message = "Введён некоректный e-mail")
     private String email;
     @NotBlank(message = "Логин не может быть пустым и содержать пробелы")

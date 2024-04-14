@@ -8,8 +8,12 @@ import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 import ru.yandex.practicum.filmorate.model.*;
-import ru.yandex.practicum.filmorate.storage.dao.*;
-import ru.yandex.practicum.filmorate.storage.mapper.FilmMapper;
+import ru.yandex.practicum.filmorate.storage.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.ReviewStorage;
+import ru.yandex.practicum.filmorate.storage.UserStorage;
+import ru.yandex.practicum.filmorate.storage.database.DbFilmStorage;
+import ru.yandex.practicum.filmorate.storage.database.DbReviewStorage;
+import ru.yandex.practicum.filmorate.storage.database.DbUserStorage;
 
 import java.time.LocalDate;
 import java.util.Collection;
@@ -21,25 +25,18 @@ import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFOR
 @JdbcTest
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
-class ReviewDaoTest {
+class DbReviewStorageTest {
     @Autowired
     private JdbcTemplate jdbcTemplate;
-    private ReviewDal reviewDao;
+    private ReviewStorage reviewDao;
     private Review review;
-    private GenreDal genreDal;
-    private LikeDal likeDal;
-    private DirectorDal directorDal;
-    private FilmMapper filmMapper;
 
 
     @BeforeEach
     void beforeEach() {
-        reviewDao = new ReviewDao(jdbcTemplate);
-        likeDal = new LikeDao(jdbcTemplate);
-        genreDal = new GenreDao(jdbcTemplate);
-        directorDal = new DirectorDao(jdbcTemplate);
-        FilmStorage filmStorage = new FilmDbStorage(jdbcTemplate, genreDal, likeDal, directorDal, filmMapper);
-        UserStorage userStorage = new UserDbStorage(jdbcTemplate);
+        reviewDao = new DbReviewStorage(jdbcTemplate);
+        FilmStorage filmStorage = new DbFilmStorage(jdbcTemplate);
+        UserStorage userStorage = new DbUserStorage(jdbcTemplate);
 
         User user = User.builder()
                 .id(1L)
@@ -67,6 +64,7 @@ class ReviewDaoTest {
                 .isPositive(false)
                 .userId(1L)
                 .filmId(1L)
+                .useful(0)
                 .build();
         reviewDao.makeReview(review);
     }
@@ -85,6 +83,7 @@ class ReviewDaoTest {
                 .isPositive(true)
                 .userId(1L)
                 .filmId(1L)
+                .useful(0)
                 .build();
         reviewDao.updateReview(newReview);
         assertThat(newReview).isNotNull().isEqualTo(reviewDao.getReviewById(1L));

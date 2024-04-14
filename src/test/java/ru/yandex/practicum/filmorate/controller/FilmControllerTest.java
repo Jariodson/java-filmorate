@@ -16,11 +16,12 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.impl.FilmServiceImpl;
-import ru.yandex.practicum.filmorate.storage.dao.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import static org.hamcrest.Matchers.hasSize;
@@ -201,7 +202,7 @@ class FilmControllerTest {
         film1.setLikes(Set.of(1L));
         film2.setLikes(Set.of(2L, 1L));
 
-        when(controller.getMostPopularsFilms(2, null, null)).thenReturn(List.of(film1, film2));
+        when(controller.getMostPopularsFilms(2, Optional.empty(), Optional.empty())).thenReturn(List.of(film1, film2));
         this.mockMvc.perform(get("/films/popular?count=2"))
                 .andExpect(status().isOk())
                 .andDo(print());

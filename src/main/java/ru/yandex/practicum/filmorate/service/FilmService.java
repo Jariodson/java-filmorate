@@ -1,15 +1,18 @@
 package ru.yandex.practicum.filmorate.service;
 
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.enums.FilmParameter;
+import ru.yandex.practicum.filmorate.model.enums.SortParam;
 
 import java.util.Collection;
+import java.util.Optional;
 
 public interface FilmService {
     Collection<Film> getFilms();
 
     Film getFilmById(Long id);
 
-    Collection<Film> getDirectorFilmsSorted(Long directorId, String[] orderBy);
+    Collection<Film> getDirectorFilmsSorted(Long directorId, Optional<SortParam[]> orderBy);
 
     Film createFilm(Film film);
 
@@ -23,7 +26,9 @@ public interface FilmService {
 
     Collection<Film> getCommonFilms(Long userId, Long friendId);
 
-    Collection<Film> getMostPopularsFilms(Integer count, Long genreId, Integer year);
+    Collection<Film> getMostPopularsFilms(Integer count, Optional<Long> genreId, Optional<Integer> year);
 
-    Collection<Film> searchFilmByParameter(String lowerCase, String lowerCase1);
+    Collection<Film> searchFilmByParameter(String lowerCase, FilmParameter[] lowerCase1);
+
+    void validateFilmId(Long id);
 }

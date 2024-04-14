@@ -4,30 +4,29 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
-import ru.yandex.practicum.filmorate.model.EventType;
-import ru.yandex.practicum.filmorate.model.Operation;
 import ru.yandex.practicum.filmorate.model.Review;
 import ru.yandex.practicum.filmorate.model.UserFeed;
+import ru.yandex.practicum.filmorate.model.enums.EventType;
+import ru.yandex.practicum.filmorate.model.enums.Operation;
 import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.service.ReviewService;
 import ru.yandex.practicum.filmorate.service.UserService;
-import ru.yandex.practicum.filmorate.storage.dao.ReviewDal;
-import ru.yandex.practicum.filmorate.storage.dao.UserFeedDal;
+import ru.yandex.practicum.filmorate.storage.ReviewStorage;
+import ru.yandex.practicum.filmorate.storage.UserFeedStorage;
 
 import java.time.Instant;
 import java.util.Collection;
 
 @Service
 public class ReviewServiceImpl implements ReviewService {
-    private final ReviewDal reviewDao;
+    private final ReviewStorage reviewDao;
 
     private final UserService userService;
     private final FilmService filmService;
-    private final UserFeedDal feedService;
+    private final UserFeedStorage feedService;
 
     @Autowired
-    public ReviewServiceImpl(ReviewDal reviewDao, UserService userService,
-                             FilmService filmService, UserFeedDal feedService) {
+    public ReviewServiceImpl(ReviewStorage reviewDao, UserService userService, FilmService filmService, UserFeedStorage feedService) {
         this.reviewDao = reviewDao;
         this.userService = userService;
         this.filmService = filmService;
@@ -120,8 +119,8 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     private void checkReview(Review review) {
-        userService.getUserById(review.getUserId());
-        filmService.getFilmById(review.getFilmId());
+        userService.validateUserId(review.getUserId());
+        filmService.validateFilmId(review.getFilmId());
         if (review.getUserId() <= 0 || review.getFilmId() <= 0) {
             throw new IllegalArgumentException("ID не может быть отрицательным или равняться 0!");
         }

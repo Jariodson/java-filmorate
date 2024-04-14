@@ -1,19 +1,20 @@
-package ru.yandex.practicum.filmorate.storage.dao;
+package ru.yandex.practicum.filmorate.storage.database;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import ru.yandex.practicum.filmorate.storage.LikeStorage;
 
 import java.util.Collection;
 
 @Repository
 @Slf4j
-public class LikeDao implements LikeDal {
+public class DbLikeStorage implements LikeStorage {
     private final JdbcTemplate jdbcTemplate;
 
     @Autowired
-    public LikeDao(JdbcTemplate jdbcTemplate) {
+    public DbLikeStorage(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 

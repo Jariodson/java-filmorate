@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.storage.dao;
+package ru.yandex.practicum.filmorate.storage.database;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -12,11 +12,11 @@ import java.sql.SQLException;
 import java.util.Collection;
 
 @Repository
-public class GenreDao implements GenreDal {
+public class DbGenreStorage implements ru.yandex.practicum.filmorate.storage.GenreStorage {
     private final JdbcTemplate jdbcTemplate;
 
     @Autowired
-    public GenreDao(JdbcTemplate jdbcTemplate) {
+    public DbGenreStorage(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 

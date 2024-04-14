@@ -1,10 +1,10 @@
-package ru.yandex.practicum.filmorate.storage.dao;
+package ru.yandex.practicum.filmorate.storage;
 
 import ru.yandex.practicum.filmorate.model.Director;
 
 import java.util.Collection;
 
-public interface DirectorDal {
+public interface DirectorStorage {
     Collection<Director> getAllDirectors();
 
     Director getDirectorById(Long id);
