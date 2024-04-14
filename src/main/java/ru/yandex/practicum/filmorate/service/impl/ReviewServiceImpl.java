@@ -4,10 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
-import ru.yandex.practicum.filmorate.model.enums.EventType;
-import ru.yandex.practicum.filmorate.model.enums.Operation;
 import ru.yandex.practicum.filmorate.model.Review;
 import ru.yandex.practicum.filmorate.model.UserFeed;
+import ru.yandex.practicum.filmorate.model.enums.EventType;
+import ru.yandex.practicum.filmorate.model.enums.Operation;
 import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.service.ReviewService;
 import ru.yandex.practicum.filmorate.service.UserService;
@@ -70,7 +70,7 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     public Review getReviewById(Long id) {
         try {
-           return reviewDao.getReviewById(id);
+            return reviewDao.getReviewById(id);
         } catch (EmptyResultDataAccessException e) {
             throw new IllegalArgumentException("Отзыва с ID: " + id + "не найдено!");
         }
@@ -119,8 +119,8 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     private void checkReview(Review review) {
-        userService.getUserById(review.getUserId());
-        filmService.getFilmById(review.getFilmId());
+        userService.validateUserId(review.getUserId());
+        filmService.validateFilmId(review.getFilmId());
         if (review.getUserId() <= 0 || review.getFilmId() <= 0) {
             throw new IllegalArgumentException("ID не может быть отрицательным или равняться 0!");
         }

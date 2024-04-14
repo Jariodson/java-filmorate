@@ -10,6 +10,7 @@ import ru.yandex.practicum.filmorate.service.ReviewService;
 
 import javax.validation.Valid;
 import java.util.Collection;
+import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -56,61 +57,63 @@ public class ReviewController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public Collection<Review> getReviewsByFilmIdAndCount(@RequestParam(required = false) Long filmId,
+    public Collection<Review> getReviewsByFilmIdAndCount(@RequestParam(required = false) Optional<Long> filmId,
                                                          @RequestParam(defaultValue = "10") Integer count) {
-        if (filmId == null) {
+        if (filmId.isEmpty()) {
             log.info("Получен запрос GET на получение отзывов ко всем фильмам. Кол-во отзывов: {}", count);
             Collection<Review> reviews = reviewService.getAllReviews(count);
             log.info("Вывод {} отзывов к фильмам.", reviews.size());
             return reviews;
-        } else if (filmId > 0) {
+        } else {
             log.info("Получен запрос GET на получение отзыва к фильму с ID: {}. Кол-во отзывов: {}", filmId,
                     count);
-            Collection<Review> reviews = reviewService.getReviewByFilmId(filmId, count);
+            Collection<Review> reviews = reviewService.getReviewByFilmId(filmId.get(), count);
             log.info("Вывод отзывов к фильму с ID: {}", filmId);
             return reviews;
-        } else {
-            throw new IllegalArgumentException("Введён неверный индефикатор фильма! Id: " + filmId);
         }
     }
 
     @PutMapping("/{id}/like/{userId}")
-    public ResponseEntity<Review> postLike(@PathVariable(value = "id") Long id,
-                                           @PathVariable(value = "userId") Long userId) {
+    @ResponseStatus(HttpStatus.OK)
+    public Review postLike(@PathVariable(value = "id") Long id,
+                           @PathVariable(value = "userId") Long userId) {
         log.info("Получен запрос PUT на добавление лайка отзыву с ID: {} пользователем с ID: {}",
                 id, userId);
         Review review = reviewService.postLike(id, userId);
         log.info("Пользователь с ID: {} успешно поставил лайк посту с ID: {}", userId, id);
-        return new ResponseEntity<>(review, HttpStatus.OK);
+        return review;
     }
 
     @PutMapping("/{id}/dislike/{userId}")
-    public ResponseEntity<Review> postDislike(@PathVariable(value = "id") Long id,
-                                              @PathVariable(value = "userId") Long userId) {
+    @ResponseStatus(HttpStatus.OK)
+    public Review postDislike(@PathVariable(value = "id") Long id,
+                              @PathVariable(value = "userId") Long userId) {
         log.info("Получен запрос PUT на добавление дизлайка отзыву с ID: {} пользователем с ID: {}",
                 id, userId);
         Review review = reviewService.postDislike(id, userId);
         log.info("Пользователь с ID: {} успешно поставил дизлайк посту с ID: {}", userId, id);
-        return new ResponseEntity<>(review, HttpStatus.OK);
+        return review;
     }
 
     @DeleteMapping("/{id}/like/{userId}")
-    public ResponseEntity<Review> deleteLike(@PathVariable(value = "id") Long id,
-                                             @PathVariable(value = "userId") Long userId) {
+    @ResponseStatus(HttpStatus.OK)
+    public Review deleteLike(@PathVariable(value = "id") Long id,
+                             @PathVariable(value = "userId") Long userId) {
         log.info("Получен запрос DELETE на удаление лайка отзыву с ID: {} пользователем с ID: {}",
                 id, userId);
         Review review = reviewService.deleteLike(id, userId);
         log.info("Пользователь с ID: {} успешно удлалил лайк посту с ID: {}", userId, id);
-        return new ResponseEntity<>(review, HttpStatus.OK);
+        return review;
     }
 
     @DeleteMapping("/{id}/dislike/{userId}")
-    public ResponseEntity<Review> deleteDislike(@PathVariable(value = "id") Long id,
-                                                @PathVariable(value = "userId") Long userId) {
+    @ResponseStatus(HttpStatus.OK)
+    public Review deleteDislike(@PathVariable(value = "id") Long id,
+                                @PathVariable(value = "userId") Long userId) {
         log.info("Получен запрос DELETE на удаление дизлайка отзыву с ID: {} пользователем с ID: {}",
                 id, userId);
         Review review = reviewService.deleteDislike(id, userId);
         log.info("Пользователь с ID: {} успешно удлалил дизлайк посту с ID: {}", userId, id);
-        return new ResponseEntity<>(review, HttpStatus.OK);
+        return review;
     }
 }
