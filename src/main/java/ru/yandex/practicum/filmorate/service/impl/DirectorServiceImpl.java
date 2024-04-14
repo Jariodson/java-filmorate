@@ -8,7 +8,6 @@ import ru.yandex.practicum.filmorate.service.DirectorService;
 import ru.yandex.practicum.filmorate.storage.DirectorStorage;
 
 import java.util.Collection;
-import java.util.List;
 
 @Service
 public class DirectorServiceImpl implements DirectorService {
@@ -42,13 +41,15 @@ public class DirectorServiceImpl implements DirectorService {
 
     @Override
     public void updateFilmDirectors(Long id, Collection<Director> directors) {
-        validate(directors);
+        for (Director director : directors) {
+            validateDirectorId(director.getId());
+        }
         directorStorage.updateFilmsDirector(id, directors);
     }
 
     @Override
     public Director updateDirector(Director director) {
-        validate(List.of(director));
+        validateDirectorId(director.getId());
         return directorStorage.updateDirector(director);
     }
 
@@ -57,13 +58,13 @@ public class DirectorServiceImpl implements DirectorService {
         directorStorage.deleteDirector(id);
     }
 
-    private void validate(Collection<Director> directors) {
-        for (Director director : directors) {
-            try {
-                directorStorage.getDirectorById(director.getId());
-            } catch (IllegalArgumentException e) {
-                throw new NotFoundException("Жанр с ID: " + director.getId() + " не найден!");
-            }
+    @Override
+    public void validateDirectorId(Long directorId) {
+        try {
+            directorStorage.getDirectorById(directorId);
+        } catch (IllegalArgumentException e) {
+            throw new NotFoundException("Жанр с ID: " + directorId + " не найден!");
         }
+
     }
 }

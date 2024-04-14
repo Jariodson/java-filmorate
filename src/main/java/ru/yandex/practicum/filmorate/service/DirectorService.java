@@ -19,4 +19,6 @@ public interface DirectorService {
     Collection<Director> getFilmsDirector(Long id);
 
     void updateFilmDirectors(Long id, Collection<Director> directors);
+
+    void validateDirectorId(Long directorId);
 }

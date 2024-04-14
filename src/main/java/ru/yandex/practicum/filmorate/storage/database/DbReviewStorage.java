@@ -10,7 +10,10 @@ import ru.yandex.practicum.filmorate.storage.ReviewStorage;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -121,7 +124,7 @@ public class DbReviewStorage implements ReviewStorage {
         return review;
     }
 
-    private Integer updateUseful(Long reviewId){
+    private Integer updateUseful(Long reviewId) {
         String sqlFromLikes = "SELECT COUNT(*) FROM review_likes WHERE review_id = ?";
         Integer countLikes = jdbcTemplate.queryForObject(sqlFromLikes, Integer.class, reviewId);
         String sqlFromDislikes = "SELECT COUNT(*) FROM review_dislikes WHERE review_id = ?";

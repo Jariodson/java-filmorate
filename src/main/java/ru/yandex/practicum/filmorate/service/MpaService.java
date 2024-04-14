@@ -9,4 +9,5 @@ public interface MpaService {
 
     Mpa getMpaById(Long id);
 
+    void validateMpaId(Long id);
 }

@@ -13,4 +13,6 @@ public interface GenreService {
     Collection<Genre> getFilmsGenre(Long id);
 
     void updateFilmsGenre(Long id, Collection<Genre> genres);
+
+    void validateGenreId(Collection<Genre> genres);
 }

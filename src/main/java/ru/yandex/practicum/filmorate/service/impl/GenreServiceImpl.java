@@ -36,11 +36,12 @@ public class GenreServiceImpl implements GenreService {
 
     @Override
     public void updateFilmsGenre(Long id, Collection<Genre> genres) {
-        validate(genres);
+        validateGenreId(genres);
         genreDao.updateFilmsGenre(id, genres);
     }
 
-    private void validate(Collection<Genre> genres) {
+    @Override
+    public void validateGenreId(Collection<Genre> genres) {
         for (Genre genre : genres) {
             try {
                 genreDao.getGenreById(genre.getId());
