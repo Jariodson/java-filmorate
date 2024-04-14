@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.storage;
 
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.enums.FilmParameter;
 import ru.yandex.practicum.filmorate.model.enums.SortParam;
 
 import java.util.Collection;
@@ -23,9 +24,6 @@ public interface FilmStorage {
 
     Collection<Film> getMostPopularsFilms(Integer count, Optional<Long> genreId, Optional<Integer> year);
 
-    Collection<Film> searchFilmByDirector(String query);
+    Collection<Film> searchFilmByParameter(String query, FilmParameter[] sortTypes);
 
-    Collection<Film> searchFilmByTitle(String query);
-
-    Collection<Film> searchFilmByDirectorAndTitle(String query);
 }

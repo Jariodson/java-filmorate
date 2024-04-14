@@ -9,7 +9,6 @@ import ru.yandex.practicum.filmorate.model.enums.FilmParameter;
 import ru.yandex.practicum.filmorate.model.enums.SortParam;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
-import javax.swing.text.html.Option;
 import javax.validation.Valid;
 import java.util.Collection;
 import java.util.Optional;
@@ -78,7 +77,6 @@ public class FilmController {
         Film film = filmService.createLike(filmId, userId);
         log.info("Лайк успешно поставлен! Id фильма: {} ,Id пользователя: {}", filmId, userId);
         return film;
-
     }
 
     @DeleteMapping("/{id}/like/{userId}")
@@ -97,8 +95,9 @@ public class FilmController {
                                                  @RequestParam(required = false) Optional<Long> genreId,
                                                  @RequestParam(required = false) Optional<Integer> year) {
         log.info("Получен запрос GET на получение самых популярных фильмов!");
+        Collection<Film> films = filmService.getMostPopularsFilms(count, genreId, year);
         log.info("Вывод {} популярных фильмов", count);
-        return filmService.getMostPopularsFilms(count, genreId, year);
+        return films;
     }
 
     @GetMapping("/director/{directorId}")
@@ -116,14 +115,18 @@ public class FilmController {
     public Collection<Film> getCommonFilms(@RequestParam Long userId,
                                            @RequestParam Long friendId) {
         log.info("Получен запрос GET для общих фильмов с другом по популярности");
-        return filmService.getCommonFilms(userId, friendId);
+        Collection<Film> films = filmService.getCommonFilms(userId, friendId);
+        log.info("Вывод {} общих фильмов ", films.size());
+        return films;
     }
 
     @GetMapping("/search")
     @ResponseStatus(HttpStatus.OK)
     public Collection<Film> searchFilmByParameter(@RequestParam(name = "query") String query,
-                                                  @RequestParam(name = "by") FilmParameter filmSearchParameter) {
+                                                  @RequestParam(name = "by") FilmParameter[] filmSearchParameter) {
         log.info("Получен GET запрос на поиск: {}", filmSearchParameter);
-        return filmService.searchFilmByParameter(query.toLowerCase(), filmSearchParameter);
+        Collection<Film> films = filmService.searchFilmByParameter(query.toLowerCase(), filmSearchParameter);
+        log.info("Вывод {} найденых фильмов ", films.size());
+        return films;
     }
 }
