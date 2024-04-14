@@ -112,7 +112,7 @@ CREATE TABLE IF NOT EXISTS user_feed
 );
 
 ALTER TABLE friendship
-   ADD FOREIGN KEY (user_id) REFERENCES "user" (user_id) ON DELETE CASCADE;
+    ADD FOREIGN KEY (user_id) REFERENCES "user" (user_id) ON DELETE CASCADE;
 
 ALTER TABLE friendship
     ADD FOREIGN KEY (friendUser_id) REFERENCES "user" (user_id) ON DELETE CASCADE;

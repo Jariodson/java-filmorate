@@ -11,13 +11,13 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.*;
-import ru.yandex.practicum.filmorate.storage.database.*;
-import ru.yandex.practicum.filmorate.storage.database.DbGenreStorage;
-import ru.yandex.practicum.filmorate.storage.mapper.DirectorMapper;
-import ru.yandex.practicum.filmorate.storage.mapper.FilmMapper;
-import ru.yandex.practicum.filmorate.storage.mapper.GenreMapper;
-import ru.yandex.practicum.filmorate.storage.mapper.MpaMapper;
+import ru.yandex.practicum.filmorate.model.enums.FilmParameter;
+import ru.yandex.practicum.filmorate.storage.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.LikeStorage;
+import ru.yandex.practicum.filmorate.storage.UserStorage;
+import ru.yandex.practicum.filmorate.storage.database.DbFilmStorage;
+import ru.yandex.practicum.filmorate.storage.database.DbLikeStorage;
+import ru.yandex.practicum.filmorate.storage.database.DbUserStorage;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -36,20 +36,14 @@ class DbFilmStorageTest {
     private JdbcTemplate jdbcTemplate;
     private FilmStorage filmStorage;
     private UserStorage userStorage;
-    private ru.yandex.practicum.filmorate.storage.GenreStorage genreStorage;
     private LikeStorage likeStorage;
-    private DirectorStorage directorStorage;
-    private FilmMapper filmMapper;
 
 
     @BeforeEach
     void beforeEach() {
         likeStorage = new DbLikeStorage(jdbcTemplate);
-        genreStorage = new DbGenreStorage(jdbcTemplate);
-        directorStorage = new DbDirectorStorage(jdbcTemplate);
-        filmStorage = new DbFilmStorage(jdbcTemplate, genreStorage, likeStorage, directorStorage, filmMapper);
+        filmStorage = new DbFilmStorage(jdbcTemplate);
         userStorage = new DbUserStorage(jdbcTemplate);
-        filmMapper = new FilmMapper(jdbcTemplate, new MpaMapper(), new GenreMapper(), new DirectorMapper());
     }
 
 
@@ -167,7 +161,7 @@ class DbFilmStorageTest {
 
         // filmStorage.addLike(film1.getId(), newUser.getId());
 
-        Collection<Film> films = filmStorage.getMostPopularsFilms(10, null, null);
+        Collection<Film> films = filmStorage.getMostPopularsFilms(10, java.util.Optional.empty(), java.util.Optional.empty());
         assertThat(films).isNotNull();
     }
 
@@ -257,27 +251,27 @@ class DbFilmStorageTest {
 
     @Test
     public void testSearchFilmByTitle() {
-        DbFilmStorage dbFilmStorage = new DbFilmStorage(jdbcTemplate, null, null, null, filmMapper);
+        DbFilmStorage dbFilmStorage = new DbFilmStorage(jdbcTemplate);
         String query = "Some query";
-        String filmSearchParameter = "title";
+        FilmParameter[] filmSearchParameter = {FilmParameter.title};
         Collection<Film> films = dbFilmStorage.searchFilmByParameter(query, filmSearchParameter);
         assertThat(films).isNotNull();
     }
 
     @Test
     public void testSearchFilmByDirector() {
-        DbFilmStorage dbFilmStorage = new DbFilmStorage(jdbcTemplate, null, null, null, filmMapper);
+        DbFilmStorage dbFilmStorage = new DbFilmStorage(jdbcTemplate);
         String query = "Some query";
-        String filmSearchParameter = "director";
+        FilmParameter[] filmSearchParameter = {FilmParameter.director};
         Collection<Film> films = dbFilmStorage.searchFilmByParameter(query, filmSearchParameter);
         assertThat(films).isNotNull();
     }
 
     @Test
     public void testSearchFilmByDirectorAndTitle() {
-        DbFilmStorage dbFilmStorage = new DbFilmStorage(jdbcTemplate, null, null, null, filmMapper);
+        DbFilmStorage dbFilmStorage = new DbFilmStorage(jdbcTemplate);
         String query = "Some query";
-        String filmSearchParameter = "director,title";
+        FilmParameter[] filmSearchParameter = {FilmParameter.director, FilmParameter.title};
         Collection<Film> films = dbFilmStorage.searchFilmByParameter(query, filmSearchParameter);
         assertThat(films).isNotNull();
     }

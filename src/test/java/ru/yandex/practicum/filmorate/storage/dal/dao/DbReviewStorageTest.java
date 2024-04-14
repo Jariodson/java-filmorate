@@ -8,10 +8,12 @@ import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 import ru.yandex.practicum.filmorate.model.*;
-import ru.yandex.practicum.filmorate.storage.*;
-import ru.yandex.practicum.filmorate.storage.database.*;
-import ru.yandex.practicum.filmorate.storage.database.DbGenreStorage;
-import ru.yandex.practicum.filmorate.storage.mapper.FilmMapper;
+import ru.yandex.practicum.filmorate.storage.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.ReviewStorage;
+import ru.yandex.practicum.filmorate.storage.UserStorage;
+import ru.yandex.practicum.filmorate.storage.database.DbFilmStorage;
+import ru.yandex.practicum.filmorate.storage.database.DbReviewStorage;
+import ru.yandex.practicum.filmorate.storage.database.DbUserStorage;
 
 import java.time.LocalDate;
 import java.util.Collection;
@@ -28,19 +30,12 @@ class DbReviewStorageTest {
     private JdbcTemplate jdbcTemplate;
     private ReviewStorage reviewDao;
     private Review review;
-    private ru.yandex.practicum.filmorate.storage.GenreStorage genreStorage;
-    private LikeStorage likeStorage;
-    private DirectorStorage directorStorage;
-    private FilmMapper filmMapper;
 
 
     @BeforeEach
     void beforeEach() {
         reviewDao = new DbReviewStorage(jdbcTemplate);
-        likeStorage = new DbLikeStorage(jdbcTemplate);
-        genreStorage = new DbGenreStorage(jdbcTemplate);
-        directorStorage = new DbDirectorStorage(jdbcTemplate);
-        FilmStorage filmStorage = new DbFilmStorage(jdbcTemplate, filmMapper);
+        FilmStorage filmStorage = new DbFilmStorage(jdbcTemplate);
         UserStorage userStorage = new DbUserStorage(jdbcTemplate);
 
         User user = User.builder()
@@ -69,6 +64,7 @@ class DbReviewStorageTest {
                 .isPositive(false)
                 .userId(1L)
                 .filmId(1L)
+                .useful(0)
                 .build();
         reviewDao.makeReview(review);
     }
@@ -87,6 +83,7 @@ class DbReviewStorageTest {
                 .isPositive(true)
                 .userId(1L)
                 .filmId(1L)
+                .useful(0)
                 .build();
         reviewDao.updateReview(newReview);
         assertThat(newReview).isNotNull().isEqualTo(reviewDao.getReviewById(1L));
