@@ -6,17 +6,17 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.service.GenreService;
-import ru.yandex.practicum.filmorate.storage.dao.GenreDal;
+import ru.yandex.practicum.filmorate.storage.GenreStorage;
 
 import java.util.Collection;
 
 @Service
 @Transactional
 public class GenreServiceImpl implements GenreService {
-    private final GenreDal genreDao;
+    private final GenreStorage genreDao;
 
     @Autowired
-    public GenreServiceImpl(GenreDal genreDao) {
+    public GenreServiceImpl(GenreStorage genreDao) {
         this.genreDao = genreDao;
     }
 

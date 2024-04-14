@@ -9,6 +9,7 @@ import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.service.DirectorService;
 import ru.yandex.practicum.filmorate.validation.WithoutParent;
 
+import javax.validation.Valid;
 import java.util.Collection;
 
 @RestController
@@ -42,8 +43,7 @@ public class DirectorController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Director addNewDirector(@Validated(WithoutParent.class)
-                                   @RequestBody Director director) {
+    public Director addNewDirector(@Valid @RequestBody Director director) {
         log.info("Получен запрос POST на добавление режисёра");
         directorService.createDirector(director);
         log.info("Вывод режисёра. ID режисёра: {}", director.getId());
@@ -52,8 +52,7 @@ public class DirectorController {
 
     @PutMapping
     @ResponseStatus(HttpStatus.OK)
-    public Director updateDirector(@Validated(WithoutParent.class)
-                                   @RequestBody Director director) {
+    public Director updateDirector(@Valid @RequestBody Director director) {
         log.info("Получен запрос PUT на обновление режисёра");
         directorService.updateDirector(director);
         log.info("Вывод режисёра. ID режисёра: {}  Имя режисёра: {}", director.getId(), director.getName());
@@ -65,5 +64,6 @@ public class DirectorController {
     public void deleteDirector(@PathVariable Long id) {
         log.info("Получен запрос DELETE на удоление режисёра");
         directorService.deleteDirector(id);
+        log.info("Фильм успешно удалён");
     }
 }

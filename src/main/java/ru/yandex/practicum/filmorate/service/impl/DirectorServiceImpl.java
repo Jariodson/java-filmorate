@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.service.DirectorService;
-import ru.yandex.practicum.filmorate.storage.dao.DirectorDal;
+import ru.yandex.practicum.filmorate.storage.DirectorStorage;
 
 import java.util.Collection;
 import java.util.List;
@@ -13,10 +13,10 @@ import java.util.List;
 @Service
 public class DirectorServiceImpl implements DirectorService {
 
-    private final DirectorDal directorStorage;
+    private final DirectorStorage directorStorage;
 
     @Autowired
-    public DirectorServiceImpl(DirectorDal directorStorage) {
+    public DirectorServiceImpl(DirectorStorage directorStorage) {
         this.directorStorage = directorStorage;
     }
 

@@ -10,10 +10,10 @@ import javax.validation.constraints.NotEmpty;
 
 @Data
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor(force = true)
+@AllArgsConstructor
 public class Genre {
     private Long id;
-    @NotEmpty(groups = WithoutParent.class)
+    @NotEmpty
     private String name;
 }

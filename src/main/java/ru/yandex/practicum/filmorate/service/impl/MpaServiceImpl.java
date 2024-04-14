@@ -6,17 +6,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.service.MpaService;
-import ru.yandex.practicum.filmorate.storage.dao.MpaDal;
+import ru.yandex.practicum.filmorate.storage.MpaStorage;
 
 import java.util.Collection;
 
 @Service
 @Transactional
 public class MpaServiceImpl implements MpaService {
-    private final MpaDal mpaDao;
+    private final MpaStorage mpaDao;
 
     @Autowired
-    public MpaServiceImpl(MpaDal mpaDao) {
+    public MpaServiceImpl(MpaStorage mpaDao) {
         this.mpaDao = mpaDao;
     }
 
