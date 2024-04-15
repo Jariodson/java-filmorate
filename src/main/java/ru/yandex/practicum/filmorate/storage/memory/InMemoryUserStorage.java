@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.dal.UserStorage;
+import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.time.LocalDate;
 import java.util.Collection;
@@ -43,11 +43,11 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public void deleteUser(User user) {
-        if (!users.containsValue(user)) {
+    public void deleteUser(Long id) {
+        if (!users.containsKey(id)) {
             throw new IllegalArgumentException("Такого пользователя не существует!");
         }
-        users.remove(user.getId());
+        users.remove(id);
     }
 
     @Override

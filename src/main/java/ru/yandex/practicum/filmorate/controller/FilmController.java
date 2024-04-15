@@ -3,9 +3,10 @@ package ru.yandex.practicum.filmorate.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.enums.FilmParameter;
+import ru.yandex.practicum.filmorate.model.enums.SortParam;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
 import javax.validation.Valid;
@@ -14,7 +15,6 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/films")
-@ResponseStatus(HttpStatus.NOT_FOUND)
 @Slf4j
 public class FilmController {
     private final FilmService filmService;
@@ -35,72 +35,98 @@ public class FilmController {
 
     @GetMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public Film getFilmById(@PathVariable Optional<Long> id) {
+    public Film getFilmById(@PathVariable Long id) {
         log.info("Получен запрос GET на получение фильма по ID: {}", id);
-        if (id.isPresent()) {
-            Film film = filmService.getFilmById(id.get());
-            log.info("Вывод фильма с Id: {}", id);
-            return film;
-        }
-        throw new IllegalArgumentException("Введен неверный индефикатор! Id: " + id);
+        Film film = filmService.getFilmById(id);
+        log.info("Вывод фильма с Id: {}", id);
+        return film;
     }
 
     @PostMapping
-    public ResponseEntity<Film> addFilm(@Valid @RequestBody Film film) {
+    @ResponseStatus(HttpStatus.CREATED)
+    public Film addFilm(@Valid @RequestBody Film film) {
         log.info("Получен запрос POST на добавление фильма в список");
-        filmService.addFilm(film);
+        Film newFilm = filmService.createFilm(film);
         log.info("Фильм добавлен в список: {}. Размер списка: {}", film, filmService.getFilms().size());
-        return new ResponseEntity<>(film, HttpStatus.CREATED);
+        return newFilm;
     }
 
     @PutMapping
-    public ResponseEntity<Film> updateFilm(@Valid @RequestBody Film film) {
+    @ResponseStatus(HttpStatus.OK)
+    public Film updateFilm(@Valid @RequestBody Film film) {
         log.info("Получен запрос PUT на обновления фильма в списке");
         Film newFilm = filmService.updateFilm(film);
-        //log.info("Обновленный фильм: {} добавлен в список. Размер списка: {}", film, filmService.getFilms().size());
-        return new ResponseEntity<>(newFilm, HttpStatus.OK);
+        log.info("Обновленный фильм: {} добавлен в список. Размер списка: {}", film, filmService.getFilms().size());
+        return newFilm;
     }
 
-    @DeleteMapping
-    public ResponseEntity<Film> deleteFilm(@Valid @RequestBody Film film) {
+    @DeleteMapping("{filmId}")
+    @ResponseStatus(HttpStatus.OK)
+    public Film deleteFilm(@PathVariable(value = "filmId") Long id) {
         log.info("Получен запрос DELETE на удаление фильма");
-        filmService.deleteFilm(film);
-        log.info("Фильм удалён! {}", film);
-        return new ResponseEntity<>(film, HttpStatus.OK);
+        Film film = filmService.removeFilm(id);
+        log.info("Фильм c ID: {} удалён!", id);
+        return film;
     }
 
     @PutMapping("/{id}/like/{userId}")
-    public ResponseEntity<Film> addLike(@PathVariable(value = "id") Optional<Long> filmId,
-                                        @PathVariable Optional<Long> userId) {
+    @ResponseStatus(HttpStatus.OK)
+    public Film addLike(@PathVariable(value = "id") Long filmId,
+                        @PathVariable(value = "userId") Long userId) {
         log.info("Получен запрос PUT на добавление лайка. Id фильма: {}, Id пользователя: {}", filmId, userId);
-        if (filmId.isPresent() && userId.isPresent()) {
-            Film film = filmService.addLike(filmId.get(), userId.get());
-            log.info("Лайк успешно поставлен! Id фильма: {} ,Id пользователя: {}", filmId, userId);
-            return new ResponseEntity<>(film, HttpStatus.OK);
-        } else {
-            throw new IllegalArgumentException("Введён неверный индефикатор! Id: " + filmId + " или Id: " + userId);
-        }
+        Film film = filmService.createLike(filmId, userId);
+        log.info("Лайк успешно поставлен! Id фильма: {} ,Id пользователя: {}", filmId, userId);
+        return film;
     }
 
     @DeleteMapping("/{id}/like/{userId}")
-    public ResponseEntity<Film> removeLike(@PathVariable(value = "id") Optional<Long> filmId,
-                                           @PathVariable Optional<Long> userId) {
+    @ResponseStatus(HttpStatus.OK)
+    public Film removeLike(@PathVariable(value = "id") Long filmId,
+                           @PathVariable(value = "userId") Long userId) {
         log.info("Получен запрос DELETE на удаление лайка");
-        if (filmId.isPresent() && userId.isPresent()) {
-            Film film = filmService.removeLike(filmId.get(), userId.get());
-            log.info("Лайк пользователя {} успешно удалён!", userId);
-            return new ResponseEntity<>(film, HttpStatus.OK);
-        } else {
-            throw new IllegalArgumentException("Введён неверный индефикатор! Id: " + filmId + " или Id: " + userId);
-        }
+        Film film = filmService.removeLike(filmId, userId);
+        log.info("Лайк пользователя {} успешно удалён!", userId);
+        return film;
     }
 
     @GetMapping("/popular")
     @ResponseStatus(HttpStatus.OK)
-    public Collection<Film> getFavouriteFilms(@RequestParam(defaultValue = "10") int count) {
+    public Collection<Film> getMostPopularsFilms(@RequestParam(defaultValue = "10") Integer count,
+                                                 @RequestParam(required = false) Optional<Long> genreId,
+                                                 @RequestParam(required = false) Optional<Integer> year) {
         log.info("Получен запрос GET на получение самых популярных фильмов!");
-        Collection<Film> films = filmService.getFavouriteFilms(count);
+        Collection<Film> films = filmService.getMostPopularsFilms(count, genreId, year);
         log.info("Вывод {} популярных фильмов", count);
+        return films;
+    }
+
+    @GetMapping("/director/{directorId}")
+    @ResponseStatus(HttpStatus.OK)
+    public Collection<Film> getFilmsByDirector(@PathVariable Long directorId,
+                                               @RequestParam(required = false) Optional<SortParam[]> sortBy) {
+        log.info("Получен запрос GET на получение фильмов по режисёру!");
+        Collection<Film> films = filmService.getDirectorFilmsSorted(directorId, sortBy);
+        log.info("Вывод {} фильмов данного режисёра", films.size());
+        return films;
+    }
+
+    @GetMapping("/common")
+    @ResponseStatus(HttpStatus.OK)
+    public Collection<Film> getCommonFilms(@RequestParam Long userId,
+                                           @RequestParam Long friendId) {
+        log.info("Получен запрос GET для общих фильмов с другом по популярности");
+        Collection<Film> films = filmService.getCommonFilms(userId, friendId);
+        log.info("Вывод {} общих фильмов ", films.size());
+        return films;
+    }
+
+    @GetMapping("/search")
+    @ResponseStatus(HttpStatus.OK)
+    public Collection<Film> searchFilmByParameter(@RequestParam(name = "query") String query,
+                                                  @RequestParam(name = "by") FilmParameter[] filmSearchParameter) {
+        log.info("Получен GET запрос на поиск: {}", filmSearchParameter);
+        Collection<Film> films = filmService.searchFilmByParameter(query.toLowerCase(), filmSearchParameter);
+        log.info("Вывод {} найденых фильмов ", films.size());
         return films;
     }
 }

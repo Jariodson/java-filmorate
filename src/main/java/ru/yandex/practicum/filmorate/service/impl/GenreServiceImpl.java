@@ -1,23 +1,22 @@
 package ru.yandex.practicum.filmorate.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.service.GenreService;
-import ru.yandex.practicum.filmorate.storage.dal.GenreDal;
+import ru.yandex.practicum.filmorate.storage.GenreStorage;
 
 import java.util.Collection;
 
 @Service
 @Transactional
 public class GenreServiceImpl implements GenreService {
-    private final GenreDal genreDao;
+    private final GenreStorage genreDao;
 
     @Autowired
-    public GenreServiceImpl(GenreDal genreDao) {
+    public GenreServiceImpl(GenreStorage genreDao) {
         this.genreDao = genreDao;
     }
 
@@ -28,21 +27,27 @@ public class GenreServiceImpl implements GenreService {
 
     @Override
     public Genre getGenreById(Long id) throws NotFoundException {
-        checkGenre(id);
         return genreDao.getGenreById(id);
     }
 
-    @Override
-    public String getGenreNameById(Long id) {
-        checkGenre(id);
-        return genreDao.getGenreNameById(id);
+    public Collection<Genre> getFilmsGenre(Long id) {
+        return genreDao.getFilmGenre(id);
     }
 
-    private void checkGenre(Long id) {
-        try {
-            genreDao.getGenreById(id);
-        } catch (EmptyResultDataAccessException e) {
-            throw new IllegalArgumentException("Жанр с ID: " + id + " не найден!");
+    @Override
+    public void updateFilmsGenre(Long id, Collection<Genre> genres) {
+        validateGenreId(genres);
+        genreDao.updateFilmsGenre(id, genres);
+    }
+
+    @Override
+    public void validateGenreId(Collection<Genre> genres) {
+        for (Genre genre : genres) {
+            try {
+                genreDao.getGenreById(genre.getId());
+            } catch (IllegalArgumentException e) {
+                throw new NotFoundException("Жанр с ID: " + genre.getId() + " не найден!");
+            }
         }
     }
 }

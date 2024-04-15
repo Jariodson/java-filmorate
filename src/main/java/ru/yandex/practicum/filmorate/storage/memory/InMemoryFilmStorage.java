@@ -4,12 +4,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.storage.dal.FilmStorage;
+import ru.yandex.practicum.filmorate.model.enums.FilmParameter;
+import ru.yandex.practicum.filmorate.model.enums.SortParam;
+import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @Component
 @Slf4j
@@ -51,32 +54,40 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public void deleteFilm(Film film) {
-        if (!films.containsValue(film)) {
-            throw new IllegalArgumentException("Такого фильма не сушествует! Фильм:" + film);
+    public void deleteFilm(Long id) {
+        if (!films.containsKey(id)) {
+            throw new IllegalArgumentException("Такого фильма не сушествует! ID фильма:" + id);
         }
-        films.remove(film.getId());
+        films.remove(id);
     }
 
     @Override
-    public Collection<Film> getFavouriteFilms(int count) {
+    public Collection<Film> getFilmsByDirectorAndSort(Long directorId, Optional<SortParam[]> orderBy) {
+        return null;
+    }
+
+
+    @Override
+    public Collection<Film> getCommonFilms(Long userId, Long friendId) {
         return null;
     }
 
     @Override
-    public Film addLike(Long filmId, Long userId) {
+    public Collection<Film> getMostPopularsFilms(Integer count, Optional<Long> genreId, Optional<Integer> year) {
         return null;
     }
 
     @Override
-    public Film removeLike(Long filmId, Long userId) {
+    public Collection<Film> searchFilmByParameter(String query, FilmParameter[] sortTypes) {
         return null;
     }
+
 
     private void checkFilmCriteria(Film film) {
         LocalDate filmBirthday = LocalDate.of(1895, 12, 28);
         if (film.getReleaseDate().isBefore(filmBirthday)) {
-            throw new ValidationException("Слшиком ранняя дата релиза! " + film.getReleaseDate());
+            throw new ValidationException("Слишком ранняя дата релиза! " + film.getReleaseDate());
         }
     }
+
 }

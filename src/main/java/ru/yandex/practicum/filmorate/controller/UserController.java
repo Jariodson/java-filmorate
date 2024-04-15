@@ -6,16 +6,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.model.UserFeed;
 import ru.yandex.practicum.filmorate.service.UserService;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.util.Collection;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/users")
-@ResponseStatus(HttpStatus.NOT_FOUND)
 @Slf4j
 public class UserController {
     private final UserService userService;
@@ -36,14 +34,11 @@ public class UserController {
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public User getUserById(@PathVariable Optional<Long> id) {
-        if (id.isPresent()) {
-            log.info("Получен запрос GET на получение пользователя с ID: {}", id);
-            User user = userService.findUserById(id.get());
-            log.info("Вывод пользоваля с Id: {}", id);
-            return user;
-        }
-        throw new IllegalArgumentException("Введён неверный индефикатор! Id: " + id);
+    public User getUserById(@PathVariable Long id) {
+        log.info("Получен запрос GET на получение пользователя с ID: {}", id);
+        User user = userService.getUserById(id);
+        log.info("Вывод пользоваля с Id: {}", id);
+        return user;
     }
 
     @PostMapping
@@ -62,69 +57,64 @@ public class UserController {
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
-    @DeleteMapping
-    public ResponseEntity<User> deleteUser(@Valid @RequestBody User user) {
-        log.info("Получен запрос DELETE на удаление пользователя: {}", user.getId());
-        userService.removeUser(user);
-        log.info("Пользователя успешно удалён!");
+    @DeleteMapping("/{userId}")
+    public ResponseEntity<User> deleteUser(@PathVariable(value = "userId") Long id) {
+        log.info("Получен запрос DELETE на удаление пользователя: {}", id);
+        User user = userService.removeUser(id);
+        log.info("Пользователя c ID {} успешно удалён!", id);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
     @GetMapping("/{id}/friends")
     @ResponseStatus(HttpStatus.OK)
-    public Collection<User> getUserFriends(@PathVariable @NotNull Optional<Long> id) {
+    public Collection<User> getUserFriends(@PathVariable Long id) {
         log.info("Получен запрос GET на вывод всех друзей пользователя");
-        if (id.isPresent()) {
-            Collection<User> friendId = userService.getFriends(id.get());
-            log.info("Вывод друзей пользователя с Id: {}. Id друзей: {}", id.get(), friendId);
-            return friendId;
-        } else {
-            throw new IllegalArgumentException("Введён неверный индефикатор! Id: " + id);
-        }
+        Collection<User> friendId = userService.getFriends(id);
+        log.info("Вывод друзей пользователя с Id: {}. Id друзей: {}", id, friendId);
+        return friendId;
     }
 
     @PutMapping("/{id}/friends/{friendId}")
-    public ResponseEntity<User> addFriend(@PathVariable(value = "id") @NotNull Optional<Long> userId,
-                                          @PathVariable @NotNull Optional<Long> friendId) {
-        if (userId.isPresent() && friendId.isPresent()) {
-            log.info("Получен запрос PUT на добавление нового друга пользователя. " +
-                    "Id пользователя: {}, Id друга: {}", friendId, userId);
-            User user = userService.addFriend(friendId.get(), userId.get());
-            log.info("Пользователь с Id: {} успешно добавил друга с Id: {}", friendId, userId);
-            log.info("{}", user);
-            return new ResponseEntity<>(user, HttpStatus.OK);
-        } else {
-            throw new IllegalArgumentException("Введён неверный индефикатор! Id: " + userId + " или Id: " + friendId);
-        }
+    public ResponseEntity<User> addFriend(@PathVariable(value = "id") Long userId,
+                                          @PathVariable(value = "friendId") Long friendId) {
+        log.info("Получен запрос PUT на добавление нового друга пользователя. " +
+                "Id пользователя: {}, Id друга: {}", friendId, userId);
+        User user = userService.addFriend(userId, friendId);
+        log.info("Пользователь с Id: {} успешно добавил друга с Id: {}", friendId, userId);
+        log.info("{}", user);
+        return new ResponseEntity<>(user, HttpStatus.OK);
+
     }
 
     @DeleteMapping("/{id}/friends/{friendId}")
-    public ResponseEntity<User> removeFriend(@PathVariable(value = "id") @NotNull Optional<Long> userId,
-                                             @PathVariable @NotNull Optional<Long> friendId) {
-        if (userId.isPresent() && friendId.isPresent()) {
-            log.info("Получен запрос DELETE на удаление пользователя из друзей" +
-                    "Id пользователя: {}, Id друга: {}", friendId, userId);
-            User user = userService.deleteFriend(friendId.get(), userId.get());
-            log.info("Пользователь с Id: {} успешно удалил друга с Id: {}", friendId, userId);
-            log.info("Пользователь: {}", user);
-            return new ResponseEntity<>(user, HttpStatus.OK);
-        } else {
-            throw new IllegalArgumentException("Введён неверный индефикатор! Id: " + userId + " или Id: " + friendId);
-        }
+    public ResponseEntity<User> removeFriend(@PathVariable(value = "id") Long userId,
+                                             @PathVariable(value = "friendId") Long friendId) {
+
+        log.info("Получен запрос DELETE на удаление пользователя из друзей" +
+                "Id пользователя: {}, Id друга: {}", friendId, userId);
+        User user = userService.deleteFriend(userId, friendId);
+        log.info("Пользователь с Id: {} успешно удалил друга с Id: {}", friendId, userId);
+        log.info("Пользователь: {}", user);
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
     @GetMapping("/{id}/friends/common/{otherId}")
     @ResponseStatus(HttpStatus.OK)
-    public Collection<User> getCommonFriends(@PathVariable(value = "id") @NotNull Optional<Long> userId,
-                                             @PathVariable(value = "otherId") @NotNull Optional<Long> friendId) {
-        if (userId.isPresent() && friendId.isPresent()) {
-            log.info("Получен запрос GET на получение общих друзей пользователей: {} и {}", userId, friendId);
-            Collection<User> commonFriends = userService.getCommonFriends(userId.get(), friendId.get());
-            log.info("Вывод общих друзей пользователя с Id: {} и Id: {}", userId, friendId);
-            log.info("Общие друзья: {}", commonFriends);
-            return commonFriends;
-        } else {
-            throw new IllegalArgumentException("Введён неверный индефикатор! Id: " + userId + " или Id: " + friendId);
-        }
+    public Collection<User> getCommonFriends(@PathVariable(value = "id") Long userId,
+                                             @PathVariable(value = "otherId") Long friendId) {
+        log.info("Получен запрос GET на получение общих друзей пользователей: {} и {}", userId, friendId);
+        Collection<User> commonFriends = userService.getCommonFriends(userId, friendId);
+        log.info("Вывод общих друзей пользователя с Id: {} и Id: {}", userId, friendId);
+        log.info("Общие друзья: {}", commonFriends);
+        return commonFriends;
+    }
+
+    @GetMapping("/{id}/feed")
+    @ResponseStatus(HttpStatus.OK)
+    public Collection<UserFeed> getCommonFriends(@PathVariable(value = "id") Long userId) {
+        log.info("Получен запрос GET на получение истории пользователя: {} ", userId);
+        Collection<UserFeed> userFeed = userService.getUserFeed(userId);
+        log.info("Вывод общих истории действий пользователя с Id: {}", userId);
+        return userFeed;
     }
 }

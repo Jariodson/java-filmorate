@@ -8,12 +8,10 @@ import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.service.GenreService;
 
 import java.util.Collection;
-import java.util.Optional;
 
 @Slf4j
 @RestController
 @RequestMapping("/genres")
-@ResponseStatus(HttpStatus.NOT_FOUND)
 public class GenreController {
     private final GenreService genreService;
 
@@ -33,13 +31,10 @@ public class GenreController {
 
     @GetMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public Genre getGenreById(@PathVariable Optional<Long> id) {
+    public Genre getGenreById(@PathVariable Long id) {
         log.info("Получен запрос GET на получение жанра по ID: {}", id);
-        if (id.isPresent()) {
-            Genre genre = genreService.getGenreById(id.get());
-            log.info("Вывод жанра с Id: {}", id);
-            return genre;
-        }
-        throw new IllegalArgumentException("Введен неверный индефикатор! Id: " + id);
+        Genre genre = genreService.getGenreById(id);
+        log.info("Вывод жанра с Id: {}", id);
+        return genre;
     }
 }

@@ -8,8 +8,8 @@ import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.dal.UserStorage;
-import ru.yandex.practicum.filmorate.storage.dal.dao.UserDbStorage;
+import ru.yandex.practicum.filmorate.storage.UserStorage;
+import ru.yandex.practicum.filmorate.storage.database.DbUserStorage;
 
 import java.time.LocalDate;
 import java.util.Collection;
@@ -21,7 +21,7 @@ import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFOR
 @JdbcTest
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
-class UserDbStorageTest {
+public class DbUserStorageTest {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -29,7 +29,7 @@ class UserDbStorageTest {
 
     @BeforeEach
     void beforeEach() {
-        userDbStorage = new UserDbStorage(jdbcTemplate);
+        userDbStorage = new DbUserStorage(jdbcTemplate);
     }
 
     @Test
@@ -118,7 +118,7 @@ class UserDbStorageTest {
                 .build();
         userDbStorage.addNewUser(user1);
         assertThat(userDbStorage.getUserById(1L)).isNotNull();
-        userDbStorage.deleteUser(user1);
+        userDbStorage.deleteUser(user1.getId());
         assertThat(userDbStorage.getAllUsers()).isEqualTo(List.of());
     }
 
